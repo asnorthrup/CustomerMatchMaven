@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.CarolinaCAT.busintel</groupId>
+  <artifactId>customerMatcher</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Customer Match From Excel</name>
+  <description>This application takes an Excel file and matches it to customers based on attributes of the customer in the Excel file (name, address, phone, etc.)</description>
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.9</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>me.xdrop</groupId>
+		  <artifactId>fuzzywuzzy</artifactId>
+		  <version>1.1.9</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/net.sf.jt400/jt400 -->
+		<dependency>
+		    <groupId>net.sf.jt400</groupId>
+		    <artifactId>jt400</artifactId>
+		    <version>6.6</version>
+		</dependency>
+				
+		
+	</dependencies>
+	
+	
+	
+</project>
