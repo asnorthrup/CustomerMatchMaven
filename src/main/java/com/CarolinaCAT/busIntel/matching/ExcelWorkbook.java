@@ -21,6 +21,8 @@ public class ExcelWorkbook {
 	private long lastRowIndex;
 	private int lastColIndex;
 	public ArrayList<excelCustomerObj> customersInWB;
+	//Excel workbook with data and where matches will be added
+	public XSSFWorkbook wb;
 	//constructor for the Excel workbook class
 	public ExcelWorkbook(String path){
 		File file = new File(path);
@@ -31,7 +33,7 @@ public class ExcelWorkbook {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		XSSFWorkbook wb = null;
+		wb = null;
 		//if(fp != null){
 		try {
 			wb = new XSSFWorkbook(opPackage);
@@ -100,6 +102,13 @@ public class ExcelWorkbook {
 			}
 		}
 		//read in columns in workbook
+		
+	}
+	
+	public void addSheetOfMatches(){
+		Sheet matchesSheet = wb.createSheet();
+		Row r = null;
+		Cell c =null;
 		
 	}
 

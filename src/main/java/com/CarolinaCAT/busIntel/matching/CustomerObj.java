@@ -3,7 +3,7 @@ package com.CarolinaCAT.busIntel.matching;
 
 import java.util.ArrayList;
 
-public class CustomerObj {
+public class CustomerObj{
 	public String cuno;
 	public String name;
 	public String parent;
@@ -11,14 +11,24 @@ public class CustomerObj {
 	public String zip;
 	public String phone;
 	public ArrayList<String> influencers; //use this to store all of the influencers for the customer
-	public double matchScore;
+	private double matchScore;
 	//for customers read in from excel, need a cell reference
 	
 	//constructor for customer object
-	public CustomerObj(String c, String nm,String nm2,String pc, String addr, String ph, String zipCode){
+	/**
+	 * Constructor for customer object
+	 * @param custNum String for customer number 
+	 * @param nm String for company name of customer
+	 * @param nm2 String for second company name of customer
+	 * @param parentNum String for parent customer number
+	 * @param addr String for address
+	 * @param ph String for phone number
+	 * @param zipCode String for zip code
+	 */
+	public CustomerObj(String custNum, String nm, String nm2, String parentNum, String addr, String ph, String zipCode){
 		//trim and check for length before assigning
-		if (c != null && c.trim().length()>0){
-			cuno = c.trim();
+		if (custNum != null && custNum.trim().length()>0){
+			cuno = custNum.trim();
 		}
 		if (nm != null && nm.trim().length()>0){
 			//need to append cnm2 if it exists
@@ -29,8 +39,8 @@ public class CustomerObj {
 			}
 		replaceDBA();
 		}
-		if (pc != null && pc.trim().length()>0){
-			parent = pc;
+		if (parentNum != null && parentNum.trim().length()>0){
+			parent = parentNum;
 		}
 		if (addr != null && addr.trim().length()>0){
 			address = addr.trim();
@@ -45,6 +55,9 @@ public class CustomerObj {
 		if (ph != null && ph.trim().length()>0){
 			phone = formatPhone(ph);
 		}
+		if (zipCode != null && zipCode.trim().length()>0){
+			zip = formatZip(zipCode.trim());
+		}
 		//set up for influencers, if exist, initial constructor has, which is plenty for most
 		influencers = new ArrayList<String>();
 	}
@@ -52,6 +65,23 @@ public class CustomerObj {
 	//add an influencer
 	public void addInfluencer(String inf){
 		influencers.add(inf);
+	}
+	
+	//Careful - If match score gets updated as it goes through list and then adds to array then no good. There doesn't need to be a match
+	//score assigned to DBS customer, in fact, there shouldn't
+	public void setMatchScore(double score){
+		matchScore = score;
+	}
+	
+	private String formatZip(String zipCode) {
+		if(zipCode.equals("00000") || zipCode.equals("99999")){
+			return null;
+		} else if (zipCode.length() == 5){
+			return zipCode;
+		} else if ( zipCode.length() != 5 && zipCode.length() > 5 ){
+			return zipCode.substring(0, 4);
+		}
+		return null;
 	}
 	
 	//remove everything except nums from phone number
