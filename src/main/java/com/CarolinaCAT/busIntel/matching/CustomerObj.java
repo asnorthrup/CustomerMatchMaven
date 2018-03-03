@@ -37,7 +37,7 @@ public class CustomerObj{
 			} else {
 				name = nm.trim();
 			}
-		replaceDBA();
+		nameTranslations();
 		}
 		if (parentNum != null && parentNum.trim().length()>0){
 			parent = parentNum;
@@ -100,10 +100,13 @@ public class CustomerObj{
 			address = address.replace("Post", "P.");
 			address = address.replace("Office", "O.");
 		}
+		//TODO go through different versions of PO Box to change to P.O. Box
 	}
 	
+	//TODO change this from using brute force to creating a global(?) array/hash (probably a static array) of lookups
+	//based on the text files.
 	//extract name from DBA
-	private void replaceDBA(){
+	private void nameTranslations(){
 		int index;
 		if ( (index = name.lastIndexOf("DBA") ) != - 1){
 			name = name.substring(index + 3).trim();

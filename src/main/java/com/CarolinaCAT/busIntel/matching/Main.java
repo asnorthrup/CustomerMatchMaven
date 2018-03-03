@@ -10,7 +10,13 @@ import java.util.ArrayList;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
+
+
+
 public class Main {
+	/**Min Addr Score in fuzzy matcher */
+	public static final int MIN_ADDR_SCORE = 90;
+	public static final int MIN_CUSTNAME_SCORE = 90;
 	//creates a composite match score to assign to a potential match
 	private static double aggrScore( double phoneScore, double addrScore, double custNmScore ){
 		double score = 0;
@@ -45,7 +51,6 @@ public class Main {
 			//create the customer object
 			//TODO add ZIP to query
 			//TODO add physical address
-			//Constructor String custNum, String nm, String nm2, String parentNum, String addr, String ph, String zipCode
 			CustomerObj co = new CustomerObj(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
 			//add to arraylist of customer objects
 			dbsCustomerList.add(co);
@@ -68,9 +73,9 @@ public class Main {
 				boolean potentialMatch = false;
 				//Scores are for each DBS customer
 				//Future enhancement could include a way to narrow out DBS customers, but doesn't really seem likely
-				int phoneScore = 0;
-				int addrScore = 0;
-				int custNmScore = 0;
+				double phoneScore = 0;
+				double addrScore = 0;
+				double custNmScore = 0;
 				//need to short circuit if already true -- actually don't do this, you'll use match score to figure out
 				if (dbsCust.phone != null && c.phone != null){
 					if ( c.phone.equals( dbsCust.phone) ) { 
@@ -81,32 +86,57 @@ public class Main {
 				if (dbsCust.address != null && c.address != null){
 					//TODO, need to load in Address with Zip code
 					//TODO match score on address should be very high
-					if ( !potentialMatch && (addrScore = FuzzySearch.ratio( c.address, dbsCust.address )) > 90) { 
+					if (c.address.toLowerCase().contains(" box ")){
+						//if its a PO BOX, then need to match with a zip code
+						String addrPlusZip = c.address + " " + c.zip;
+						String DBSaddrPlusZip = dbsCust.address + " " + dbsCust.zip;
+						if ( !potentialMatch && (addrScore = FuzzySearch.ratio( addrPlusZip, DBSaddrPlusZip )) > MIN_ADDR_SCORE ) {
+							potentialMatch = true;
+						}
+					} else if ( !potentialMatch && (addrScore = FuzzySearch.ratio( c.address, dbsCust.address )) > MIN_ADDR_SCORE ) { 
 						potentialMatch = true; 
 					}
 				}
 				if (dbsCust.name != null && c.name != null){
-					if ( !potentialMatch && (custNmScore = FuzzySearch.partialRatio( c.name, dbsCust.name ) ) > 90 ) { 
+					if ( !potentialMatch && (custNmScore = FuzzySearch.partialRatio( c.name, dbsCust.name ) ) > MIN_CUSTNAME_SCORE ) { 
 						potentialMatch = true; 
 					}
 				}
-				//still need to deal with influencers getting scores
+				//TODO add influencers into the scoring
 				
 				//if it is a potential match add it to c, which has an array list of potentialDBSCustomers
 				//this means it passes certain threshold
 				if (potentialMatch){
-					//create match score then add to potential customer list for Customer
-					double matchScore = aggrScore( phoneScore, addrScore, custNmScore );
-					//create a deep copy of this DBS customer and add a match score
-					CustomerObj matchedDBSCust = new CustomerObj(dbsCust.cuno, dbsCust.name, null, dbsCust.parent, dbsCust.address, dbsCust.phone, dbsCust.zip); 
-					for(String inf : dbsCust.influencers){
-						matchedDBSCust.addInfluencer(inf);
-					}
-					matchedDBSCust.setMatchScore( aggrScore( phoneScore, addrScore, custNmScore ) );
-					c.addPotentialDBSCustomer(matchedDBSCust);
+					createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, addrScore, custNmScore);
+
 				}
 			}
 		}
+	}
+
+	/**
+	 * Method takes a excel customer object, that has a matched DBS customer object and adds it to the excel customer objects
+	 * potential match list with an aggregated score. This method creates a deep copy of the DBS customer object so it can add the
+	 * customer with a specific score.
+	 * @param excelCO excel customer object that has a potential DBS customer matched for it
+	 * @param matchedCO DBS customer object that is potential match
+	 * @param pScore phone number score of match
+	 * @param aScore address score of match
+	 * @param nScore customer name score of match
+	 */
+	//TODO think about the storage vs access of the dbs customers. Creating potentially a lot of space use for customers taht aren't
+	//really being used
+	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double pScore, double aScore, double nScore) {
+		// TODO Auto-generated method stub
+		//create a deep copy of this DBS customer and add a match score
+		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zip); 
+		for(String inf : matchedCO.influencers){
+			matchedDBSCust.addInfluencer(inf);
+		}
+		//create match score then add to potential customer list for Customer
+		matchedDBSCust.setMatchScore( aggrScore( pScore, aScore, nScore ) );
+		excelCO.addPotentialDBSCustomer(matchedDBSCust);
+		
 	}
 
 }
