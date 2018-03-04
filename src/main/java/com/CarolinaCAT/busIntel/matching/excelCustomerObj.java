@@ -7,9 +7,6 @@ import java.util.ArrayList;
 public class excelCustomerObj extends CustomerObj {
 	//row of custCellRow
 	public int custCellRow;
-	//want this arraylist to hold a customer obj side by side with the score
-	//need a two column arraylist
-	//note below isn't correct, but need ot look up syntax
 	/**Each customer in excel will have a list of potential matches from DBS, this variable stores those customers in arraylist*/
 	public ArrayList<CustomerObj> potenDBSMatches;
 	
@@ -35,8 +32,11 @@ public class excelCustomerObj extends CustomerObj {
 	}
 	
 	//use this to add potential DBS matches
+	/**
+	 * Adds a potential match to the excel customer. Must create a copy first that has a match score associated with it
+	 * @param cust customer object with a match score
+	 */
 	public void addPotentialDBSCustomer(CustomerObj cust){
-		//match score isn't correct, but need to look up
 		potenDBSMatches.add(cust);
 	}
 

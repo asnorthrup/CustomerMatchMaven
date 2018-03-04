@@ -11,7 +11,7 @@ public class CustomerObj{
 	public String zip;
 	public String phone;
 	public ArrayList<String> influencers; //use this to store all of the influencers for the customer
-	private double matchScore;
+	public double matchScore;
 	//for customers read in from excel, need a cell reference
 	
 	//constructor for customer object

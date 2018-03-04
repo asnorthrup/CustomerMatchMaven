@@ -84,7 +84,6 @@ public class Main {
 					}
 				}
 				if (dbsCust.address != null && c.address != null){
-					//TODO, need to load in Address with Zip code
 					//TODO match score on address should be very high
 					if (c.address.toLowerCase().contains(" box ")){
 						//if its a PO BOX, then need to match with a zip code
@@ -108,10 +107,11 @@ public class Main {
 				//this means it passes certain threshold
 				if (potentialMatch){
 					createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, addrScore, custNmScore);
-
 				}
-			}
-		}
+			} //end of loop checking each DBS record for matches
+		} //end of list of customers in excel file
+		
+		
 	}
 
 	/**
@@ -136,7 +136,5 @@ public class Main {
 		//create match score then add to potential customer list for Customer
 		matchedDBSCust.setMatchScore( aggrScore( pScore, aScore, nScore ) );
 		excelCO.addPotentialDBSCustomer(matchedDBSCust);
-		
 	}
-
 }

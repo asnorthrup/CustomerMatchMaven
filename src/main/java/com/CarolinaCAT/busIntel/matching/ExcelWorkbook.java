@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -58,12 +59,12 @@ public class ExcelWorkbook {
 		//TODO set up a column for a user to tell the program where paste the values of dbs customers in
 		//TODO when writing back, do you select the parent or the customer?
 		int numInSheet = myExcelSheet.getLastRowNum();
-		customersInWB = new ArrayList<excelCustomerObj>(myExcelSheet.getLastRowNum());
+		customersInWB = new ArrayList<excelCustomerObj>(numInSheet);
 		
 		//set up to process sheet
 		//note the first row will likely be header, skip 1 with iterator
-		for (int i= startRow; i<myExcelSheet.getLastRowNum();i++){
-			Row row = myExcelSheet.getRow(i);
+		for (int i= startRow; i<numInSheet; i++){
+			Row row = myExcelSheet.getRow( i );
 			String nm = null;
 			String inf = null;
 			String addr = null;
@@ -101,15 +102,34 @@ public class ExcelWorkbook {
 				customersInWB.add(cust);
 			}
 		}
-		//read in columns in workbook
-		
+		//completed read in columns in workbook
 	}
 	
+	/**
+	 * Populate a worksheet in the original workbook with the highest rated match. Before calling this function, the customers should
+	 * have been matched with a DBS customer (if one exists) and assigned a specific match score.
+	 */
+	//TODO finish this logic, still need to output the excel customer snad the top match to excel. Also, need to write test cases
 	public void addSheetOfMatches(){
-		Sheet matchesSheet = wb.createSheet();
+		//may not be able to name by passing string in
+		Sheet matchesSheet = wb.createSheet("DBSmatches");
 		Row r = null;
 		Cell c =null;
-		
+		int rowCounter = 0;
+		for( excelCustomerObj excelCust : customersInWB){
+			if (excelCust.potenDBSMatches.size() > 0){
+				//for this excelCust, check for highest match score
+				Collections.sort(excelCust.potenDBSMatches,new matchSorting());				
+			} else {
+				//else there aren't any matches
+			}
+
+			//populate excel sheet 'matchesSheet' with customer and matches
+			r = matchesSheet.createRow(rowCounter);
+			c = r.createCell(0);
+			c.setCellValue(/*TODO*/);
+			rowCounter++;
+		}
 	}
 
 	//TODO are these used?
