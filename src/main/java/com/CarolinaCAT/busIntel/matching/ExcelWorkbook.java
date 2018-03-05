@@ -113,23 +113,55 @@ public class ExcelWorkbook {
 	public void addSheetOfMatches(){
 		//may not be able to name by passing string in
 		Sheet matchesSheet = wb.createSheet("DBSmatches");
-		Row r = null;
-		Cell c =null;
-		int rowCounter = 0;
+		setHeaders(matchesSheet);
+		
+		int rowCounter = 1;
+		//create header for excel file
 		for( excelCustomerObj excelCust : customersInWB){
-			if (excelCust.potenDBSMatches.size() > 0){
-				//for this excelCust, check for highest match score
-				Collections.sort(excelCust.potenDBSMatches,new matchSorting());				
+			r = matchesSheet.createRow(rowCounter);
+			if (excelCust.potenDBSMatches.isEmpty()){
+
+				c.setCellValue();
+								
 			} else {
-				//else there aren't any matches
+				Collections.sort(excelCust.potenDBSMatches,new matchSorting());
+				
 			}
 
 			//populate excel sheet 'matchesSheet' with customer and matches
-			r = matchesSheet.createRow(rowCounter);
-			c = r.createCell(0);
+			
+			
 			c.setCellValue(/*TODO*/);
 			rowCounter++;
 		}
+	}
+	
+	private void setExcelCustToRow(Row r, excelCustomerObj xlCust){
+		Cell c = r.createCell(0);
+		c.setCellValue();
+	}
+	
+	//helper method to set up headers
+	private void setHeaders(Sheet matchSheet){
+		Row r = null;
+		r = matchSheet.createRow(0);
+		Cell hdr = r.createCell(0);
+		hdr.setCellValue("Excel CustomerName");
+		hdr = r.createCell(1);
+		hdr.setCellValue("Excel CustomerAddress");
+		hdr = r.createCell(2);
+		hdr.setCellValue("Excel CustomerPhone");
+		hdr = r.createCell(2);
+		hdr.setCellValue("DBS Customer Num");
+		hdr = r.createCell(3);
+		hdr.setCellValue("DBS Customer Name");
+		hdr = r.createCell(4);
+		hdr.setCellValue("DBS Customer Address");
+		hdr = r.createCell(5);
+		hdr.setCellValue("DBS Customer Phone");
+		//eventually may do something with influencer at this point
+		hdr = r.createCell(6);
+		hdr.setCellValue("DBS Customer MatchScore");
 	}
 
 	//TODO are these used?
