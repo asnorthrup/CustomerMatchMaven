@@ -1,17 +1,9 @@
 package com.CarolinaCAT.busIntel.matching;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
-
 import me.xdrop.fuzzywuzzy.FuzzySearch;
-
-
-
 
 public class Main {
 	/**Min Addr Score in fuzzy matcher */
@@ -87,8 +79,8 @@ public class Main {
 					//TODO match score on address should be very high
 					if (c.address.toLowerCase().contains(" box ")){
 						//if its a PO BOX, then need to match with a zip code
-						String addrPlusZip = c.address + " " + c.zip;
-						String DBSaddrPlusZip = dbsCust.address + " " + dbsCust.zip;
+						String addrPlusZip = c.address + " " + c.zipCode;
+						String DBSaddrPlusZip = dbsCust.address + " " + dbsCust.zipCode;
 						if ( !potentialMatch && (addrScore = FuzzySearch.ratio( addrPlusZip, DBSaddrPlusZip )) > MIN_ADDR_SCORE ) {
 							potentialMatch = true;
 						}
@@ -129,7 +121,7 @@ public class Main {
 	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double pScore, double aScore, double nScore) {
 		// TODO Auto-generated method stub
 		//create a deep copy of this DBS customer and add a match score
-		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zip); 
+		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zipCode); 
 		for(String inf : matchedCO.influencers){
 			matchedDBSCust.addInfluencer(inf);
 		}

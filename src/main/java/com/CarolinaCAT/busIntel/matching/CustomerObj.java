@@ -8,13 +8,11 @@ public class CustomerObj{
 	public String name;
 	public String parent;
 	public String address;
-	public String zip;
+	public String zipCode;
 	public String phone;
 	public ArrayList<String> influencers; //use this to store all of the influencers for the customer
 	public double matchScore;
-	//for customers read in from excel, need a cell reference
-	
-	//constructor for customer object
+
 	/**
 	 * Constructor for customer object
 	 * @param custNum String for customer number 
@@ -43,20 +41,21 @@ public class CustomerObj{
 			parent = parentNum;
 		}
 		if (addr != null && addr.trim().length()>0){
+			//TODO Need to do some translations of road to Rd, Avenue to Ave, etc.
 			address = addr.trim();
 			modPOBox();
 		}
 		if (zipCode != null && zipCode.trim().length()>0){
-			zip = zip.trim();
-			if (zip.length() != 5){
-				zip = zip.substring(0, Math.min(zip.length(), 5));
+			this.zipCode = zipCode.trim();
+			if (this.zipCode.length() != 5){
+				this.zipCode = this.zipCode.substring(0, Math.min(this.zipCode.length(), 5));
 			}
 		}
 		if (ph != null && ph.trim().length()>0){
 			phone = formatPhone(ph);
 		}
 		if (zipCode != null && zipCode.trim().length()>0){
-			zip = formatZip(zipCode.trim());
+			zipCode = formatZip(zipCode.trim());
 		}
 		//set up for influencers, if exist, initial constructor has, which is plenty for most
 		influencers = new ArrayList<String>();

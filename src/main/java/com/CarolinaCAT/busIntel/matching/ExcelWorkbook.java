@@ -113,32 +113,54 @@ public class ExcelWorkbook {
 	public void addSheetOfMatches(){
 		//may not be able to name by passing string in
 		Sheet matchesSheet = wb.createSheet("DBSmatches");
-		setHeaders(matchesSheet);
-		
-		int rowCounter = 1;
 		//create header for excel file
+		setHeaders(matchesSheet);
+		int rowCounter = 1;
 		for( excelCustomerObj excelCust : customersInWB){
+			Row r = null;
 			r = matchesSheet.createRow(rowCounter);
 			if (excelCust.potenDBSMatches.isEmpty()){
-
-				c.setCellValue();
+				//no match, just copy Excel Customer data
+				setExcelCustToRow(r, excelCust, null);
 								
 			} else {
-				Collections.sort(excelCust.potenDBSMatches,new matchSorting());
-				
+				if (excelCust.potenDBSMatches.size() > 1){
+					Collections.sort(excelCust.potenDBSMatches,new matchSorting());
+				}
+				CustomerObj bestMatch = excelCust.potenDBSMatches.get(0);
+				//populate excel sheet 'matchesSheet' with customer and matches
+				setExcelCustToRow(r, excelCust, bestMatch);
 			}
-
-			//populate excel sheet 'matchesSheet' with customer and matches
-			
-			
-			c.setCellValue(/*TODO*/);
 			rowCounter++;
 		}
 	}
 	
-	private void setExcelCustToRow(Row r, excelCustomerObj xlCust){
-		Cell c = r.createCell(0);
-		c.setCellValue();
+	private void setExcelCustToRow(Row r, excelCustomerObj xlCust, CustomerObj topMatch){
+		if (topMatch == null){
+			Cell c = r.createCell(0);
+			c.setCellValue(xlCust.name);
+			c = r.createCell(1);
+			c.setCellValue(xlCust.address);
+			c = r.createCell(2);
+			c.setCellValue(xlCust.phone);
+		} else {
+			Cell c = r.createCell(0);
+			c.setCellValue(xlCust.name);
+			c = r.createCell(1);
+			c.setCellValue(xlCust.address);
+			c = r.createCell(2);
+			c.setCellValue(xlCust.phone);
+			c = r.createCell(3);
+			c.setCellValue(topMatch.cuno);
+			c = r.createCell(4);
+			c.setCellValue(topMatch.name);
+			c = r.createCell(5);
+			c.setCellValue(topMatch.address);
+			c = r.createCell(6);
+			c.setCellValue(topMatch.phone);
+			c = r.createCell(5);
+			c.setCellValue(topMatch.matchScore);
+		}
 	}
 	
 	//helper method to set up headers
@@ -151,16 +173,16 @@ public class ExcelWorkbook {
 		hdr.setCellValue("Excel CustomerAddress");
 		hdr = r.createCell(2);
 		hdr.setCellValue("Excel CustomerPhone");
-		hdr = r.createCell(2);
-		hdr.setCellValue("DBS Customer Num");
 		hdr = r.createCell(3);
-		hdr.setCellValue("DBS Customer Name");
+		hdr.setCellValue("DBS Customer Num");
 		hdr = r.createCell(4);
-		hdr.setCellValue("DBS Customer Address");
+		hdr.setCellValue("DBS Customer Name");
 		hdr = r.createCell(5);
+		hdr.setCellValue("DBS Customer Address");
+		hdr = r.createCell(6);
 		hdr.setCellValue("DBS Customer Phone");
 		//eventually may do something with influencer at this point
-		hdr = r.createCell(6);
+		hdr = r.createCell(7);
 		hdr.setCellValue("DBS Customer MatchScore");
 	}
 
