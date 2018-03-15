@@ -47,15 +47,10 @@ public class CustomerObj{
 		}
 		if (zipCode != null && zipCode.trim().length()>0){
 			this.zipCode = zipCode.trim();
-			if (this.zipCode.length() != 5){
-				this.zipCode = this.zipCode.substring(0, Math.min(this.zipCode.length(), 5));
-			}
+			this.zipCode = formatZip(this.zipCode);
 		}
 		if (ph != null && ph.trim().length()>0){
 			phone = formatPhone(ph);
-		}
-		if (zipCode != null && zipCode.trim().length()>0){
-			zipCode = formatZip(zipCode.trim());
 		}
 		//set up for influencers, if exist, initial constructor has, which is plenty for most
 		influencers = new ArrayList<String>();
@@ -78,7 +73,11 @@ public class CustomerObj{
 		} else if (zipCode.length() == 5){
 			return zipCode;
 		} else if ( zipCode.length() != 5 && zipCode.length() > 5 ){
-			return zipCode.substring(0, 4);
+			zipCode = zipCode.substring(0, 5);
+			if(zipCode.equals("00000") || zipCode.equals("99999")){
+				return null;
+			}
+			return zipCode;
 		}
 		return null;
 	}
@@ -86,7 +85,7 @@ public class CustomerObj{
 	//remove everything except nums from phone number
 	private String formatPhone(String s){
 		String stt= s.replaceAll("\\D+","");
-		if(stt.equals("0000000000")){
+		if(stt.equals("0000000000") || stt.equals("9999999999") || stt.length() != 10){
 			return "N/A";
 		} else {
 			return stt;
@@ -107,14 +106,14 @@ public class CustomerObj{
 	//extract name from DBA
 	private void nameTranslations(){
 		int index;
+		name = name.toUpperCase();
 		if ( (index = name.lastIndexOf("DBA") ) != - 1){
 			name = name.substring(index + 3).trim();
 		} else if ((index = name.lastIndexOf("D/B/A") ) != - 1){
 			name = name.substring(index + 3).trim();
-		} else {
-			//do nothing
-		}
+		} 
 		//removes Cash Sale from customer name - this probably could be refined
+
 		if (name.contains("CASH SALE")){
 			name = name.replace("CASH SALE","");
 			name = name.trim();

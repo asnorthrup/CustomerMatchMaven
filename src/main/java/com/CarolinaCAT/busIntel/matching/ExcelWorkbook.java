@@ -98,7 +98,8 @@ public class ExcelWorkbook {
 			if (nm != null || inf != null || addr !=null || ph != null){
 				//create an excel customer object and add it to arraylist
 				//TODO what is all of the nulls, check on this
-				excelCustomerObj cust = new excelCustomerObj(null, nm, null, null, addr, zipCode, ph, i);
+				//i+1 is because row indexing starts at 0
+				excelCustomerObj cust = new excelCustomerObj(null, nm, null, null, addr, zipCode, ph, i + 1);
 				customersInWB.add(cust);
 			}
 		}
