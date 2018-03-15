@@ -41,5 +41,6 @@ public class CustomerObjTest {
 		co.setMatchScore(98);
 		assertEquals(co.matchScore, 98.0,.001);
 	}
+	//TODO test Post Office Box addresses
 
 }
