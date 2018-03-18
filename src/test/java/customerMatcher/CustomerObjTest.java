@@ -16,6 +16,16 @@ public class CustomerObjTest {
 		assertEquals(co.zipCode, "12345");
 		assertEquals(co.phone, "7044444483");
 	}
+	
+	@Test
+	public void testPOBoxAddr() {
+		CustomerObj co = new CustomerObj(null,"John John", "DBA JJ's Trucking", null, "PO Box 1111", "704-444-4483", "12345");
+		assertEquals(co.name, "JJ'S TRUCKING");
+		assertEquals(co.address, "P.O. Box 1111");
+		assertEquals(co.zipCode, "12345");
+		assertEquals(co.phone, "7044444483");
+	}
+	
 	@Test
 	public void testPhoneZipError() {
 		CustomerObj co = new CustomerObj(null,"John John", "Albert", null, "101 Main Street", "704-44483", "12345-3233");

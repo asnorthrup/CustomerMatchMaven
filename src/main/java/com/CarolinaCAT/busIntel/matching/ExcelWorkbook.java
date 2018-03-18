@@ -24,8 +24,16 @@ public class ExcelWorkbook {
 	public ArrayList<excelCustomerObj> customersInWB;
 	//Excel workbook with data and where matches will be added
 	public XSSFWorkbook wb;
-	//constructor for the Excel workbook class
+	//TODO should be passing in more information? Like which columns specific data is in?
+	/**
+	 * Constructor that takes an excel path and creates an object called an excel workbook.
+	 * @param path to xlsx file as string for where to find the file with potential matches
+	 */
 	public ExcelWorkbook(String path){
+		//check that this is a xlsx file
+		if(path.trim().substring(path.trim().length() - 1) != "x"){
+			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
+		}
 		File file = new File(path);
 		OPCPackage opPackage = null;
 		try {
@@ -43,6 +51,7 @@ public class ExcelWorkbook {
 			e.printStackTrace();
 		}
 
+		//The name of the worksheet in the file
 		Sheet myExcelSheet = wb.getSheet("Results");
 		
 		populateCustomers(myExcelSheet);
@@ -63,7 +72,7 @@ public class ExcelWorkbook {
 		
 		//set up to process sheet
 		//note the first row will likely be header, skip 1 with iterator
-		for (int i= startRow; i<numInSheet; i++){
+		for (int i= startRow; i<=numInSheet; i++){
 			Row row = myExcelSheet.getRow( i );
 			String nm = null;
 			String inf = null;

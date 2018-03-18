@@ -3,6 +3,8 @@ package com.CarolinaCAT.busIntel.matching;
 
 import java.util.ArrayList;
 
+import javax.swing.DebugGraphics;
+
 public class CustomerObj{
 	public String cuno;
 	public String name;
@@ -97,6 +99,8 @@ public class CustomerObj{
 		if( address.contains("Post Office") ){
 			address = address.replace("Post", "P.");
 			address = address.replace("Office", "O.");
+		} else if ( address.substring(0,3).equals("PO ") ){
+			address = address.replace("PO ", "P.O. ");
 		}
 		//TODO go through different versions of PO Box to change to P.O. Box
 	}
@@ -110,7 +114,7 @@ public class CustomerObj{
 		if ( (index = name.lastIndexOf("DBA") ) != - 1){
 			name = name.substring(index + 3).trim();
 		} else if ((index = name.lastIndexOf("D/B/A") ) != - 1){
-			name = name.substring(index + 3).trim();
+			name = name.substring(index + 6).trim();
 		} 
 		//removes Cash Sale from customer name - this probably could be refined
 

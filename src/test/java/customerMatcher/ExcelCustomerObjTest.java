@@ -27,7 +27,7 @@ public class ExcelCustomerObjTest {
 
 	@Test
 	public void testExcelCustomerObj() {
-		excelCustomerObj eco = new excelCustomerObj(null, "Joe's Grading",null,null,"1801 Leaf St.","802-555-5555","12345",12);
+		excelCustomerObj eco = new excelCustomerObj(null, "Joe's Grading",null,null,"1801 Leaf St.","12345","802-555-5555",12);
 		assertEquals(eco.address,"1801 Leaf St.");
 		assertEquals(eco.name,"JOE'S GRADING");
 		assertEquals(eco.phone,"8025555555");
