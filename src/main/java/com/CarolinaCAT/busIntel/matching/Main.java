@@ -3,23 +3,20 @@ package com.CarolinaCAT.busIntel.matching;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
+/**
+ * Java Program to read an excel sheet and create customer matches
+ * @author ANorthrup
+ *
+ */
 public class Main {
 	/**Min Addr Score in fuzzy matcher */
 	public static final int MIN_ADDR_SCORE = 90;
 	public static final int MIN_CUSTNAME_SCORE = 90;
 	//creates a composite match score to assign to a potential match
-	private static double aggrScore( double phoneScore, double addrScore, double custNmScore ){
-		double score = 0;
-		//matching phone means definite match
-		if (phoneScore == 100){
-			return 100;
-		} else {
-			score = ( addrScore > custNmScore ) ? addrScore : custNmScore;
-		} 
-		return score;
-	}
+
 	
 	public static void main(String[] args) throws Exception
 	{
@@ -69,25 +66,10 @@ public class Main {
 				double addrScore = 0;
 				double custNmScore = 0;
 				//need to short circuit if already true -- actually don't do this, you'll use match score to figure out
-				if (dbsCust.phone != null && c.phone != null){
-					if ( c.phone.equals( dbsCust.phone) ) { 
-						potentialMatch = true; //probably unecessary, but just do for now
-						phoneScore = 100;
-					}
-				}
-				if (dbsCust.address != null && c.address != null){
-					//TODO match score on address should be very high
-					if (c.address.toLowerCase().contains(" box ")){
-						//if its a PO BOX, then need to match with a zip code
-						String addrPlusZip = c.address + " " + c.zipCode;
-						String DBSaddrPlusZip = dbsCust.address + " " + dbsCust.zipCode;
-						if ( !potentialMatch && (addrScore = FuzzySearch.ratio( addrPlusZip, DBSaddrPlusZip )) > MIN_ADDR_SCORE ) {
-							potentialMatch = true;
-						}
-					} else if ( !potentialMatch && (addrScore = FuzzySearch.ratio( c.address, dbsCust.address )) > MIN_ADDR_SCORE ) { 
-						potentialMatch = true; 
-					}
-				}
+				phoneScore = MatcherHelpers.getPhoneScore(dbsCust.phone, c.phone);
+				
+				MatcherHelpers.getAddressScore(dbsCust.address, dbsCust.zipCode, c.address, c.zipCode);
+
 				if (dbsCust.name != null && c.name != null){
 					if ( !potentialMatch && (custNmScore = FuzzySearch.partialRatio( c.name, dbsCust.name ) ) > MIN_CUSTNAME_SCORE ) { 
 						potentialMatch = true; 
@@ -103,7 +85,7 @@ public class Main {
 			} //end of loop checking each DBS record for matches
 		} //end of list of customers in excel file
 		
-		
+
 	}
 
 	/**
@@ -126,7 +108,7 @@ public class Main {
 			matchedDBSCust.addInfluencer(inf);
 		}
 		//create match score then add to potential customer list for Customer
-		matchedDBSCust.setMatchScore( aggrScore( pScore, aScore, nScore ) );
+		matchedDBSCust.setMatchScore( MatcherHelpers.aggrScore( pScore, aScore, nScore ) );
 		excelCO.addPotentialDBSCustomer(matchedDBSCust);
 	}
 }
