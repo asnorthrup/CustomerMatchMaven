@@ -59,28 +59,38 @@ public class Main {
 			//c is a potential customer, check for match in customerList
 			for (CustomerObj dbsCust : dbsCustomerList){
 				//check the 'c' customer against dbs customers to find matches
-				boolean potentialMatch = false;
+				boolean exactMatch = false;
+				boolean partialMatch = false;
 				//Scores are for each DBS customer
 				//Future enhancement could include a way to narrow out DBS customers, but doesn't really seem likely
-				double phoneScore = 0;
-				double addrScore = 0;
-				double custNmScore = 0;
+				int phoneScore = 0;
+				int addrScore = 0;
+				int custNameScore = 0;
 				//need to short circuit if already true -- actually don't do this, you'll use match score to figure out
 				phoneScore = MatcherHelpers.getPhoneScore(dbsCust.phone, c.phone);
-				
-				MatcherHelpers.getAddressScore(dbsCust.address, dbsCust.zipCode, c.address, c.zipCode);
-
-				if (dbsCust.name != null && c.name != null){
-					if ( !potentialMatch && (custNmScore = FuzzySearch.partialRatio( c.name, dbsCust.name ) ) > MIN_CUSTNAME_SCORE ) { 
-						potentialMatch = true; 
-					}
+				if (phoneScore == 100){
+					exactMatch = true;
 				}
+				if (!exactMatch){
+					addrScore = MatcherHelpers.getAddressScore(dbsCust.address, dbsCust.zipCode, c.address, c.zipCode);
+					if (addrScore == 100){ exactMatch = true; }
+					if (addrScore > MIN_ADDR_SCORE){ partialMatch = true; }
+				}
+				if(!exactMatch){
+					custNameScore = MatcherHelpers.getNameScore(dbsCust.name, c.name);
+					if (custNameScore == 100){ exactMatch = true; }
+					if (custNameScore > MIN_CUSTNAME_SCORE){ partialMatch = true; }
+				}
+				
+				//TODO create a composite score if there is a partial match? probably need a composite score for each match type
+				
+				
 				//TODO add influencers into the scoring
 				
 				//if it is a potential match add it to c, which has an array list of potentialDBSCustomers
 				//this means it passes certain threshold
-				if (potentialMatch){
-					createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, addrScore, custNmScore);
+				if (exactMatch){
+					createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, addrScore, custNameScore);
 				}
 			} //end of loop checking each DBS record for matches
 		} //end of list of customers in excel file
