@@ -60,7 +60,8 @@ public class Main {
 			for (CustomerObj dbsCust : dbsCustomerList){
 				//check the 'c' customer against dbs customers to find matches
 				boolean exactMatch = false;
-				boolean partialMatch = false;
+				boolean partialMatchAddr = false;
+				boolean partialMatchName = false;
 				//Scores are for each DBS customer
 				//Future enhancement could include a way to narrow out DBS customers, but doesn't really seem likely
 				int phoneScore = 0;
@@ -70,20 +71,32 @@ public class Main {
 				phoneScore = MatcherHelpers.getPhoneScore(dbsCust.phone, c.phone);
 				if (phoneScore == 100){
 					exactMatch = true;
+					if (exactMatch){
+						createDBSCustomerwithMatchScore(c, dbsCust, phoneScore);
+					}
 				}
 				if (!exactMatch){
 					addrScore = MatcherHelpers.getAddressScore(dbsCust.address, dbsCust.zipCode, c.address, c.zipCode);
 					if (addrScore == 100){ exactMatch = true; }
-					if (addrScore > MIN_ADDR_SCORE){ partialMatch = true; }
+					if(exactMatch){
+						createDBSCustomerwithMatchScore(c, dbsCust, addrScore);
+					}
+					if (addrScore > MIN_ADDR_SCORE){ partialMatchAddr = true; }
 				}
 				if(!exactMatch){
 					custNameScore = MatcherHelpers.getNameScore(dbsCust.name, c.name);
 					if (custNameScore == 100){ exactMatch = true; }
-					if (custNameScore > MIN_CUSTNAME_SCORE){ partialMatch = true; }
+					if(exactMatch){
+						createDBSCustomerwithMatchScore(c, dbsCust, custNameScore);
+					}
+					if (custNameScore > MIN_CUSTNAME_SCORE){ partialMatchName = true; }
 				}
 				
-				//TODO create a composite score if there is a partial match? probably need a composite score for each match type
-				
+				//TODO no exact matches found, so need to create a composite score if there is a partial match? probably need a composite score for each match type
+				if(partialMatchAddr && partialMatchName){
+					//TODO use the aggregate function
+					
+				}
 				
 				//TODO add influencers into the scoring
 				
@@ -91,7 +104,8 @@ public class Main {
 				//this means it passes certain threshold
 				if (exactMatch){
 					createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, addrScore, custNameScore);
-				}
+				} else if ()
+				MatcherHelpers.aggrScore( pScore, aScore, nScore )
 			} //end of loop checking each DBS record for matches
 		} //end of list of customers in excel file
 		
@@ -110,7 +124,7 @@ public class Main {
 	 */
 	//TODO think about the storage vs access of the dbs customers. Creating potentially a lot of space use for customers taht aren't
 	//really being used
-	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double pScore, double aScore, double nScore) {
+	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double matchScore) {
 		// TODO Auto-generated method stub
 		//create a deep copy of this DBS customer and add a match score
 		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zipCode); 
@@ -118,7 +132,7 @@ public class Main {
 			matchedDBSCust.addInfluencer(inf);
 		}
 		//create match score then add to potential customer list for Customer
-		matchedDBSCust.setMatchScore( MatcherHelpers.aggrScore( pScore, aScore, nScore ) );
+		matchedDBSCust.setMatchScore(  );
 		excelCO.addPotentialDBSCustomer(matchedDBSCust);
 	}
 }
