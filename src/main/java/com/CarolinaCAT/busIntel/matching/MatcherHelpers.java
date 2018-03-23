@@ -3,15 +3,16 @@ package com.CarolinaCAT.busIntel.matching;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 public class MatcherHelpers {
-	
-	public static double aggrScore( double phoneScore, double addrScore, double custNmScore ){
-		double score = 0;
+	/**
+	 * Creates a composite score out of two non-exact matching matches of customer name and address
+	 * @param addrScore score of address
+	 * @param custNmScore score of name
+	 * @return average of two matching scores rounded
+	 */
+	public static int aggrScore( double addrScore, double custNmScore ){
+		int score = 0;
 		//matching phone means definite match
-		if (phoneScore == 100){
-			return 100;
-		} else {
-			score = ( addrScore > custNmScore ) ? addrScore : custNmScore;
-		} 
+		score = (int) Math.round( (addrScore + custNmScore) / 2);
 		return score;
 	}
 
@@ -29,6 +30,7 @@ public class MatcherHelpers {
 		// TODO Auto-generated method stub
 	}
 
+	//TODO this should be more robust to check street and city/county if it exists
 	public static int getAddressScore(String addressDBS, String zipCodeDBS,
 		String addressCust, String zipCust) {
 		if (addressDBS != null && addressCust != null){

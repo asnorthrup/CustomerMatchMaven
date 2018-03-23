@@ -14,6 +14,7 @@ public class CustomerObj{
 	public String phone;
 	public ArrayList<String> influencers; //use this to store all of the influencers for the customer
 	public double matchScore;
+	public String matchType;
 
 	/**
 	 * Constructor for customer object
@@ -62,12 +63,7 @@ public class CustomerObj{
 	public void addInfluencer(String inf){
 		influencers.add(inf);
 	}
-	
-	//Careful - If match score gets updated as it goes through list and then adds to array then no good. There doesn't need to be a match
-	//score assigned to DBS customer, in fact, there shouldn't
-	public void setMatchScore(double score){
-		matchScore = score;
-	}
+
 	
 	private String formatZip(String zipCode) {
 		if(zipCode.equals("00000") || zipCode.equals("99999")){
@@ -140,6 +136,17 @@ public class CustomerObj{
 			name = name.replace("C ASH SALE","");
 			name = name.trim();
 		}
+	}
+	
+	
+	
+	//Careful - If match score gets updated as it goes through list and then adds to array then no good. There doesn't need to be a match
+	//score assigned to DBS customer, in fact, there shouldn't
+	public void setMatchScore(double score){
+		matchScore = score;
+	}
+	public void setMatchType(String type){
+		matchType = type;
 	}
 	
 	public void printCustomer(){

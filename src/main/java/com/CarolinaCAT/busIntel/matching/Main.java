@@ -72,14 +72,15 @@ public class Main {
 				if (phoneScore == 100){
 					exactMatch = true;
 					if (exactMatch){
-						createDBSCustomerwithMatchScore(c, dbsCust, phoneScore);
+						//TODO create enum for match type
+						createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, "Phone");
 					}
 				}
 				if (!exactMatch){
 					addrScore = MatcherHelpers.getAddressScore(dbsCust.address, dbsCust.zipCode, c.address, c.zipCode);
 					if (addrScore == 100){ exactMatch = true; }
 					if(exactMatch){
-						createDBSCustomerwithMatchScore(c, dbsCust, addrScore);
+						createDBSCustomerwithMatchScore(c, dbsCust, addrScore, "Address");
 					}
 					if (addrScore > MIN_ADDR_SCORE){ partialMatchAddr = true; }
 				}
@@ -87,25 +88,16 @@ public class Main {
 					custNameScore = MatcherHelpers.getNameScore(dbsCust.name, c.name);
 					if (custNameScore == 100){ exactMatch = true; }
 					if(exactMatch){
-						createDBSCustomerwithMatchScore(c, dbsCust, custNameScore);
+						createDBSCustomerwithMatchScore(c, dbsCust, custNameScore,"Customer Name");
 					}
 					if (custNameScore > MIN_CUSTNAME_SCORE){ partialMatchName = true; }
 				}
 				
 				//TODO no exact matches found, so need to create a composite score if there is a partial match? probably need a composite score for each match type
 				if(partialMatchAddr && partialMatchName){
-					//TODO use the aggregate function
-					
+					createDBSCustomerwithMatchScore(c, dbsCust,MatcherHelpers.aggrScore(addrScore, custNameScore), "Composite");				
 				}
-				
-				//TODO add influencers into the scoring
-				
-				//if it is a potential match add it to c, which has an array list of potentialDBSCustomers
-				//this means it passes certain threshold
-				if (exactMatch){
-					createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, addrScore, custNameScore);
-				} else if ()
-				MatcherHelpers.aggrScore( pScore, aScore, nScore )
+
 			} //end of loop checking each DBS record for matches
 		} //end of list of customers in excel file
 		
@@ -124,7 +116,7 @@ public class Main {
 	 */
 	//TODO think about the storage vs access of the dbs customers. Creating potentially a lot of space use for customers taht aren't
 	//really being used
-	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double matchScore) {
+	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double matchScore, String matchType) {
 		// TODO Auto-generated method stub
 		//create a deep copy of this DBS customer and add a match score
 		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zipCode); 
@@ -132,7 +124,8 @@ public class Main {
 			matchedDBSCust.addInfluencer(inf);
 		}
 		//create match score then add to potential customer list for Customer
-		matchedDBSCust.setMatchScore(  );
+		matchedDBSCust.setMatchScore( matchScore );
+		matchedDBSCust.setMatchType( matchType );
 		excelCO.addPotentialDBSCustomer(matchedDBSCust);
 	}
 }
