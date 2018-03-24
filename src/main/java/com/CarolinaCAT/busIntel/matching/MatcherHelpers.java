@@ -36,12 +36,24 @@ public class MatcherHelpers {
 		if (addressDBS != null && addressCust != null){
 			//TODO match score on address should be very high
 			if (addressCust.toLowerCase().contains(" box ")){
-				//if its a PO BOX, then need to match with a zip code
+				//if its a PO BOX, then need to match with a zip code, and zip code must match exactly
+				if(zipCodeDBS == null || zipCust == null || !zipCodeDBS.equals(zipCust) ){
+					return 0; //zip codes must match
+				}
 				String addrPlusZip = addressCust.trim() + " " + zipCust.trim();
 				String DBSaddrPlusZip = addressDBS.trim() + " " + zipCodeDBS.trim();
-				return FuzzySearch.ratio( addrPlusZip, DBSaddrPlusZip );
+				if (addrPlusZip.equalsIgnoreCase(DBSaddrPlusZip)){
+					return 100; //only exact matching PO boxes match
+				} else {
+					return 0;
+				}
 			}
-		return FuzzySearch.ratio( addressCust, addressDBS );
+			//not a PO Box - could check county or zip code
+			if(zipCodeDBS != null && zipCust != null && zipCodeDBS.equals(zipCust)){
+				return FuzzySearch.ratio( addressCust, addressDBS );
+			} else {
+				return 0; //zip codes didn't match or had a null
+			}
 		}
 		return 0; //one of addresses was null
 	}

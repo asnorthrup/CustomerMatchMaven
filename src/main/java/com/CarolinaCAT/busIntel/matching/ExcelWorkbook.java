@@ -4,6 +4,7 @@ package com.CarolinaCAT.busIntel.matching;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.impl.xb.xsdschema.Facet;
+import org.apache.xmlbeans.impl.xb.xsdschema.impl.FacetImpl;
 
 public class ExcelWorkbook {
 	private long lastRowIndex;
@@ -24,6 +27,8 @@ public class ExcelWorkbook {
 	public ArrayList<excelCustomerObj> customersInWB;
 	//Excel workbook with data and where matches will be added
 	public XSSFWorkbook wb;
+	private File file;
+	private OPCPackage opPackage;
 	//TODO should be passing in more information? Like which columns specific data is in?
 	/**
 	 * Constructor that takes an excel path and creates an object called an excel workbook.
@@ -34,27 +39,20 @@ public class ExcelWorkbook {
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
 		}
-		File file = new File(path);
-		OPCPackage opPackage = null;
+		file = new File(path);
+		opPackage = null;
 		try {
-			opPackage = OPCPackage.open(file.getAbsolutePath());
-		} catch (InvalidFormatException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		wb = null;
-		//if(fp != null){
-		try {
-			wb = new XSSFWorkbook(opPackage);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			FileInputStream excelFile = new FileInputStream(file);
+			//opPackage = OPCPackage.open(file.getAbsolutePath());
+			wb = new XSSFWorkbook(excelFile);
+			//The name of the worksheet in the file
+			Sheet myExcelSheet = wb.getSheet("Results");
+			populateCustomers(myExcelSheet);
+		} catch (FileNotFoundException e){
+			e.printStackTrace();
+		} catch (IOException e){
 			e.printStackTrace();
 		}
-
-		//The name of the worksheet in the file
-		Sheet myExcelSheet = wb.getSheet("Results");
-		
-		populateCustomers(myExcelSheet);
 	}	
 	
 	private void populateCustomers(Sheet myExcelSheet) {
@@ -120,47 +118,92 @@ public class ExcelWorkbook {
 	 * have been matched with a DBS customer (if one exists) and assigned a specific match score.
 	 */
 	//TODO finish this logic, still need to output the excel customer snad the top match to excel. Also, need to write test cases
-	public void addSheetOfMatches(){
+	public void addSheetOfMatches(String path){
+		XSSFWorkbook outputBook = new XSSFWorkbook();
 		//may not be able to name by passing string in
 		Sheet matchesSheet = wb.createSheet("DBSmatches");
+
+		
 		//create header for excel file
 		setHeaders(matchesSheet);
-		int rowCounter = 1;
-		for( excelCustomerObj excelCust : customersInWB){
-			Row r = null;
-			r = matchesSheet.createRow(rowCounter);
-			if (excelCust.potenDBSMatches.isEmpty()){
-				//no match, just copy Excel Customer data
-				setExcelCustToRow(r, excelCust, null);
-								
-			} else {
-				if (excelCust.potenDBSMatches.size() > 1){
-					Collections.sort(excelCust.potenDBSMatches,new matchSorting());
-				}
-				CustomerObj bestMatch = excelCust.potenDBSMatches.get(0);
-				//populate excel sheet 'matchesSheet' with customer and matches
-				setExcelCustToRow(r, excelCust, bestMatch);
-			}
-			rowCounter++;
+//		int rowCounter = 1;
+//		for( excelCustomerObj excelCust : customersInWB){
+//			Row r = null;
+//			r = matchesSheet.createRow(rowCounter);
+//			if (excelCust.potenDBSMatches.isEmpty()){
+//				//no match, just copy Excel Customer data
+//				setExcelCustToRow(r, excelCust, null);
+//								
+//			} else {
+//				if (excelCust.potenDBSMatches.size() > 1){
+//					Collections.sort(excelCust.potenDBSMatches,new matchSorting());
+//				}
+//				CustomerObj bestMatch = excelCust.potenDBSMatches.get(0);
+//				//populate excel sheet 'matchesSheet' with customer and matches
+//				setExcelCustToRow(r, excelCust, bestMatch);
+//			}
+//			rowCounter++;
+//		}
+		
+		//create an output stream for writing
+		FileOutputStream fileOut = null;
+		try {
+			fileOut = new FileOutputStream(path);
+			outputBook.write(fileOut);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e){
+			e.printStackTrace();
 		}
+		//OLD CODE
+//		try {
+//			fileOut = new FileOutputStream(file);
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+
+		
 		//TODO need to figure out how to save, the sheet isn't getting added to the workbook
+//		if ( fileOut != null){
+//			try {
+//				wb.write(fileOut);
+//				opPackage.close();
+//				fileOut.close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			try {
+//				fileOut.close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+
 	}
 	
 	private void setExcelCustToRow(Row r, excelCustomerObj xlCust, CustomerObj topMatch){
 		if (topMatch == null){
 			Cell c = r.createCell(0);
+			//c.setCellType(STRING);
 			c.setCellValue(xlCust.name);
 			c = r.createCell(1);
 			c.setCellValue(xlCust.address);
 			c = r.createCell(2);
-			c.setCellValue(xlCust.phone);
+			String tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
+			c.setCellValue(tmpPhone);
 		} else {
 			Cell c = r.createCell(0);
 			c.setCellValue(xlCust.name);
 			c = r.createCell(1);
 			c.setCellValue(xlCust.address);
 			c = r.createCell(2);
-			c.setCellValue(xlCust.phone);
+			String tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
+			c.setCellValue(tmpPhone);
 			c = r.createCell(3);
 			c.setCellValue(topMatch.cuno);
 			c = r.createCell(4);
@@ -168,6 +211,7 @@ public class ExcelWorkbook {
 			c = r.createCell(5);
 			c.setCellValue(topMatch.address);
 			c = r.createCell(6);
+			tmpPhone = topMatch.phone.substring(0,3)+"-"+topMatch.phone.substring(3,6)+"-"+topMatch.phone.substring(6);
 			c.setCellValue(topMatch.phone);
 			c = r.createCell(5);
 			c.setCellValue(topMatch.matchScore);
@@ -176,25 +220,53 @@ public class ExcelWorkbook {
 	
 	//helper method to set up headers
 	private void setHeaders(Sheet matchSheet){
-		Row r = null;
-		r = matchSheet.createRow(0);
-		Cell hdr = r.createCell(0);
-		hdr.setCellValue("Excel CustomerName");
-		hdr = r.createCell(1);
-		hdr.setCellValue("Excel CustomerAddress");
-		hdr = r.createCell(2);
-		hdr.setCellValue("Excel CustomerPhone");
-		hdr = r.createCell(3);
-		hdr.setCellValue("DBS Customer Num");
-		hdr = r.createCell(4);
-		hdr.setCellValue("DBS Customer Name");
-		hdr = r.createCell(5);
-		hdr.setCellValue("DBS Customer Address");
-		hdr = r.createCell(6);
-		hdr.setCellValue("DBS Customer Phone");
-		//eventually may do something with influencer at this point
-		hdr = r.createCell(7);
-		hdr.setCellValue("DBS Customer MatchScore");
+		
+		//TEST CODE
+		Object[][] datatypes = {
+                {"Datatype", "Type", "Size(in bytes)"},
+                {"int", "Primitive", 2},
+                {"float", "Primitive", 4},
+                {"double", "Primitive", 8},
+                {"char", "Primitive", 1},
+                {"String", "Non-Primitive", "No fixed size"}
+        };
+
+        int rowNum = 0;
+        System.out.println("Creating excel");
+
+        for (Object[] datatype : datatypes) {
+            Row row = matchSheet.createRow(rowNum++);
+            int colNum = 0;
+            for (Object field : datatype) {
+                Cell cell = row.createCell(colNum++);
+                if (field instanceof String) {
+                    cell.setCellValue((String) field);
+                } else if (field instanceof Integer) {
+                    cell.setCellValue((Integer) field);
+                }
+            }
+        }
+		
+		
+//		Row r = null;
+//		r = matchSheet.createRow(0);
+//		Cell hdr = r.createCell(0);
+//		hdr.setCellValue("Excel CustomerName");
+//		hdr = r.createCell(1);
+//		hdr.setCellValue("Excel CustomerAddress");
+//		hdr = r.createCell(2);
+//		hdr.setCellValue("Excel CustomerPhone");
+//		hdr = r.createCell(3);
+//		hdr.setCellValue("DBS Customer Num");
+//		hdr = r.createCell(4);
+//		hdr.setCellValue("DBS Customer Name");
+//		hdr = r.createCell(5);
+//		hdr.setCellValue("DBS Customer Address");
+//		hdr = r.createCell(6);
+//		hdr.setCellValue("DBS Customer Phone");
+//		//eventually may do something with influencer at this point
+//		hdr = r.createCell(7);
+//		hdr.setCellValue("DBS Customer MatchScore");
 	}
 
 	//TODO are these used?
