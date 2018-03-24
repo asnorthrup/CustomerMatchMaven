@@ -2,6 +2,9 @@ package customerMatcher;
 
 import static org.junit.Assert.*;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +43,8 @@ public class ExcelWorkbookTest {
 			eco.addPotentialDBSCustomer(co1);
 			eco.addPotentialDBSCustomer(co2);
 		}
-		ewo.addSheetOfMatches("C:\\Users\\anorthrup\\Documents\\Product List 20180318_testfileOutput2.xlsx");
+
+		ewo.addSheetOfMatches("C:\\Users\\anorthrup\\Documents\\Product List 20180318_testfileOutput3.xlsx");
 	}
 
 }

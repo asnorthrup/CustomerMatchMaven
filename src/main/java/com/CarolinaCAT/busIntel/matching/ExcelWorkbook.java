@@ -121,35 +121,37 @@ public class ExcelWorkbook {
 	public void addSheetOfMatches(String path){
 		XSSFWorkbook outputBook = new XSSFWorkbook();
 		//may not be able to name by passing string in
-		Sheet matchesSheet = wb.createSheet("DBSmatches");
+		Sheet matchesSheet = outputBook.createSheet("DBSmatches");
 
 		
 		//create header for excel file
 		setHeaders(matchesSheet);
-//		int rowCounter = 1;
-//		for( excelCustomerObj excelCust : customersInWB){
-//			Row r = null;
-//			r = matchesSheet.createRow(rowCounter);
-//			if (excelCust.potenDBSMatches.isEmpty()){
-//				//no match, just copy Excel Customer data
-//				setExcelCustToRow(r, excelCust, null);
-//								
-//			} else {
-//				if (excelCust.potenDBSMatches.size() > 1){
-//					Collections.sort(excelCust.potenDBSMatches,new matchSorting());
-//				}
-//				CustomerObj bestMatch = excelCust.potenDBSMatches.get(0);
-//				//populate excel sheet 'matchesSheet' with customer and matches
-//				setExcelCustToRow(r, excelCust, bestMatch);
-//			}
-//			rowCounter++;
-//		}
-		
+		int rowCounter = 1;
+		for( excelCustomerObj excelCust : customersInWB){
+			Row r = null;
+			r = matchesSheet.createRow(rowCounter);
+			if (excelCust.potenDBSMatches.isEmpty()){
+				//no match, just copy Excel Customer data
+				setExcelCustToRow(r, excelCust, null);
+								
+			} else {
+				if (excelCust.potenDBSMatches.size() > 1){
+					Collections.sort(excelCust.potenDBSMatches,new matchSorting());
+				}
+				CustomerObj bestMatch = excelCust.potenDBSMatches.get(0);
+				//populate excel sheet 'matchesSheet' with customer and matches
+				setExcelCustToRow(r, excelCust, bestMatch);
+			}
+			rowCounter++;
+		}
+	        
+
 		//create an output stream for writing
 		FileOutputStream fileOut = null;
 		try {
 			fileOut = new FileOutputStream(path);
 			outputBook.write(fileOut);
+			fileOut.close();
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -219,54 +221,27 @@ public class ExcelWorkbook {
 	}
 	
 	//helper method to set up headers
-	private void setHeaders(Sheet matchSheet){
+	private void setHeaders(Sheet matchSheet){		
 		
-		//TEST CODE
-		Object[][] datatypes = {
-                {"Datatype", "Type", "Size(in bytes)"},
-                {"int", "Primitive", 2},
-                {"float", "Primitive", 4},
-                {"double", "Primitive", 8},
-                {"char", "Primitive", 1},
-                {"String", "Non-Primitive", "No fixed size"}
-        };
-
-        int rowNum = 0;
-        System.out.println("Creating excel");
-
-        for (Object[] datatype : datatypes) {
-            Row row = matchSheet.createRow(rowNum++);
-            int colNum = 0;
-            for (Object field : datatype) {
-                Cell cell = row.createCell(colNum++);
-                if (field instanceof String) {
-                    cell.setCellValue((String) field);
-                } else if (field instanceof Integer) {
-                    cell.setCellValue((Integer) field);
-                }
-            }
-        }
-		
-		
-//		Row r = null;
-//		r = matchSheet.createRow(0);
-//		Cell hdr = r.createCell(0);
-//		hdr.setCellValue("Excel CustomerName");
-//		hdr = r.createCell(1);
-//		hdr.setCellValue("Excel CustomerAddress");
-//		hdr = r.createCell(2);
-//		hdr.setCellValue("Excel CustomerPhone");
-//		hdr = r.createCell(3);
-//		hdr.setCellValue("DBS Customer Num");
-//		hdr = r.createCell(4);
-//		hdr.setCellValue("DBS Customer Name");
-//		hdr = r.createCell(5);
-//		hdr.setCellValue("DBS Customer Address");
-//		hdr = r.createCell(6);
-//		hdr.setCellValue("DBS Customer Phone");
-//		//eventually may do something with influencer at this point
-//		hdr = r.createCell(7);
-//		hdr.setCellValue("DBS Customer MatchScore");
+		Row r = null;
+		r = matchSheet.createRow(0);
+		Cell hdr = r.createCell(0);
+		hdr.setCellValue("Excel CustomerName");
+		hdr = r.createCell(1);
+		hdr.setCellValue("Excel CustomerAddress");
+		hdr = r.createCell(2);
+		hdr.setCellValue("Excel CustomerPhone");
+		hdr = r.createCell(3);
+		hdr.setCellValue("DBS Customer Num");
+		hdr = r.createCell(4);
+		hdr.setCellValue("DBS Customer Name");
+		hdr = r.createCell(5);
+		hdr.setCellValue("DBS Customer Address");
+		hdr = r.createCell(6);
+		hdr.setCellValue("DBS Customer Phone");
+		//eventually may do something with influencer at this point
+		hdr = r.createCell(7);
+		hdr.setCellValue("DBS Customer MatchScore");
 	}
 
 	//TODO are these used?
