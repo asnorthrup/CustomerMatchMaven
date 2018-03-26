@@ -11,6 +11,7 @@ public class CustomerObj{
 	public String parent;
 	public String address;
 	public String zipCode;
+	//TODO need to add second address and second ZIP
 	public String phone;
 	public ArrayList<String> influencers; //use this to store all of the influencers for the customer
 	public double matchScore;
@@ -108,9 +109,19 @@ public class CustomerObj{
 		int index;
 		name = name.toUpperCase();
 		if ( (index = name.lastIndexOf("DBA") ) != - 1){
-			name = name.substring(index + 3).trim();
+			if( name.length() > index + 3){
+				name = name.substring(index + 3).trim();
+			} else {
+				name = "No Company Name"; //if nothing listed after dba
+			}
 		} else if ((index = name.lastIndexOf("D/B/A") ) != - 1){
-			name = name.substring(index + 6).trim();
+			System.out.println(name);
+			if(name.length()> index + 6 ){
+				name = name.substring(index + 6).trim(); //some records have D/B/A and then blank
+			} else {
+				name = "No Company Name";
+			}
+			
 		} 
 		//removes Cash Sale from customer name - this probably could be refined
 

@@ -71,6 +71,10 @@ public class ExcelWorkbook {
 		//set up to process sheet
 		//note the first row will likely be header, skip 1 with iterator
 		for (int i= startRow; i<=numInSheet; i++){
+			if((i % 10) == 0){
+				double pct = ((double)i / numInSheet) * 100;
+				System.out.println("Read in"+ pct + "of Excel file");
+			}
 			Row row = myExcelSheet.getRow( i );
 			String nm = null;
 			String inf = null;
@@ -128,6 +132,11 @@ public class ExcelWorkbook {
 		setHeaders(matchesSheet);
 		int rowCounter = 1;
 		for( excelCustomerObj excelCust : customersInWB){
+			if((rowCounter % 10) == 0){
+				double pct = ((double)rowCounter / customersInWB.size()) * 100;
+				System.out.println("Matching"+ pct + "Pct Complete");
+			}
+			
 			Row r = null;
 			r = matchesSheet.createRow(rowCounter);
 			if (excelCust.potenDBSMatches.isEmpty()){
@@ -189,6 +198,7 @@ public class ExcelWorkbook {
 	}
 	
 	private void setExcelCustToRow(Row r, excelCustomerObj xlCust, CustomerObj topMatch){
+		String tmpPhone = null;
 		if (topMatch == null){
 			Cell c = r.createCell(0);
 			//c.setCellType(STRING);
@@ -196,16 +206,20 @@ public class ExcelWorkbook {
 			c = r.createCell(1);
 			c.setCellValue(xlCust.address);
 			c = r.createCell(2);
-			String tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
-			c.setCellValue(tmpPhone);
+			if(xlCust.phone != null){
+				tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
+				c.setCellValue(tmpPhone);
+			}
 		} else {
 			Cell c = r.createCell(0);
 			c.setCellValue(xlCust.name);
 			c = r.createCell(1);
 			c.setCellValue(xlCust.address);
 			c = r.createCell(2);
-			String tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
-			c.setCellValue(tmpPhone);
+			if(xlCust.phone != null){
+				tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
+				c.setCellValue(tmpPhone);
+			}
 			c = r.createCell(3);
 			c.setCellValue(topMatch.cuno);
 			c = r.createCell(4);
@@ -213,9 +227,11 @@ public class ExcelWorkbook {
 			c = r.createCell(5);
 			c.setCellValue(topMatch.address);
 			c = r.createCell(6);
-			tmpPhone = topMatch.phone.substring(0,3)+"-"+topMatch.phone.substring(3,6)+"-"+topMatch.phone.substring(6);
-			c.setCellValue(topMatch.phone);
-			c = r.createCell(5);
+			if(topMatch.phone != null){
+				tmpPhone = topMatch.phone.substring(0,3)+"-"+topMatch.phone.substring(3,6)+"-"+topMatch.phone.substring(6);
+				c.setCellValue(tmpPhone);
+			}
+			c = r.createCell(7);
 			c.setCellValue(topMatch.matchScore);
 		}
 	}

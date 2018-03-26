@@ -100,8 +100,8 @@ public class Main {
 
 			} //end of loop checking each DBS record for matches
 		} //end of list of customers in excel file
-		
-
+		wbOfCusts.addSheetOfMatches("C:\\Users\\anorthrup\\Documents\\Product List 20180318_testfileOutput.xlsx");
+		System.out.println("Done!") ;
 	}
 
 	/**
