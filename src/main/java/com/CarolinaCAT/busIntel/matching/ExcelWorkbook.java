@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JOptionPane;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -162,7 +164,12 @@ public class ExcelWorkbook {
 			outputBook.write(fileOut);
 			fileOut.close();
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
+			// if file cannot be found, alert user
+			JOptionPane.showMessageDialog(null, 
+                    "File not available - Please close file and restart", 
+                    "Cannot Write Warning", 
+                    JOptionPane.WARNING_MESSAGE);
+			//TODO remove stack trace
 			e1.printStackTrace();
 		} catch (IOException e){
 			e.printStackTrace();
@@ -216,22 +223,30 @@ public class ExcelWorkbook {
 			c = r.createCell(1);
 			c.setCellValue(xlCust.address);
 			c = r.createCell(2);
+			c.setCellValue(xlCust.zipCode);
+			c = r.createCell(3);
 			if(xlCust.phone != null){
 				tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
 				c.setCellValue(tmpPhone);
 			}
-			c = r.createCell(3);
-			c.setCellValue(topMatch.cuno);
 			c = r.createCell(4);
-			c.setCellValue(topMatch.name);
+			c.setCellValue(topMatch.cuno);
 			c = r.createCell(5);
-			c.setCellValue(topMatch.address);
+			c.setCellValue(topMatch.name);
 			c = r.createCell(6);
-			if(topMatch.phone != null){
+			c.setCellValue(topMatch.address);
+			c = r.createCell(7);
+			c.setCellValue(topMatch.zipCode);
+			c = r.createCell(8);
+			if(topMatch.phone != null && topMatch.phone.length() == 10){
 				tmpPhone = topMatch.phone.substring(0,3)+"-"+topMatch.phone.substring(3,6)+"-"+topMatch.phone.substring(6);
 				c.setCellValue(tmpPhone);
 			}
-			c = r.createCell(7);
+			c = r.createCell(9);
+			c.setCellValue(topMatch.parent);
+			c = r.createCell(10);
+			c.setCellValue(topMatch.matchType);
+			c = r.createCell(11);
 			c.setCellValue(topMatch.matchScore);
 		}
 	}
@@ -246,17 +261,25 @@ public class ExcelWorkbook {
 		hdr = r.createCell(1);
 		hdr.setCellValue("Excel CustomerAddress");
 		hdr = r.createCell(2);
-		hdr.setCellValue("Excel CustomerPhone");
+		hdr.setCellValue("Excel CustomerZipCode");
 		hdr = r.createCell(3);
-		hdr.setCellValue("DBS Customer Num");
+		hdr.setCellValue("Excel CustomerPhone");
 		hdr = r.createCell(4);
-		hdr.setCellValue("DBS Customer Name");
+		hdr.setCellValue("DBS Customer Num");
 		hdr = r.createCell(5);
-		hdr.setCellValue("DBS Customer Address");
+		hdr.setCellValue("DBS Customer Name");
 		hdr = r.createCell(6);
+		hdr.setCellValue("DBS Customer Address");		
+		hdr = r.createCell(7);
+		hdr.setCellValue("DBS Customer ZipCode");
+		hdr = r.createCell(8);
+		hdr.setCellValue("DBS Parent Customer Num");
+		hdr = r.createCell(9);
 		hdr.setCellValue("DBS Customer Phone");
 		//eventually may do something with influencer at this point
-		hdr = r.createCell(7);
+		hdr = r.createCell(10);
+		hdr.setCellValue("DBS Match Type");
+		hdr = r.createCell(11);
 		hdr.setCellValue("DBS Customer MatchScore");
 	}
 

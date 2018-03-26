@@ -57,6 +57,7 @@ public class Main {
 		ExcelWorkbook wbOfCusts = new ExcelWorkbook("C:\\Users\\anorthrup\\Documents\\Product List 20171218.xlsx");
 		for ( excelCustomerObj c : wbOfCusts.customersInWB){
 			//c is a potential customer, check for match in customerList
+			//TODO this is where we need to print out percent complete
 			for (CustomerObj dbsCust : dbsCustomerList){
 				//check the 'c' customer against dbs customers to find matches
 				boolean exactMatch = false;
@@ -85,6 +86,9 @@ public class Main {
 					if (addrScore > MIN_ADDR_SCORE){ partialMatchAddr = true; }
 				}
 				if(!exactMatch){
+//					if(dbsCust.name.contains("BLYTHE")){
+//						System.out.println("Start debug");
+//					}
 					custNameScore = MatcherHelpers.getNameScore(dbsCust.name, c.name);
 					if (custNameScore == 100){ exactMatch = true; }
 					if(exactMatch){
@@ -96,6 +100,10 @@ public class Main {
 				//TODO no exact matches found, so need to create a composite score if there is a partial match? probably need a composite score for each match type
 				if(partialMatchAddr && partialMatchName){
 					createDBSCustomerwithMatchScore(c, dbsCust,MatcherHelpers.aggrScore(addrScore, custNameScore), "Composite");				
+				} else if (partialMatchName){
+					createDBSCustomerwithMatchScore(c, dbsCust,custNameScore, "Customer Name");
+				} else if (partialMatchAddr){
+					createDBSCustomerwithMatchScore(c, dbsCust, addrScore, "Address");
 				}
 
 			} //end of loop checking each DBS record for matches

@@ -115,7 +115,7 @@ public class CustomerObj{
 				name = "No Company Name"; //if nothing listed after dba
 			}
 		} else if ((index = name.lastIndexOf("D/B/A") ) != - 1){
-			System.out.println(name);
+			//System.out.println(name);
 			if(name.length()> index + 6 ){
 				name = name.substring(index + 6).trim(); //some records have D/B/A and then blank
 			} else {
