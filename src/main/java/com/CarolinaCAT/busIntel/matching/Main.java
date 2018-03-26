@@ -55,9 +55,13 @@ public class Main {
 		//need to go through the potential customers
 		//remember must escape sequence back slash with a backslash
 		ExcelWorkbook wbOfCusts = new ExcelWorkbook("C:\\Users\\anorthrup\\Documents\\Product List 20171218.xlsx");
+		int pctCompleteCounter = 1;
 		for ( excelCustomerObj c : wbOfCusts.customersInWB){
 			//c is a potential customer, check for match in customerList
-			//TODO this is where we need to print out percent complete
+			if((pctCompleteCounter % 10) == 0){
+				double pct = ((double)pctCompleteCounter / wbOfCusts.customersInWB.size()) * 100;
+				System.out.println("Approx " + pct + " % of Matching Complete") ;
+			}
 			for (CustomerObj dbsCust : dbsCustomerList){
 				//check the 'c' customer against dbs customers to find matches
 				boolean exactMatch = false;
@@ -107,6 +111,7 @@ public class Main {
 				}
 
 			} //end of loop checking each DBS record for matches
+			pctCompleteCounter++;
 		} //end of list of customers in excel file
 		wbOfCusts.addSheetOfMatches("C:\\Users\\anorthrup\\Documents\\Product List 20180318_testfileOutput.xlsx");
 		System.out.println("Done!") ;

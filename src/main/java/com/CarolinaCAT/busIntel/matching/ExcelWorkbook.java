@@ -134,11 +134,12 @@ public class ExcelWorkbook {
 		setHeaders(matchesSheet);
 		int rowCounter = 1;
 		for( excelCustomerObj excelCust : customersInWB){
-			if((rowCounter % 10) == 0){
-				double pct = ((double)rowCounter / customersInWB.size()) * 100;
-				System.out.println("Matching"+ pct + "Pct Complete");
-			}
-			
+			//Helper for checking how fast writer is working
+//			if((rowCounter % 10) == 0){
+//				double pct = ((double)rowCounter / customersInWB.size()) * 100;
+//				System.out.println("Matching"+ pct + "Pct Complete");
+//			}
+//			
 			Row r = null;
 			r = matchesSheet.createRow(rowCounter);
 			if (excelCust.potenDBSMatches.isEmpty()){
