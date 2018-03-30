@@ -48,7 +48,7 @@ public class ExcelWorkbook {
 			//opPackage = OPCPackage.open(file.getAbsolutePath());
 			wb = new XSSFWorkbook(excelFile);
 			//The name of the worksheet in the file
-			Sheet myExcelSheet = wb.getSheet("Results");
+			Sheet myExcelSheet = wb.getSheet("QueryResults");
 			populateCustomers(myExcelSheet);
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
@@ -59,11 +59,11 @@ public class ExcelWorkbook {
 	
 	private void populateCustomers(Sheet myExcelSheet) {
 		int startRow = 1; //rows are 0 based index
-		int colCustName = 0; //col A
+		int colCustName = 7; //col A
 		int colCustInfluencer = 1; //col B
-		int colCustAddr = 3; //col D
-		int colCustPhone = 10; //col k
-		int colCustZip = 6; //col G
+		int colCustAddr = 8; //col D
+		int colCustPhone = 13; //col k
+		int colCustZip = 12; //col G
 		
 		//TODO set up a column for a user to tell the program where paste the values of dbs customers in
 		//TODO when writing back, do you select the parent or the customer?
@@ -214,7 +214,9 @@ public class ExcelWorkbook {
 			c = r.createCell(1);
 			c.setCellValue(xlCust.address);
 			c = r.createCell(2);
-			if(xlCust.phone != null){
+			c.setCellValue(xlCust.zipCode);
+			c = r.createCell(3);
+			if(xlCust.phone != null && xlCust.phone.length()>6){
 				tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
 				c.setCellValue(tmpPhone);
 			}
@@ -226,7 +228,7 @@ public class ExcelWorkbook {
 			c = r.createCell(2);
 			c.setCellValue(xlCust.zipCode);
 			c = r.createCell(3);
-			if(xlCust.phone != null){
+			if(xlCust.phone != null && xlCust.phone.length()>6){
 				tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
 				c.setCellValue(tmpPhone);
 			}
@@ -274,9 +276,9 @@ public class ExcelWorkbook {
 		hdr = r.createCell(7);
 		hdr.setCellValue("DBS Customer ZipCode");
 		hdr = r.createCell(8);
-		hdr.setCellValue("DBS Parent Customer Num");
-		hdr = r.createCell(9);
 		hdr.setCellValue("DBS Customer Phone");
+		hdr = r.createCell(9);
+		hdr.setCellValue("DBS Parent Customer Num");
 		//eventually may do something with influencer at this point
 		hdr = r.createCell(10);
 		hdr.setCellValue("DBS Match Type");

@@ -54,7 +54,7 @@ public class Main {
 		/*Have all DBS customers read into an array called customerList, now need to get excel file path and populate that*/
 		//need to go through the potential customers
 		//remember must escape sequence back slash with a backslash
-		ExcelWorkbook wbOfCusts = new ExcelWorkbook("C:\\Users\\anorthrup\\Documents\\Product List 20171218.xlsx");
+		ExcelWorkbook wbOfCusts = new ExcelWorkbook("C:\\Users\\anorthrup\\Documents\\EDA_Export_FullFile_20180329.xlsx");
 		int pctCompleteCounter = 1;
 		for ( excelCustomerObj c : wbOfCusts.customersInWB){
 			//c is a potential customer, check for match in customerList
@@ -73,8 +73,10 @@ public class Main {
 				int addrScore = 0;
 				int custNameScore = 0;
 				//need to short circuit if already true -- actually don't do this, you'll use match score to figure out
+				
 				phoneScore = MatcherHelpers.getPhoneScore(dbsCust.phone, c.phone);
-				if (phoneScore == 100){
+				if ( dbsCust.phone != null && c.phone != null && dbsCust.phone.length() > 6 && c.phone.length() > 6 && dbsCust.phone.equals(c.phone)){
+					phoneScore = 100;
 					exactMatch = true;
 					if (exactMatch){
 						//TODO create enum for match type
@@ -113,7 +115,7 @@ public class Main {
 			} //end of loop checking each DBS record for matches
 			pctCompleteCounter++;
 		} //end of list of customers in excel file
-		wbOfCusts.addSheetOfMatches("C:\\Users\\anorthrup\\Documents\\Product List 20180318_testfileOutput.xlsx");
+		wbOfCusts.addSheetOfMatches("C:\\Users\\anorthrup\\Documents\\EDA_Export_FullFile_20180329_match.xlsx");
 		System.out.println("Done!") ;
 	}
 

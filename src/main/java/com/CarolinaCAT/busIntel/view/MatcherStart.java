@@ -14,17 +14,30 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
+import javax.swing.JFileChooser;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JTextArea;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MatcherStart extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField txtColLetter;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-
+	private JTextField txtCustNameCol;
+	private JTextField txtCustAddrCol;
+	private JTextField txtCustZipCol;
+	private JTextField txtCustPhoneCol;
+	private JTextField txtCustInfCol;
+	private JTextField txtFirstRow;
+	private JTextField txtOutputFileLocation;
+	private final JFileChooser openFileChooser;
+	private JButton btnSelectInputFile; 
+	private JLabel lblSelectInputFile;
+	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -55,6 +68,7 @@ public class MatcherStart extends JFrame {
 		createEvents();
 		
 
+
 	}
 	
 ////////////////////////////////////////////
@@ -65,46 +79,56 @@ private void initComponents() {
 	setTitle("Customer Matcher Program");
 	
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setBounds(100, 100, 450, 408);
+	setBounds(100, 100, 705, 408);
 	contentPane = new JPanel();
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	setContentPane(contentPane);
 	
-	JLabel lblCustomerNameColumn = new JLabel("Customer Name Column:");
+	JLabel lblCustNameCol = new JLabel("Customer Name Column:");
 	
-	JLabel lblCustomerAddressColumn = new JLabel("Customer Address Column:");
+	JLabel lblCustAddrCol = new JLabel("Customer Address Column:");
 	
-	JLabel lblCustomerZipColumn = new JLabel("Customer Zip Column:");
+	JLabel lblCustZipCol = new JLabel("Customer Zip Column:");
 	
-	JLabel lblCustomerPhoneColumn = new JLabel("Customer Phone Column:");
+	JLabel lblCustPhoneCol = new JLabel("Customer Phone Column:");
 	
-	JLabel lblCustomerInfluencerColumn = new JLabel("Customer Influencer Column:");
+	JLabel lblCustInfCol = new JLabel("Customer Influencer Column:");
 	
-	JLabel lblFirstRowOf = new JLabel("First Row of Customers:");
+	JLabel lblFirstRow = new JLabel("First Row of Customers:");
 	
-	txtColLetter = new JTextField();
-	txtColLetter.setText("Col Letter");
-	txtColLetter.setColumns(10);
+	txtCustNameCol = new JTextField();
+	txtCustNameCol.setText("Col Letter");
+	txtCustNameCol.setColumns(10);
 	
-	textField = new JTextField();
-	textField.setText("Col Letter");
-	textField.setColumns(10);
+	txtCustAddrCol = new JTextField();
+	txtCustAddrCol.setText("Col Letter");
+	txtCustAddrCol.setColumns(10);
 	
-	textField_1 = new JTextField();
-	textField_1.setText("Col Letter");
-	textField_1.setColumns(10);
+	txtCustZipCol = new JTextField();
+	txtCustZipCol.setText("Col Letter");
+	txtCustZipCol.setColumns(10);
 	
-	textField_2 = new JTextField();
-	textField_2.setText("Col Letter");
-	textField_2.setColumns(10);
+	txtCustPhoneCol = new JTextField();
+	txtCustPhoneCol.setText("Col Letter");
+	txtCustPhoneCol.setColumns(10);
 	
-	textField_3 = new JTextField();
-	textField_3.setText("Col Letter");
-	textField_3.setColumns(10);
+	txtCustInfCol = new JTextField();
+	txtCustInfCol.setText("Col Letter");
+	txtCustInfCol.setColumns(10);
 	
-	textField_4 = new JTextField();
-	textField_4.setText("Col Letter");
-	textField_4.setColumns(10);
+	txtFirstRow = new JTextField();
+	txtFirstRow.setText("Col Letter");
+	txtFirstRow.setColumns(10);
+	
+	btnSelectInputFile = new JButton("Select Input File...");
+
+	
+	JButton btnSelectOutputLocation = new JButton("Select Output Location:");
+	
+	txtOutputFileLocation = new JTextField();
+	txtOutputFileLocation.setColumns(10);
+	
+	lblSelectInputFile = new JLabel("New label");
 	GroupLayout gl_contentPane = new GroupLayout(contentPane);
 	gl_contentPane.setHorizontalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -112,59 +136,75 @@ private void initComponents() {
 				.addContainerGap()
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addComponent(lblCustomerNameColumn)
+						.addComponent(lblCustNameCol)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(txtColLetter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addComponent(lblCustomerAddressColumn)
+						.addComponent(lblCustAddrCol)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addComponent(lblCustomerZipColumn)
+						.addComponent(lblCustZipCol)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addComponent(lblCustomerPhoneColumn)
+						.addComponent(lblCustPhoneCol)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addComponent(lblCustomerInfluencerColumn)
+						.addComponent(lblCustInfCol)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addComponent(lblFirstRowOf)
+						.addComponent(lblFirstRow)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(textField_4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-				.addContainerGap(114, Short.MAX_VALUE))
+						.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGroup(gl_contentPane.createSequentialGroup()
+						.addComponent(btnSelectInputFile)
+						.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addComponent(lblSelectInputFile, GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createSequentialGroup()
+						.addComponent(btnSelectOutputLocation)
+						.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addComponent(txtOutputFileLocation, GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)))
+				.addContainerGap())
 	);
 	gl_contentPane.setVerticalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
 			.addGroup(gl_contentPane.createSequentialGroup()
-				.addGap(50)
+				.addGap(7)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblCustomerNameColumn)
-					.addComponent(txtColLetter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(btnSelectInputFile)
+					.addComponent(lblSelectInputFile))
 				.addGap(18)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblCustomerAddressColumn)
-					.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(lblCustNameCol)
+					.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(18)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblCustomerZipColumn)
-					.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(lblCustAddrCol)
+					.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(18)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblCustomerPhoneColumn)
-					.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(lblCustZipCol)
+					.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(18)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblCustomerInfluencerColumn)
-					.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(lblCustPhoneCol)
+					.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGap(18)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addComponent(lblCustInfCol)
+					.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addPreferredGap(ComponentPlacement.UNRELATED)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblFirstRowOf)
-					.addComponent(textField_4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addContainerGap(92, Short.MAX_VALUE))
+					.addComponent(lblFirstRow)
+					.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGap(18)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addComponent(btnSelectOutputLocation)
+					.addComponent(txtOutputFileLocation, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addContainerGap(41, Short.MAX_VALUE))
 	);
 	contentPane.setLayout(gl_contentPane);
 }
@@ -175,6 +215,19 @@ private void initComponents() {
 ////////////////////////////////////////////
 	private void createEvents() {
 		// TODO Auto-generated method stub
-		
+		//TODO this should probably be in action events
+		openFileChooser = new JFileChooser();
+		btnSelectInputFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				openFileChooser.setFileFilter(new FileNameExtensionFilter("XLSX files","xlsx"));
+				int returnValue = openFileChooser.showOpenDialog(rootPane);
+				if (returnValue == JFileChooser.APPROVE_OPTION){
+					lblSelectInputFile.setText(openFileChooser.getSelectedFile().getAbsolutePath());
+				} else {
+					lblSelectInputFile.setText("No File Choosen");
+				}
+			}
+		});
 	}
 }

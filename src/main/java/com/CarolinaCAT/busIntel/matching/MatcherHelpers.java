@@ -60,9 +60,9 @@ public class MatcherHelpers {
 
 
 	public static int getNameScore(String nameDBS, String nameCust) {
-		String transNameDBS = nameDBS.trim().toUpperCase();
-		String transNameCust = nameCust.trim().toUpperCase();
 		if (nameDBS != null && nameCust != null){
+			String transNameDBS = nameDBS.trim().toUpperCase();
+			String transNameCust = nameCust.trim().toUpperCase();
 			return FuzzySearch.ratio( transNameDBS, transNameCust );
 		}
 		return 0;
