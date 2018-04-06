@@ -11,14 +11,24 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
  * @author ANorthrup
  *
  */
-public class Main {
+public class CustomerMatcher {
 	/**Min Addr Score in fuzzy matcher */
-	public static final int MIN_ADDR_SCORE = 90;
-	public static final int MIN_CUSTNAME_SCORE = 90;
+	private int MIN_ADDR_SCORE = 90;
+	private int MIN_CUSTNAME_SCORE = 90;
+	
+	public void setMIN_ADDR_SCORE(int mIN_ADDR_SCORE) {
+		MIN_ADDR_SCORE = mIN_ADDR_SCORE;
+	}
+
+	public void setMIN_CUSTNAME_SCORE(int mIN_CUSTNAME_SCORE) {
+		MIN_CUSTNAME_SCORE = mIN_CUSTNAME_SCORE;
+	}
+
+	
 	//creates a composite match score to assign to a potential match
 
 	
-	public static void main(String[] args) throws Exception
+	public CustomerMatcher() throws Exception
 	{
 
 		String queryCode = "SELECT CUNO, CUNM, CUNM2, PRCUNO, CUADD2, PHNO, ZIPCD9 "

@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.ButtonModel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import javax.swing.GroupLayout;
@@ -22,9 +23,11 @@ import javax.swing.JTextArea;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.ButtonGroup;
+
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
@@ -44,31 +47,12 @@ public class MatcherStart extends JFrame {
 	private JRadioButton rdbtnUCC;
 	private JRadioButton rdbtnDom;
 	private JRadioButton rdbtnCustom;
+	//TODO need getter on button group
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnRunMatcher;
+	//TOD need getter on spinner name tolerance
+	private JSpinner spnrNameTol;
 	
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MatcherStart frame = new MatcherStart();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
 	/**
 	 * Create the frame.
 	 */
@@ -146,7 +130,7 @@ private void initComponents() {
 	
 	JLabel lblModifyCustomerName = new JLabel("Modify Customer Name Tolerance:");
 	
-	JSpinner spnrNameTol = new JSpinner();
+	spnrNameTol = new JSpinner();
 	spnrNameTol.setModel(new SpinnerNumberModel(new Integer(90), null, null, new Integer(1)));
 	
 	btnRunMatcher = new JButton("Run Matcher!");
@@ -272,9 +256,19 @@ private void initComponents() {
 		btnRunMatcher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO Read values in input boxes
-				//TODO create matchers
-				//TODO initiate popup for progress bar
-				
+
+				//Initiate popup for progress bar
+				//TODO handle if user exes out program bar popup before done running
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							ProgressBar frame = new ProgressBar();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 			}
 		});
 
@@ -299,11 +293,76 @@ private void initComponents() {
 			}
 		});
 		
+		//TODO need multiple of these for each input box
 		txtCustNameCol.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				//TODO figure out what to do with incorrect input
 			}
 		});
+	}
+
+	/**
+	 * @return the txtCustNameCol
+	 */
+	public String getTxtCustNameCol() {
+		return txtCustNameCol.getText();
+	}
+
+	/**
+	 * @return the txtCustAddrCol
+	 */
+	public String getTxtCustAddrCol() {
+		return txtCustAddrCol.getText();
+	}
+
+	/**
+	 * @return the txtCustZipCol
+	 */
+	public String getTxtCustZipCol() {
+		return txtCustZipCol.getText();
+	}
+
+	/**
+	 * @return the txtCustPhoneCol
+	 */
+	public String getTxtCustPhoneCol() {
+		return txtCustPhoneCol.getText();
+	}
+
+	/**
+	 * @return the txtCustInfCol
+	 */
+	public String getTxtCustInfCol() {
+		return txtCustInfCol.getText();
+	}
+
+	/**
+	 * @return the txtFirstRow
+	 */
+	public int getTxtFirstRow() {
+		return Integer.parseInt(txtFirstRow.getText());
+	}
+
+	/**
+	 * @return the txtOutputFileName
+	 */
+	public String getTxtOutputFileName() {
+		//TODO add file path to this
+		return txtOutputFileName.getText();
+	}
+
+	/**
+	 * @return the lblSelectInputFile
+	 */
+	public JLabel getLblSelectInputFile() {
+		return lblSelectInputFile;
+	}
+
+	/**
+	 * @return the spnrNameTol
+	 */
+	public int getSpnrNameTol() {
+		return (int) spnrNameTol.getValue();
 	}
 }
