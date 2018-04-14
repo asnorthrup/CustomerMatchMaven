@@ -377,6 +377,7 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustNameCol.getText())){
 					lblErrNameCol.setText("");
+					//TODO check if clickable
 				} else {
 					lblErrNameCol.setText("*");
 				}
@@ -388,8 +389,10 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustAddrCol.getText())){
 					lblErrAddrCol.setText("");
+					//TODO check if clickable
 				} else {
 					lblErrAddrCol.setText("*");
+					
 				}
 			}
 		});
@@ -399,6 +402,7 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustPhoneCol.getText())){
 					lblErrPhoneCol.setText("");
+					//TODO check if clickable
 				} else {
 					lblErrPhoneCol.setText("*");
 				}
@@ -410,6 +414,7 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustZipCol.getText())){
 					lblErrZipCol.setText("");
+					//TODO check if clickable
 				} else {
 					lblErrZipCol.setText("*");
 				}
@@ -422,6 +427,7 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustInfCol.getText())){
 					lblErrInflCol.setText("");
+					//TODO check if clickable
 				} else {
 					lblErrInflCol.setText("*");
 				}
@@ -433,8 +439,9 @@ private void initComponents() {
 			@Override
 			//TODO this isn't correct need to check agaist number not checkCol method
 			public void focusLost(FocusEvent arg0) {
-				if (checkCol(txtFirstRow.getText())){
+				if (txtFirstRow.getText().length() > 0 && txtFirstRow.getText().matches("-?\\d+")){
 					lblErrFirstRow.setText("");
+					//TODO check if clickable
 				} else {
 					lblErrFirstRow.setText("*");
 				}
@@ -512,14 +519,16 @@ private void initComponents() {
 		return (int) spnrNameTol.getValue();
 	}
 	
+	//helper to check columns are appropriate format as entered
 	private boolean checkCol(String col){
-		if(col.trim().length() == 1 && Character.isLetter(txtCustNameCol.getText().charAt(0))){
-			return true;
-		} else if (col.trim().length() == 2 && Character.isLetter(txtCustNameCol.getText().charAt(0)) && Character.isLetter(txtCustNameCol.getText().charAt(1))){
+		if(col.trim().length()>0 && col.trim().length() < 3 && col.trim().matches("[a-zA-Z]+")){
 			return true;
 		} else {
 			return false;
 		}
+	}
+	private void checkReadyToRun(){
+		//TODO set up way to make button clickable
 	}
 
 }
