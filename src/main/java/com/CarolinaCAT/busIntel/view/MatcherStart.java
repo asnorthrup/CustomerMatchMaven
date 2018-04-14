@@ -365,11 +365,10 @@ private void initComponents() {
 ///This method contains all of the code for creating events
 ////////////////////////////////////////////
 	private void createEvents() {
+		//TODO need to do radio buttons
+		
 		btnRunMatcher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO check that user has put all the necessary variables before start running
-				//check error flag for user input
-				
 				//Initiate popup for progress bar
 				//TODO handle if user exes out program bar popup before done running
 				EventQueue.invokeLater(new Runnable() {
@@ -499,9 +498,11 @@ private void initComponents() {
 					lblErrNameCol.setText("");
 					txtCustNameCol.setText("");
 					txtCustNameCol.setEditable(false);
+					checkReadyToRun();
 				} else {
 					txtCustNameCol.setEditable(true);
 					lblErrNameCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -512,9 +513,11 @@ private void initComponents() {
 					lblErrAddrCol.setText("");
 					txtCustAddrCol.setText("");
 					txtCustAddrCol.setEditable(false);
+					checkReadyToRun();
 				} else {
 					txtCustAddrCol.setEditable(true);
 					lblErrAddrCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -525,9 +528,11 @@ private void initComponents() {
 					lblErrZipCol.setText("");
 					txtCustZipCol.setText("");
 					txtCustZipCol.setEditable(false);
+					checkReadyToRun();
 				} else {
 					txtCustZipCol.setEditable(true);
 					lblErrZipCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -538,9 +543,11 @@ private void initComponents() {
 					lblErrPhoneCol.setText("");
 					txtCustPhoneCol.setText("");
 					txtCustPhoneCol.setEditable(false);
+					checkReadyToRun();
 				} else {
 					txtCustPhoneCol.setEditable(true);
 					lblErrPhoneCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -551,9 +558,11 @@ private void initComponents() {
 					lblErrInflCol.setText("");
 					txtCustInfCol.setText("");
 					txtCustInfCol.setEditable(false);
+					checkReadyToRun();
 				} else {
 					txtCustInfCol.setEditable(true);
 					lblErrInflCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});

@@ -17,7 +17,10 @@ import java.awt.Dialog.ModalExclusionType;
 public class ProgressBar extends JFrame {
 
 	private JPanel contentPane;
-
+	private JProgressBar pbImportDBS;
+	private JProgressBar pbReadCusts;
+	private JProgressBar pbGenMatches;
+	
 	/**
 	 * Create the frame.
 	 */
@@ -33,15 +36,15 @@ public class ProgressBar extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
 		
-		JProgressBar pbReadCusts = new JProgressBar();
+		pbReadCusts = new JProgressBar();
 		
-		JProgressBar pbGenMatches = new JProgressBar();
+		pbGenMatches = new JProgressBar();
 		
 		JButton btnCancel = new JButton("Cancel");
 		
 		JLabel lblReadCustFileStatus = new JLabel("Reading Customer File...");
 		
-		JProgressBar pbImportDBS = new JProgressBar();
+		pbImportDBS = new JProgressBar();
 		
 		JLabel lblImportDBSStatus = new JLabel("Importing DBS Customers...");
 		
@@ -94,5 +97,18 @@ public class ProgressBar extends JFrame {
 		);
 		panel.setLayout(gl_panel);
 	}
-
+	
+	///////////////////*** SETTERS FOR UPDATING STATUS BARS ***////////////////////
+	public void setPBImportDBS(int pct){
+		pbImportDBS.setValue(pct);
+	}
+	
+	public void setPBReadCusts(int pct){
+		pbReadCusts.setValue(pct);
+	}
+	
+	public void setPBGenMatches(int pct){
+		pbGenMatches.setValue(pct);
+	}
+	
 }
