@@ -1,12 +1,12 @@
 package com.CarolinaCAT.busIntel.view;
 
-import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.ButtonModel;
+
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import javax.swing.GroupLayout;
@@ -16,10 +16,9 @@ import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JFileChooser;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.BevelBorder;
+
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.JTextArea;
+
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -37,6 +36,10 @@ import javax.swing.JCheckBox;
 
 public class MatcherStart extends JFrame {
 
+	/**
+	 * Auto-gen serializable version id
+	 */
+	private static final long serialVersionUID = -6712151586227499454L;
 	private JPanel contentPane;
 	private JTextField txtCustNameCol;
 	private JTextField txtCustAddrCol;

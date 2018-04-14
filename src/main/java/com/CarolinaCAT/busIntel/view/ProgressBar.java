@@ -1,8 +1,6 @@
 package com.CarolinaCAT.busIntel.view;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -16,6 +14,10 @@ import java.awt.Dialog.ModalExclusionType;
 
 public class ProgressBar extends JFrame {
 
+	/**
+	 * Auto-gen serial version
+	 */
+	private static final long serialVersionUID = 6850691244875716569L;
 	private JPanel contentPane;
 	private JProgressBar pbImportDBS;
 	private JProgressBar pbReadCusts;
