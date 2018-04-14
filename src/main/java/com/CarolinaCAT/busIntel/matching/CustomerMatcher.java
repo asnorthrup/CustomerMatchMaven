@@ -28,7 +28,7 @@ public class CustomerMatcher {
 	//creates a composite match score to assign to a potential match
 
 	
-	public CustomerMatcher() throws Exception
+	public CustomerMatcher(String inputFileNameAndPath, String outputFileNameAndPath) throws Exception
 	{
 
 		String queryCode = "SELECT CUNO, CUNM, CUNM2, PRCUNO, CUADD2, PHNO, ZIPCD9 "
@@ -64,7 +64,7 @@ public class CustomerMatcher {
 		/*Have all DBS customers read into an array called customerList, now need to get excel file path and populate that*/
 		//need to go through the potential customers
 		//remember must escape sequence back slash with a backslash
-		ExcelWorkbook wbOfCusts = new ExcelWorkbook("C:\\Users\\anorthrup\\Documents\\EDA_Export_FullFile_20180329.xlsx");
+		ExcelWorkbook wbOfCusts = new ExcelWorkbook(inputFileNameAndPath);
 		int pctCompleteCounter = 1;
 		for ( excelCustomerObj c : wbOfCusts.customersInWB){
 			//c is a potential customer, check for match in customerList
@@ -125,7 +125,7 @@ public class CustomerMatcher {
 			} //end of loop checking each DBS record for matches
 			pctCompleteCounter++;
 		} //end of list of customers in excel file
-		wbOfCusts.addSheetOfMatches("C:\\Users\\anorthrup\\Documents\\EDA_Export_FullFile_20180329_match.xlsx");
+		wbOfCusts.addSheetOfMatches(outputFileNameAndPath);
 		System.out.println("Done!") ;
 	}
 

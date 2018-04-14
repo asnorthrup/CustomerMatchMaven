@@ -14,6 +14,7 @@ import com.CarolinaCAT.busIntel.view.MatcherStart;
 public class Main {
 	public static void main(String args[]){
 		//create the GUI frame
+		final MatcherStart startFrame;
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Throwable e) {
@@ -22,8 +23,8 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MatcherStart frame = new MatcherStart();
-					frame.setVisible(true);
+					startFrame = new MatcherStart();
+					startFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -32,7 +33,7 @@ public class Main {
 		
 		CustomerMatcher matcherProg;
 		try {
-			matcherProg = new CustomerMatcher();
+			matcherProg = new CustomerMatcher(startFrame.getTxtInputFileAndAbsPath(),startFrame.getTxtOutputFileAndAbsPath());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
