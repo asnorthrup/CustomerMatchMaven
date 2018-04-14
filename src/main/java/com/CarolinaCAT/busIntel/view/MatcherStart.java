@@ -33,6 +33,7 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.awt.Color;
 import java.awt.Font;
+import javax.swing.JCheckBox;
 
 public class MatcherStart extends JFrame {
 
@@ -62,6 +63,12 @@ public class MatcherStart extends JFrame {
 	private JLabel lblErrZipCol;
 	private JLabel lblErrAddrCol;
 	private JLabel lblErrNameCol;
+	private JLabel lblIgnore;
+	private JCheckBox ckbxIgnrName;
+	private JCheckBox ckbxIgnrAddr;
+	private JCheckBox ckbxIgnrZip;
+	private JCheckBox ckbxIgnrPhone;
+	private JCheckBox ckbxIgnrInfl;
 	
 	
 	public static void main(String args[]){
@@ -103,7 +110,7 @@ private void initComponents() {
 	setTitle("Customer Matcher Program");
 	
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setBounds(100, 100, 705, 447);
+	setBounds(100, 100, 705, 482);
 	contentPane = new JPanel();
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	setContentPane(contentPane);
@@ -190,14 +197,39 @@ private void initComponents() {
 	lblErrFirstRow = new JLabel("*");
 	lblErrFirstRow.setFont(new Font("Tahoma", Font.BOLD, 13));
 	lblErrFirstRow.setForeground(new Color(255, 0, 0));
+	
+	ckbxIgnrName = new JCheckBox("");
+	
+	
+	ckbxIgnrAddr = new JCheckBox("");
+	
+	ckbxIgnrZip = new JCheckBox("");
+	
+	ckbxIgnrPhone = new JCheckBox("");
+	
+	ckbxIgnrInfl = new JCheckBox("");
+	
+	lblIgnore = new JLabel("Ignore?");
 
 	GroupLayout gl_contentPane = new GroupLayout(contentPane);
 	gl_contentPane.setHorizontalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
 			.addGroup(gl_contentPane.createSequentialGroup()
+				.addGap(241)
+				.addComponent(btnRunMatcher)
+				.addGap(317))
+			.addGroup(gl_contentPane.createSequentialGroup()
+				.addContainerGap()
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_contentPane.createSequentialGroup()
-						.addContainerGap()
+					.addComponent(ckbxIgnrName)
+					.addComponent(ckbxIgnrAddr)
+					.addComponent(ckbxIgnrZip)
+					.addComponent(ckbxIgnrPhone)
+					.addComponent(ckbxIgnrInfl)
+					.addComponent(lblIgnore))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 							.addGroup(gl_contentPane.createSequentialGroup()
 								.addComponent(lblCustZipCol)
@@ -220,11 +252,7 @@ private void initComponents() {
 							.addGroup(gl_contentPane.createSequentialGroup()
 								.addComponent(lblMatchFileName)
 								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(btnSelectInputFile)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(lblSelectInputFile, GroupLayout.PREFERRED_SIZE, 392, GroupLayout.PREFERRED_SIZE))
+								.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
 							.addGroup(gl_contentPane.createSequentialGroup()
 								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 									.addGroup(gl_contentPane.createSequentialGroup()
@@ -252,51 +280,59 @@ private void initComponents() {
 									.addComponent(rdbtnUCC)
 									.addComponent(rdbtnCustom)
 									.addComponent(rdbtnDom))
-								.addGap(257))))
+								.addGap(257)))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(lblModifyCustomerName)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(lblModifyCustomerName)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(btnSelectInputFile)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGroup(gl_contentPane.createSequentialGroup()
-						.addGap(241)
-						.addComponent(btnRunMatcher)))
-				.addContainerGap())
+						.addComponent(lblSelectInputFile, GroupLayout.PREFERRED_SIZE, 392, GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(96, Short.MAX_VALUE))))
 	);
 	gl_contentPane.setVerticalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
 			.addGroup(gl_contentPane.createSequentialGroup()
-				.addGap(7)
+				.addContainerGap()
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 					.addComponent(btnSelectInputFile)
 					.addComponent(lblSelectInputFile))
+				.addPreferredGap(ComponentPlacement.RELATED)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addGap(18)
+						.addComponent(lblIgnore)
+						.addPreferredGap(ComponentPlacement.RELATED)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustNameCol)
 							.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrNameCol))
+							.addComponent(lblErrNameCol)
+							.addComponent(ckbxIgnrName))
 						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustAddrCol)
 							.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrAddrCol))
+							.addComponent(lblErrAddrCol)
+							.addComponent(ckbxIgnrAddr))
 						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustZipCol)
 							.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrZipCol))
+							.addComponent(lblErrZipCol)
+							.addComponent(ckbxIgnrZip))
 						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustPhoneCol)
 							.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrPhoneCol))
+							.addComponent(lblErrPhoneCol)
+							.addComponent(ckbxIgnrPhone))
 						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustInfCol)
 							.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrInflCol))
+							.addComponent(lblErrInflCol)
+							.addComponent(ckbxIgnrInfl))
 						.addPreferredGap(ComponentPlacement.UNRELATED)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblFirstRow)
@@ -317,7 +353,7 @@ private void initComponents() {
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 					.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addComponent(lblModifyCustomerName))
-				.addPreferredGap(ComponentPlacement.UNRELATED)
+				.addPreferredGap(ComponentPlacement.RELATED)
 				.addComponent(btnRunMatcher)
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	);
@@ -372,7 +408,9 @@ private void initComponents() {
 			}
 		});
 		
-		//TODO need multiple of these for each input box
+		////////////////////////////   LISTENERS FOR TEXT BOX VALIDATION ////////////////////////////
+		// TODO Check if focus listener is really what want, maybe a change listener
+		// TODO on listener, make uppercase for readability
 		txtCustNameCol.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
@@ -453,8 +491,75 @@ private void initComponents() {
 				}
 			}
 		});
+		
+		///////////////////////***	CHECK BOX LISTENERS AND BUTTON ENABLE ***////////////////////
+		ckbxIgnrName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if( ckbxIgnrName.isSelected() ) { 
+					lblErrNameCol.setText("");
+					txtCustNameCol.setText("");
+					txtCustNameCol.setEditable(false);
+				} else {
+					txtCustNameCol.setEditable(true);
+					lblErrNameCol.setText("*");
+				}
+			}
+		});
+		
+		ckbxIgnrAddr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if( ckbxIgnrAddr.isSelected() ) { 
+					lblErrAddrCol.setText("");
+					txtCustAddrCol.setText("");
+					txtCustAddrCol.setEditable(false);
+				} else {
+					txtCustAddrCol.setEditable(true);
+					lblErrAddrCol.setText("*");
+				}
+			}
+		});
+		
+		ckbxIgnrZip.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if( ckbxIgnrZip.isSelected() ) { 
+					lblErrZipCol.setText("");
+					txtCustZipCol.setText("");
+					txtCustZipCol.setEditable(false);
+				} else {
+					txtCustZipCol.setEditable(true);
+					lblErrZipCol.setText("*");
+				}
+			}
+		});
+		
+		ckbxIgnrPhone.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if( ckbxIgnrPhone.isSelected() ) { 
+					lblErrPhoneCol.setText("");
+					txtCustPhoneCol.setText("");
+					txtCustPhoneCol.setEditable(false);
+				} else {
+					txtCustPhoneCol.setEditable(true);
+					lblErrPhoneCol.setText("*");
+				}
+			}
+		});
+		
+		ckbxIgnrInfl.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if( ckbxIgnrInfl.isSelected() ) { 
+					lblErrInflCol.setText("");
+					txtCustInfCol.setText("");
+					txtCustInfCol.setEditable(false);
+				} else {
+					txtCustInfCol.setEditable(true);
+					lblErrInflCol.setText("*");
+				}
+			}
+		});
 	}
 
+	//////////////////////////////*** GETTERS FOR PROGRAM INPUT ****//////////////////////////////////////////////////////////////////////
 	/**
 	 * @return the txtCustNameCol
 	 */
@@ -524,8 +629,10 @@ private void initComponents() {
 	public int getSpnrNameTol() {
 		return (int) spnrNameTol.getValue();
 	}
+	////////////////////////////////////END GETTERS////////////////////////////////////////////
 	
-	//helper to check columns are appropriate format as entered
+	////////////////////////////////////HELPER METHODS/////////////////////////////////////////
+	//check columns are appropriate format as entered
 	private boolean checkCol(String col){
 		if(col.trim().length()>0 && col.trim().length() < 3 && col.trim().matches("[a-zA-Z]+")){
 			return true;
@@ -533,9 +640,9 @@ private void initComponents() {
 			return false;
 		}
 	}
-	//TODO this needs to run after every action listener
+	//checks for error indicators, will enable button if no indicators exist
 	private void checkReadyToRun(){
-		//TODO set up way to make button clickable
+		
 		//probably should put error labels in an array
 		if(lblErrNameCol.getText().equals("*") || lblErrAddrCol.getText().equals("*")|| lblErrZipCol.getText().equals("*") || 
 			lblErrPhoneCol.getText().equals("*") || lblErrInflCol.getText().equals("*") || lblErrFirstRow.getText().equals("*")
@@ -545,5 +652,4 @@ private void initComponents() {
 			btnRunMatcher.setEnabled(true);
 		}
 	}
-
 }
