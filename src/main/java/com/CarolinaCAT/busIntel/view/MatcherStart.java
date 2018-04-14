@@ -165,6 +165,7 @@ private void initComponents() {
 	spnrNameTol.setModel(new SpinnerNumberModel(new Integer(90), null, null, new Integer(1)));
 	
 	btnRunMatcher = new JButton("Run Matcher!");
+	btnRunMatcher.setEnabled(false);
 	
 	lblErrNameCol = new JLabel("*");
 	lblErrNameCol.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -364,7 +365,7 @@ private void initComponents() {
 					//int start = lblSelectInputFile.getText().substring(lblSelectInputFile.getText().lastIndexOf("\\"+1));
 					String outfile = openFileChooser.getSelectedFile().getAbsolutePath().substring(start,end) + "_match";
 					txtOutputFileName.setText(outfile);
-					
+					checkReadyToRun();
 				} else {
 					lblSelectInputFile.setText("No File Choosen");
 				}
@@ -377,9 +378,10 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustNameCol.getText())){
 					lblErrNameCol.setText("");
-					//TODO check if clickable
+					checkReadyToRun();
 				} else {
 					lblErrNameCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -389,10 +391,10 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustAddrCol.getText())){
 					lblErrAddrCol.setText("");
-					//TODO check if clickable
+					checkReadyToRun();
 				} else {
 					lblErrAddrCol.setText("*");
-					
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -402,9 +404,10 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustPhoneCol.getText())){
 					lblErrPhoneCol.setText("");
-					//TODO check if clickable
+					checkReadyToRun();
 				} else {
 					lblErrPhoneCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -414,9 +417,10 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustZipCol.getText())){
 					lblErrZipCol.setText("");
-					//TODO check if clickable
+					checkReadyToRun();
 				} else {
 					lblErrZipCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -427,9 +431,10 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustInfCol.getText())){
 					lblErrInflCol.setText("");
-					//TODO check if clickable
+					checkReadyToRun();
 				} else {
 					lblErrInflCol.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -441,9 +446,10 @@ private void initComponents() {
 			public void focusLost(FocusEvent arg0) {
 				if (txtFirstRow.getText().length() > 0 && txtFirstRow.getText().matches("-?\\d+")){
 					lblErrFirstRow.setText("");
-					//TODO check if clickable
+					checkReadyToRun();
 				} else {
 					lblErrFirstRow.setText("*");
+					btnRunMatcher.setEnabled(false);
 				}
 			}
 		});
@@ -527,8 +533,17 @@ private void initComponents() {
 			return false;
 		}
 	}
+	//TODO this needs to run after every action listener
 	private void checkReadyToRun(){
 		//TODO set up way to make button clickable
+		//probably should put error labels in an array
+		if(lblErrNameCol.getText().equals("*") || lblErrAddrCol.getText().equals("*")|| lblErrZipCol.getText().equals("*") || 
+			lblErrPhoneCol.getText().equals("*") || lblErrInflCol.getText().equals("*") || lblErrFirstRow.getText().equals("*")
+			|| lblSelectInputFile.getText().equals("No File Choosen") || txtOutputFileName.getText().trim().length() < 1 ){
+			btnRunMatcher.setEnabled(false);
+		} else {
+			btnRunMatcher.setEnabled(true);
+		}
 	}
 
 }
