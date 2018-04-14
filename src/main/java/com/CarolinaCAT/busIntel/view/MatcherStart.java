@@ -69,6 +69,7 @@ public class MatcherStart extends JFrame {
 	private JCheckBox ckbxIgnrZip;
 	private JCheckBox ckbxIgnrPhone;
 	private JCheckBox ckbxIgnrInfl;
+	private ProgressBar progBarFrame;
 	
 	
 	public static void main(String args[]){
@@ -374,8 +375,8 @@ private void initComponents() {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							ProgressBar frame = new ProgressBar();
-							frame.setVisible(true);
+							progBarFrame = new ProgressBar();
+							progBarFrame.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -640,6 +641,19 @@ private void initComponents() {
 	}
 	////////////////////////////////////END GETTERS////////////////////////////////////////////
 	
+	//////////////////////////*** UPDATE PROGRESS BARS ***/////////////////////////////////////
+	public void updateDBSLoadStatus(int pct){
+		progBarFrame.setPBImportDBS(pct);
+	}
+	
+	public void updateReadExcelCustomersStatus(int pct){
+		progBarFrame.setPBReadCusts(pct);
+	}
+	
+	public void updateCustomerMatchingStatus(int pct){
+		progBarFrame.setPBGenMatches(pct);
+	}
+	
 	////////////////////////////////////HELPER METHODS/////////////////////////////////////////
 	//check columns are appropriate format as entered
 	private boolean checkCol(String col){
@@ -661,4 +675,7 @@ private void initComponents() {
 			btnRunMatcher.setEnabled(true);
 		}
 	}
+	
+
+	
 }
