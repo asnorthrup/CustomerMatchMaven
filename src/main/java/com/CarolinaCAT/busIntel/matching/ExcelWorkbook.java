@@ -23,6 +23,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.impl.xb.xsdschema.Facet;
 import org.apache.xmlbeans.impl.xb.xsdschema.impl.FacetImpl;
 
+import com.CarolinaCAT.busIntel.view.MatcherStart;
+
 public class ExcelWorkbook {
 	private long lastRowIndex;
 	private int lastColIndex;
@@ -36,7 +38,7 @@ public class ExcelWorkbook {
 	 * Constructor that takes an excel path and creates an object called an excel workbook.
 	 * @param path to xlsx file as string for where to find the file with potential matches
 	 */
-	public ExcelWorkbook(String path){
+	public ExcelWorkbook(String path, MatcherStart gui){
 		//check that this is a xlsx file
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
@@ -49,7 +51,7 @@ public class ExcelWorkbook {
 			wb = new XSSFWorkbook(excelFile);
 			//The name of the worksheet in the file
 			Sheet myExcelSheet = wb.getSheet("QueryResults");
-			populateCustomers(myExcelSheet);
+			populateCustomers(myExcelSheet, gui);
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		} catch (IOException e){
@@ -57,7 +59,8 @@ public class ExcelWorkbook {
 		}
 	}	
 	
-	private void populateCustomers(Sheet myExcelSheet) {
+	private void populateCustomers(Sheet myExcelSheet, MatcherStart gui) {
+		//TODO need to make these read from gui
 		int startRow = 1; //rows are 0 based index
 		int colCustName = 7; //col A
 		int colCustInfluencer = 1; //col B
@@ -76,6 +79,7 @@ public class ExcelWorkbook {
 			if((i % 10) == 0){
 				double pct = ((double)i / numInSheet) * 100;
 				System.out.println("Read in"+ pct + "of Excel file");
+				gui.updateReadExcelCustomersStatus((int) pct);
 			}
 			Row row = myExcelSheet.getRow( i );
 			String nm = null;

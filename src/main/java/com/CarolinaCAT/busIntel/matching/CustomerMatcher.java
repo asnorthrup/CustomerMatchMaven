@@ -4,6 +4,10 @@ package com.CarolinaCAT.busIntel.matching;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+
+import com.CarolinaCAT.busIntel.view.MatcherStart;
+
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 /**
@@ -28,7 +32,7 @@ public class CustomerMatcher {
 	//creates a composite match score to assign to a potential match
 
 	
-	public CustomerMatcher(String inputFileNameAndPath, String outputFileNameAndPath) throws Exception
+	public CustomerMatcher(String inputFileNameAndPath, String outputFileNameAndPath, MatcherStart gui) throws Exception
 	{
 
 		String queryCode = "SELECT CUNO, CUNM, CUNM2, PRCUNO, CUADD2, PHNO, ZIPCD9 "
@@ -48,7 +52,6 @@ public class CustomerMatcher {
 		ResultSet result = customersQuery.getResultSet(); 
 		while(result.next()){
 			//create the customer object
-			//TODO add ZIP to query
 			//TODO add physical address
 			CustomerObj co = new CustomerObj(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
 			//add to arraylist of customer objects
@@ -57,6 +60,7 @@ public class CustomerMatcher {
 			if((numReadIn % 1000) == 0){
 				double pct = ((double)numReadIn / approxDBSCustomers) * 100;
 				System.out.println("Approx " + pct + "% DBS loaded") ;
+				gui.updateDBSLoadStatus((int) pct);
 			}
 			numReadIn++;
 		}
@@ -64,13 +68,14 @@ public class CustomerMatcher {
 		/*Have all DBS customers read into an array called customerList, now need to get excel file path and populate that*/
 		//need to go through the potential customers
 		//remember must escape sequence back slash with a backslash
-		ExcelWorkbook wbOfCusts = new ExcelWorkbook(inputFileNameAndPath);
+		ExcelWorkbook wbOfCusts = new ExcelWorkbook(inputFileNameAndPath, gui);
 		int pctCompleteCounter = 1;
 		for ( excelCustomerObj c : wbOfCusts.customersInWB){
 			//c is a potential customer, check for match in customerList
 			if((pctCompleteCounter % 10) == 0){
 				double pct = ((double)pctCompleteCounter / wbOfCusts.customersInWB.size()) * 100;
 				System.out.println("Approx " + pct + " % of Matching Complete") ;
+				gui.updateCustomerMatchingStatus((int) pct);
 			}
 			for (CustomerObj dbsCust : dbsCustomerList){
 				//check the 'c' customer against dbs customers to find matches

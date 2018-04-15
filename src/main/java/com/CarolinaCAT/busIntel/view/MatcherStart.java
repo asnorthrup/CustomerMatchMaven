@@ -74,25 +74,25 @@ public class MatcherStart extends JFrame {
 	private JCheckBox ckbxIgnrInfl;
 	private ProgressBar progBarFrame;
 	
-	
-	public static void main(String args[]){
-		//create the GUI frame
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MatcherStart frame = new MatcherStart();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	*****************ONLY NEEDED FOR TESTING*************************
+//	public static void main(String args[]){
+//		//create the GUI frame
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		} catch (Throwable e) {
+//			e.printStackTrace();
+//		}
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					MatcherStart frame = new MatcherStart();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 	
 	/**
 	 * Create the frame.
@@ -598,14 +598,16 @@ private void initComponents() {
 	 * @return the txtCustPhoneCol
 	 */
 	public String getTxtCustPhoneCol() {
+		//TODO create number also consider AA
 		return txtCustPhoneCol.getText();
 	}
 
 	/**
 	 * @return the txtCustInfCol
 	 */
-	public String getTxtCustInfCol() {
-		return txtCustInfCol.getText();
+	public int getTxtCustInfCol() {
+		//TODO create number also consider AA
+		String tmp = txtCustInfCol.getText().toUpperCase();
 	}
 
 	/**
