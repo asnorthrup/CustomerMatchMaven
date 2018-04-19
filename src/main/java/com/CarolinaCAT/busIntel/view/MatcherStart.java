@@ -6,7 +6,6 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import javax.swing.GroupLayout;
@@ -16,8 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JFileChooser;
-
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 
 import java.awt.event.ActionListener;
@@ -32,6 +31,7 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.awt.Color;
 import java.awt.Font;
+
 import javax.swing.JCheckBox;
 
 public class MatcherStart extends JFrame {
@@ -75,24 +75,24 @@ public class MatcherStart extends JFrame {
 	private ProgressBar progBarFrame;
 	
 //	*****************ONLY NEEDED FOR TESTING*************************
-//	public static void main(String args[]){
-//		//create the GUI frame
-//		try {
-//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//		} catch (Throwable e) {
-//			e.printStackTrace();
-//		}
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					MatcherStart frame = new MatcherStart();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	public static void main(String args[]){
+		//create the GUI frame
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MatcherStart frame = new MatcherStart();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 	
 	/**
 	 * Create the frame.
@@ -418,6 +418,7 @@ private void initComponents() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustNameCol.getText())){
+					txtCustNameCol.setText(txtCustNameCol.getText().toUpperCase());
 					lblErrNameCol.setText("");
 					checkReadyToRun();
 				} else {
@@ -431,6 +432,7 @@ private void initComponents() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustAddrCol.getText())){
+					txtCustAddrCol.setText(txtCustAddrCol.getText().toUpperCase());
 					lblErrAddrCol.setText("");
 					checkReadyToRun();
 				} else {
@@ -444,6 +446,7 @@ private void initComponents() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustPhoneCol.getText())){
+					txtCustPhoneCol.setText(txtCustPhoneCol.getText().toUpperCase());
 					lblErrPhoneCol.setText("");
 					checkReadyToRun();
 				} else {
@@ -457,6 +460,7 @@ private void initComponents() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustZipCol.getText())){
+					txtCustZipCol.setText(txtCustZipCol.getText().toUpperCase());
 					lblErrZipCol.setText("");
 					checkReadyToRun();
 				} else {
@@ -471,8 +475,10 @@ private void initComponents() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				if (checkCol(txtCustInfCol.getText())){
+					txtCustInfCol.setText(txtCustInfCol.getText().toUpperCase());
 					lblErrInflCol.setText("");
 					checkReadyToRun();
+					//TESTING ONLY System.out.println(getTxtCustInfCol());
 				} else {
 					lblErrInflCol.setText("*");
 					btnRunMatcher.setEnabled(false);
@@ -576,38 +582,88 @@ private void initComponents() {
 	/**
 	 * @return the txtCustNameCol
 	 */
-	public String getTxtCustNameCol() {
-		return txtCustNameCol.getText();
+	public int getTxtCustNameCol() {
+		String tmp = txtCustNameCol.getText();
+		if(tmp.length()==1){
+			char c1 = tmp.charAt(0);
+			//A is 65
+			return ((int) c1) - 65;
+		} else {
+			char c1 = tmp.charAt(0);
+			char c2 = tmp.charAt(1);
+			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
+			return i;
+		}
 	}
 
 	/**
 	 * @return the txtCustAddrCol
 	 */
-	public String getTxtCustAddrCol() {
-		return txtCustAddrCol.getText();
+	public int getTxtCustAddrCol() {
+		String tmp = txtCustAddrCol.getText();
+		if(tmp.length()==1){
+			char c1 = tmp.charAt(0);
+			//A is 65
+			return ((int) c1) - 65;
+		} else {
+			char c1 = tmp.charAt(0);
+			char c2 = tmp.charAt(1);
+			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
+			return i;
+		}
 	}
 
 	/**
 	 * @return the txtCustZipCol
 	 */
-	public String getTxtCustZipCol() {
-		return txtCustZipCol.getText();
+	public int getTxtCustZipCol() {
+		String tmp = txtCustZipCol.getText();
+		if(tmp.length()==1){
+			char c1 = tmp.charAt(0);
+			//A is 65
+			return ((int) c1) - 65;
+		} else {
+			char c1 = tmp.charAt(0);
+			char c2 = tmp.charAt(1);
+			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
+			return i;
+		}
 	}
 
 	/**
 	 * @return the txtCustPhoneCol
 	 */
-	public String getTxtCustPhoneCol() {
+	public int getTxtCustPhoneCol() {
 		//TODO create number also consider AA
-		return txtCustPhoneCol.getText();
+		String tmp = txtCustPhoneCol.getText();
+		if(tmp.length()==1){
+			char c1 = tmp.charAt(0);
+			//A is 65
+			return ((int) c1) - 65;
+		} else {
+			char c1 = tmp.charAt(0);
+			char c2 = tmp.charAt(1);
+			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
+			return i;
+		}
 	}
 
 	/**
 	 * @return the txtCustInfCol
 	 */
 	public int getTxtCustInfCol() {
-		//TODO create number also consider AA
+		//TODO create number also consider AA, should be upper case already
 		String tmp = txtCustInfCol.getText().toUpperCase();
+		if(tmp.length()==1){
+			char c1 = tmp.charAt(0);
+			//A is 65
+			return ((int) c1) - 65;
+		} else {
+			char c1 = tmp.charAt(0);
+			char c2 = tmp.charAt(1);
+			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
+			return i;
+		}
 	}
 
 	/**
