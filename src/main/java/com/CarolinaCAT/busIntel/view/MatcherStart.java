@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JFormattedTextField;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import javax.swing.GroupLayout;
@@ -20,6 +21,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 
+
+
+import javax.swing.text.MaskFormatter;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -38,19 +42,24 @@ import javax.swing.JCheckBox;
 
 import com.CarolinaCAT.busIntel.matching.CustomerMatcher;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 public class MatcherStart extends JFrame {
 
 	/**
 	 * Auto-gen serializable version id
 	 */
+	
+	//Change text field to JFormattedTextField
 	private static final long serialVersionUID = -6712151586227499454L;
 	private JPanel contentPane;
-	private JTextField txtCustNameCol;
-	private JTextField txtCustAddrCol;
-	private JTextField txtCustZipCol;
-	private JTextField txtCustPhoneCol;
-	private JTextField txtCustInfCol;
-	private JTextField txtFirstRow;
+	private JFormattedTextField txtCustNameCol;
+	private JFormattedTextField txtCustAddrCol;
+	private JFormattedTextField txtCustZipCol;
+	private JFormattedTextField txtCustPhoneCol;
+	private JFormattedTextField txtCustInfCol;
+	private JFormattedTextField txtFirstRow;
 	private JTextField txtOutputFileName;
 	private final JFileChooser openFileChooser = new JFileChooser();
 	private JButton btnSelectInputFile; 
@@ -112,6 +121,9 @@ public class MatcherStart extends JFrame {
 
 	}
 	
+
+	
+	
 ////////////////////////////////////////////
 ///This method contains all of the code for creating and initializing
 ///components.
@@ -139,26 +151,14 @@ private void initComponents() {
 	
 	JLabel lblFirstRow = new JLabel("First Row of Customers:");
 	
-	txtCustNameCol = new JTextField();
-
-
-
-	txtCustNameCol.setColumns(10);
+	//CREATE FORMATTED TEXT FIELDS
+	txtCustNameCol = new JFormattedTextField(createFormatter("UU"));
+	txtCustAddrCol = new JFormattedTextField(createFormatter("UU"));
+	txtCustZipCol = new JFormattedTextField(createFormatter("UU"));
+	txtCustPhoneCol = new JFormattedTextField(createFormatter("UU"));
+	txtCustInfCol = new JFormattedTextField(createFormatter("UU"));
+	txtFirstRow = new JFormattedTextField(createFormatter("###"));
 	
-	txtCustAddrCol = new JTextField();
-	txtCustAddrCol.setColumns(10);
-	
-	txtCustZipCol = new JTextField();
-	txtCustZipCol.setColumns(10);
-	
-	txtCustPhoneCol = new JTextField();
-	txtCustPhoneCol.setColumns(10);
-	
-	txtCustInfCol = new JTextField();
-	txtCustInfCol.setColumns(10);
-	
-	txtFirstRow = new JTextField();
-	txtFirstRow.setColumns(10);
 	
 	btnSelectInputFile = new JButton("Select Input File...");
 	
@@ -499,9 +499,13 @@ private void initComponents() {
 		});		
 		
 		////////////////////////////   LISTENERS FOR TEXT BOX VALIDATION ////////////////////////////
-		// TODO Check if focus listener is really what want, maybe a change listener
-		// TODO on listener, make uppercase for readability	
-		
+		// TODO Check if focus listener is really what want, maybe a change listener	
+		//TODO notes - formatted text field text and value are 2 diferent properties (value typ lags behind text), text property always reflects
+		//what the field displays, the value property might not, while user types, text property changes, but value doesn't change until the changes
+		//are committed. Value can be set by set value or commitEdit method.The commitEdit method sets the value to whatever object the formatter determines is represented by the field's text. The commitEdit method is automatically called when either of the following happens:
+		//When the user presses Enter while the field has the focus.
+		//By default, when the field loses the focus, for example, when the user presses the Tab key to change the focus to another component. You can use the setFocusLostBehavior method to specify a different outcome when the field loses the focus. 
+		//https://docs.oracle.com/javase/tutorial/uiswing/components/formattedtextfield.html
 		txtCustNameCol.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
@@ -830,5 +834,15 @@ private void initComponents() {
 	public boolean getMatcherStart(){
 		return matcherStart;
 	}
-	
+	//helper method for creating formatted text fields
+	protected MaskFormatter createFormatter(String s){
+		MaskFormatter formatter = null;
+		try {
+			formatter = new MaskFormatter(s);
+		} catch(java.text.ParseException exc) {
+	        System.err.println("formatter is bad: " + exc.getMessage());
+	        System.exit(-1);
+		}
+		return formatter;
+	}
 }
