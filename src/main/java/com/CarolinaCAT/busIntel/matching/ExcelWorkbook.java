@@ -24,6 +24,7 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Facet;
 import org.apache.xmlbeans.impl.xb.xsdschema.impl.FacetImpl;
 
 import com.CarolinaCAT.busIntel.view.MatcherStart;
+import com.CarolinaCAT.busIntel.view.ProgressBar;
 
 public class ExcelWorkbook {
 	private long lastRowIndex;
@@ -33,12 +34,13 @@ public class ExcelWorkbook {
 	public XSSFWorkbook wb;
 	private File file;
 	private OPCPackage opPackage;
-	//TODO should be passing in more information? Like which columns specific data is in?
+
 	/**
 	 * Constructor that takes an excel path and creates an object called an excel workbook.
 	 * @param path to xlsx file as string for where to find the file with potential matches
+	 * @param inputs 
 	 */
-	public ExcelWorkbook(String path, MatcherStart gui){
+	public ExcelWorkbook(String path, ProgressBar progBarFrame, int[] inputs){
 		//check that this is a xlsx file
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
@@ -50,8 +52,9 @@ public class ExcelWorkbook {
 			//opPackage = OPCPackage.open(file.getAbsolutePath());
 			wb = new XSSFWorkbook(excelFile);
 			//The name of the worksheet in the file
-			Sheet myExcelSheet = wb.getSheet("QueryResults");
-			populateCustomers(myExcelSheet, gui);
+			//TODO need to ask user for sheet name
+			Sheet myExcelSheet = wb.getSheet("Results");
+			populateCustomers(myExcelSheet, progBarFrame, inputs);
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		} catch (IOException e){
@@ -59,17 +62,17 @@ public class ExcelWorkbook {
 		}
 	}	
 	
-	private void populateCustomers(Sheet myExcelSheet, MatcherStart gui) {
-		//TODO need to make these read from gui
-		int startRow = 1; //rows are 0 based index
-		int colCustName = 7; //col A
-		int colCustInfluencer = 1; //col B
-		int colCustAddr = 8; //col D
-		int colCustPhone = 13; //col k
-		int colCustZip = 12; //col G
+	private void populateCustomers(Sheet myExcelSheet, ProgressBar progBarFrame, int[] inputs) {
+		//array of inputs is passed to 
+		//TODO must check if these are equal to -1 when setting up excel customer obs
+		//TODO start row can't be null
+		int startRow = inputs[0]; //rows are 0 based index
+		int colCustName = inputs[1]; //col A
+		int colCustInfluencer = inputs[2]; //col B
+		int colCustAddr = inputs[3]; //col D
+		int colCustPhone = inputs[4]; //col k
+		int colCustZip = inputs[5]; //col G
 		
-		//TODO set up a column for a user to tell the program where paste the values of dbs customers in
-		//TODO when writing back, do you select the parent or the customer?
 		int numInSheet = myExcelSheet.getLastRowNum();
 		customersInWB = new ArrayList<excelCustomerObj>(numInSheet);
 		
@@ -79,7 +82,7 @@ public class ExcelWorkbook {
 			if((i % 10) == 0){
 				double pct = ((double)i / numInSheet) * 100;
 				System.out.println("Read in"+ pct + "of Excel file");
-				gui.updateReadExcelCustomersStatus((int) pct);
+				progBarFrame.setPBReadCusts((int) pct);
 			}
 			Row row = myExcelSheet.getRow( i );
 			String nm = null;
@@ -94,21 +97,29 @@ public class ExcelWorkbook {
 				if(cnm != null){
 					nm = cnm.getStringCellValue();
 				}
-				Cell cinf = row.getCell(colCustInfluencer);
-				if (cinf != null){
-					inf = cinf.getStringCellValue();
+				if(colCustInfluencer != -1){ //only if we are using influencer
+					Cell cinf = row.getCell(colCustInfluencer);
+					if (cinf != null){
+						inf = cinf.getStringCellValue();
+					}
 				}
-				Cell caddr = row.getCell(colCustAddr);
-				if (caddr != null){
-					addr = caddr.getStringCellValue();
+				if(colCustAddr != -1){
+					Cell caddr = row.getCell(colCustAddr);
+					if (caddr != null){
+						addr = caddr.getStringCellValue();
+					}
 				}
-				Cell czip = row.getCell(colCustZip);
-				if (czip != null){
-					zipCode = czip.getStringCellValue();
+				if(colCustZip != -1){
+					Cell czip = row.getCell(colCustZip);
+					if (czip != null){
+						zipCode = czip.getStringCellValue();
+					}
 				}
-				Cell cph = row.getCell(colCustPhone);
-				if (cph != null){
-					ph = cph.getStringCellValue();
+				if(colCustPhone != -1){
+					Cell cph = row.getCell(colCustPhone);
+					if (cph != null){
+						ph = cph.getStringCellValue();
+					}
 				}
 			}
 			//check if nm, inf, addr or ph has info in it

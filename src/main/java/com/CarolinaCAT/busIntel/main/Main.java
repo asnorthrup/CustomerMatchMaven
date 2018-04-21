@@ -24,16 +24,16 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					System.out.println("step 1");
 					JFrame startFrame = new MatcherStart();
+					System.out.println("step 2");
 					startFrame.setVisible(true);
+					System.out.println("step 3");
 					startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					System.out.println("step 4");
 					CustomerMatcher matcherProg = null;
-					try {
-						matcherProg = new CustomerMatcher(((MatcherStart) startFrame).getTxtInputFileAndAbsPath(),((MatcherStart) startFrame).getTxtOutputFileAndAbsPath(), (MatcherStart) startFrame);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
+
 					
 				} catch (Exception e) {
 					e.printStackTrace();

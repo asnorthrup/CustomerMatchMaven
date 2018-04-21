@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 
 import com.CarolinaCAT.busIntel.view.MatcherStart;
+import com.CarolinaCAT.busIntel.view.ProgressBar;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
@@ -32,13 +33,13 @@ public class CustomerMatcher {
 	//creates a composite match score to assign to a potential match
 
 	
-	public CustomerMatcher(String inputFileNameAndPath, String outputFileNameAndPath, MatcherStart gui) throws Exception
+	public CustomerMatcher(String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, int[] inputs) throws Exception
 	{
 
 		String queryCode = "SELECT CUNO, CUNM, CUNM2, PRCUNO, CUADD2, PHNO, ZIPCD9 "
 				+ "FROM D09IL01.LIBD09.CIPNAME0 "
 				+ "WHERE CUNO NOT LIKE ('I%')";
-		
+		System.out.println("started query build");
 		DBSquery customersQuery = new DBSquery(queryCode);
 		
 		
@@ -60,7 +61,7 @@ public class CustomerMatcher {
 			if((numReadIn % 1000) == 0){
 				double pct = ((double)numReadIn / approxDBSCustomers) * 100;
 				System.out.println("Approx " + pct + "% DBS loaded") ;
-				gui.updateDBSLoadStatus((int) pct);
+				progBarFrame.setPBImportDBS((int) pct);
 			}
 			numReadIn++;
 		}
@@ -68,14 +69,14 @@ public class CustomerMatcher {
 		/*Have all DBS customers read into an array called customerList, now need to get excel file path and populate that*/
 		//need to go through the potential customers
 		//remember must escape sequence back slash with a backslash
-		ExcelWorkbook wbOfCusts = new ExcelWorkbook(inputFileNameAndPath, gui);
+		ExcelWorkbook wbOfCusts = new ExcelWorkbook(inputFileNameAndPath, progBarFrame, inputs);
 		int pctCompleteCounter = 1;
 		for ( excelCustomerObj c : wbOfCusts.customersInWB){
 			//c is a potential customer, check for match in customerList
 			if((pctCompleteCounter % 10) == 0){
 				double pct = ((double)pctCompleteCounter / wbOfCusts.customersInWB.size()) * 100;
 				System.out.println("Approx " + pct + " % of Matching Complete") ;
-				gui.updateCustomerMatchingStatus((int) pct);
+				progBarFrame.setPBGenMatches((int) pct);
 			}
 			for (CustomerObj dbsCust : dbsCustomerList){
 				//check the 'c' customer against dbs customers to find matches

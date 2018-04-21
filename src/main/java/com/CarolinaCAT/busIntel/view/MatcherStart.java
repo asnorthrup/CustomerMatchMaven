@@ -19,6 +19,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 
+
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -33,6 +35,8 @@ import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JCheckBox;
+
+import com.CarolinaCAT.busIntel.matching.CustomerMatcher;
 
 public class MatcherStart extends JFrame {
 
@@ -73,6 +77,8 @@ public class MatcherStart extends JFrame {
 	private JCheckBox ckbxIgnrPhone;
 	private JCheckBox ckbxIgnrInfl;
 	private ProgressBar progBarFrame;
+	//tells main class whether to start executing or not
+	public static volatile boolean matcherStart = false;
 	
 //	*****************ONLY NEEDED FOR TESTING*************************
 	public static void main(String args[]){
@@ -161,6 +167,7 @@ private void initComponents() {
 	JLabel lblMatchFileName = new JLabel("Matches File Name");
 	
 	rdbtnUCC = new JRadioButton("EDA UCC Download");
+
 	buttonGroup.add(rdbtnUCC);
 	
 	rdbtnDom = new JRadioButton("DOM File");
@@ -379,7 +386,25 @@ private void initComponents() {
 					public void run() {
 						try {
 							progBarFrame = new ProgressBar();
+							System.out.println("created prog bar");
 							progBarFrame.setVisible(true);
+							System.out.println("prog bar visible");
+							CustomerMatcher matcherProg = null;
+							//create array of column locations
+							int[] colLocs = new int[6];
+							colLocs[0] =  getTxtFirstRow();
+							colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
+							colLocs[2] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
+							colLocs[3] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
+							colLocs[4] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
+							colLocs[5] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
+							try {
+								System.out.println("starting run");
+								matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -410,6 +435,47 @@ private void initComponents() {
 				}
 			}
 		});
+		
+		///////////////////////////  DEFINE PRESETS FOR THE RADIO BUTTONS ///////////////////////////
+		rdbtnUCC.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (rdbtnUCC.isSelected()){
+					//TODO set up presets for a UCC EDA file
+					//TODO give room for a concatenation field
+					txtCustNameCol.setText("H");
+					txtCustAddrCol.setText("I");
+					txtCustZipCol.setText("M");
+					txtCustPhoneCol.setText("N");
+					txtCustInfCol.setText("C");
+					txtFirstRow.setText("2");
+				}
+			}
+		});
+		rdbtnDom.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (rdbtnDom.isSelected()){
+					//TODO set up presets for a UCC EDA file
+					txtCustNameCol.setText("A");
+					txtCustAddrCol.setText("D");
+					txtCustZipCol.setText("G");
+					txtCustPhoneCol.setText("K");
+					txtCustInfCol.setText("B");
+					txtFirstRow.setText("2");
+				}
+			}
+		});		
+		rdbtnCustom.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (rdbtnCustom.isSelected()){
+					txtCustNameCol.setText("");
+					txtCustAddrCol.setText("");
+					txtCustZipCol.setText("");
+					txtCustPhoneCol.setText("");
+					txtCustInfCol.setText("");
+					txtFirstRow.setText("");
+				}
+			}
+		});		
 		
 		////////////////////////////   LISTENERS FOR TEXT BOX VALIDATION ////////////////////////////
 		// TODO Check if focus listener is really what want, maybe a change listener
@@ -600,6 +666,7 @@ private void initComponents() {
 	 * @return the txtCustAddrCol
 	 */
 	public int getTxtCustAddrCol() {
+		if(txtCustAddrCol.getText() == null ) {return -1;}
 		String tmp = txtCustAddrCol.getText();
 		if(tmp.length()==1){
 			char c1 = tmp.charAt(0);
@@ -617,6 +684,7 @@ private void initComponents() {
 	 * @return the txtCustZipCol
 	 */
 	public int getTxtCustZipCol() {
+		if(txtCustZipCol.getText() == null ) {return -1;}
 		String tmp = txtCustZipCol.getText();
 		if(tmp.length()==1){
 			char c1 = tmp.charAt(0);
@@ -634,7 +702,7 @@ private void initComponents() {
 	 * @return the txtCustPhoneCol
 	 */
 	public int getTxtCustPhoneCol() {
-		//TODO create number also consider AA
+		if(txtCustPhoneCol.getText() == null ) {return -1;}
 		String tmp = txtCustPhoneCol.getText();
 		if(tmp.length()==1){
 			char c1 = tmp.charAt(0);
@@ -652,7 +720,7 @@ private void initComponents() {
 	 * @return the txtCustInfCol
 	 */
 	public int getTxtCustInfCol() {
-		//TODO create number also consider AA, should be upper case already
+		if(txtCustInfCol.getText() == null ) {return -1;}
 		String tmp = txtCustInfCol.getText().toUpperCase();
 		if(tmp.length()==1){
 			char c1 = tmp.charAt(0);
@@ -737,6 +805,8 @@ private void initComponents() {
 		}
 	}
 	
-
+	public boolean getMatcherStart(){
+		return matcherStart;
+	}
 	
 }
