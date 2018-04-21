@@ -117,6 +117,8 @@ public class MatcherStart extends JFrame {
 ///components.
 ////////////////////////////////////////////
 private void initComponents() {
+	
+	//TODO need second columns for influencers, maybe address+zip? eh 
 	setTitle("Customer Matcher Program");
 	
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -138,6 +140,7 @@ private void initComponents() {
 	JLabel lblFirstRow = new JLabel("First Row of Customers:");
 	
 	txtCustNameCol = new JTextField();
+
 
 
 	txtCustNameCol.setColumns(10);
@@ -376,8 +379,7 @@ private void initComponents() {
 ///This method contains all of the code for creating events
 ////////////////////////////////////////////
 	private void createEvents() {
-		//TODO need to do radio buttons
-		
+	
 		btnRunMatcher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Initiate popup for progress bar
@@ -385,8 +387,10 @@ private void initComponents() {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							progBarFrame = new ProgressBar();
-							System.out.println("created prog bar");
+							if (progBarFrame == null){
+								progBarFrame = new ProgressBar();
+								System.out.println("created prog bar");
+							}
 							progBarFrame.setVisible(true);
 							System.out.println("prog bar visible");
 							CustomerMatcher matcherProg = null;
@@ -405,6 +409,11 @@ private void initComponents() {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
+							progBarFrame.setVisible(false);
+							//TODO this isn't correct, need to restart
+							progBarFrame.setPBGenMatches(0);
+							progBarFrame.setPBImportDBS(0);
+							progBarFrame.setPBReadCusts(0);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -443,11 +452,17 @@ private void initComponents() {
 					//TODO set up presets for a UCC EDA file
 					//TODO give room for a concatenation field
 					txtCustNameCol.setText("H");
+					lblErrNameCol.setText(""); //clears error indicator
 					txtCustAddrCol.setText("I");
+					lblErrAddrCol.setText("");
 					txtCustZipCol.setText("M");
+					lblErrZipCol.setText("");
 					txtCustPhoneCol.setText("N");
+					lblErrPhoneCol.setText("");
 					txtCustInfCol.setText("C");
+					lblErrInflCol.setText("");
 					txtFirstRow.setText("2");
+					lblErrFirstRow.setText("");
 				}
 			}
 		});
@@ -456,11 +471,17 @@ private void initComponents() {
 				if (rdbtnDom.isSelected()){
 					//TODO set up presets for a UCC EDA file
 					txtCustNameCol.setText("A");
+					lblErrNameCol.setText(""); //clears error indicator
 					txtCustAddrCol.setText("D");
+					lblErrAddrCol.setText("");
 					txtCustZipCol.setText("G");
+					lblErrZipCol.setText("");
 					txtCustPhoneCol.setText("K");
+					lblErrPhoneCol.setText("");
 					txtCustInfCol.setText("B");
+					lblErrInflCol.setText("");
 					txtFirstRow.setText("2");
+					lblErrFirstRow.setText("");
 				}
 			}
 		});		
@@ -479,7 +500,8 @@ private void initComponents() {
 		
 		////////////////////////////   LISTENERS FOR TEXT BOX VALIDATION ////////////////////////////
 		// TODO Check if focus listener is really what want, maybe a change listener
-		// TODO on listener, make uppercase for readability
+		// TODO on listener, make uppercase for readability	
+		
 		txtCustNameCol.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {

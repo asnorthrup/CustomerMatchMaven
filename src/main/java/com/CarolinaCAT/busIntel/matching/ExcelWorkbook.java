@@ -131,6 +131,7 @@ public class ExcelWorkbook {
 				customersInWB.add(cust);
 			}
 		}
+		progBarFrame.setPBReadCusts(100);
 		//completed read in columns in workbook
 	}
 	

@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
 import java.awt.Dialog.ModalExclusionType;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class ProgressBar extends JFrame {
 
@@ -35,6 +37,7 @@ public class ProgressBar extends JFrame {
 		setContentPane(contentPane);
 		
 		JPanel panel = new JPanel();
+
 		contentPane.add(panel, BorderLayout.CENTER);
 		
 		pbReadCusts = new JProgressBar();
@@ -99,17 +102,28 @@ public class ProgressBar extends JFrame {
 		panel.setLayout(gl_panel);
 	}
 	
+//	panel.addPropertyChangeListener(new PropertyChangeListener() {
+//		public void propertyChange(PropertyChangeEvent arg0) {
+//			if ("progress" == arg0.getPropertyName()){
+//				this.setValue(progress);
+//			}
+//		}
+//	});
+	
 	///////////////////*** SETTERS FOR UPDATING STATUS BARS ***////////////////////
 	public void setPBImportDBS(int pct){
 		pbImportDBS.setValue(pct);
+		pbImportDBS.update(pbImportDBS.getGraphics());
 	}
 	
 	public void setPBReadCusts(int pct){
 		pbReadCusts.setValue(pct);
+		pbReadCusts.update(pbReadCusts.getGraphics());
 	}
 	
 	public void setPBGenMatches(int pct){
 		pbGenMatches.setValue(pct);
+		pbGenMatches.update(pbGenMatches.getGraphics());
 	}
 	
 }

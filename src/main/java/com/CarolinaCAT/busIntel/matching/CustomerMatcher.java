@@ -65,6 +65,7 @@ public class CustomerMatcher {
 			}
 			numReadIn++;
 		}
+		progBarFrame.setPBImportDBS(100);
 		System.out.println("100% DBS loaded!") ;
 		/*Have all DBS customers read into an array called customerList, now need to get excel file path and populate that*/
 		//need to go through the potential customers
@@ -132,6 +133,7 @@ public class CustomerMatcher {
 			pctCompleteCounter++;
 		} //end of list of customers in excel file
 		wbOfCusts.addSheetOfMatches(outputFileNameAndPath);
+		progBarFrame.setPBGenMatches(100);
 		System.out.println("Done!") ;
 	}
 
