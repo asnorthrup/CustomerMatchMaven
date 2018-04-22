@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import javax.swing.GroupLayout;
@@ -44,6 +45,8 @@ import com.CarolinaCAT.busIntel.matching.CustomerMatcher;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class MatcherStart extends JFrame {
 
@@ -54,12 +57,12 @@ public class MatcherStart extends JFrame {
 	//Change text field to JFormattedTextField
 	private static final long serialVersionUID = -6712151586227499454L;
 	private JPanel contentPane;
-	private JFormattedTextField txtCustNameCol;
-	private JFormattedTextField txtCustAddrCol;
-	private JFormattedTextField txtCustZipCol;
-	private JFormattedTextField txtCustPhoneCol;
-	private JFormattedTextField txtCustInfCol;
-	private JFormattedTextField txtFirstRow;
+	private JTextField txtCustNameCol;
+	private JTextField txtCustAddrCol;
+	private JTextField txtCustZipCol;
+	private JTextField txtCustPhoneCol;
+	private JTextField txtCustInfCol;
+	private JTextField txtFirstRow;
 	private JTextField txtOutputFileName;
 	private final JFileChooser openFileChooser = new JFileChooser();
 	private JButton btnSelectInputFile; 
@@ -88,6 +91,7 @@ public class MatcherStart extends JFrame {
 	private ProgressBar progBarFrame;
 	//tells main class whether to start executing or not
 	public static volatile boolean matcherStart = false;
+	private boolean readyToRun = false;
 	
 //	*****************ONLY NEEDED FOR TESTING*************************
 	public static void main(String args[]){
@@ -139,26 +143,28 @@ private void initComponents() {
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	setContentPane(contentPane);
 	
+	////////////// CREATE LABELS FOR EXCEL INPUT COLUMNS /////////////////
 	JLabel lblCustNameCol = new JLabel("Customer Name Column:");
-	
 	JLabel lblCustAddrCol = new JLabel("Customer Address Column:");
-	
 	JLabel lblCustZipCol = new JLabel("Customer Zip Column:");
-	
 	JLabel lblCustPhoneCol = new JLabel("Customer Phone Column:");
-	
 	JLabel lblCustInfCol = new JLabel("Customer Influencer Column:");
-	
 	JLabel lblFirstRow = new JLabel("First Row of Customers:");
 	
-	//CREATE FORMATTED TEXT FIELDS
-	txtCustNameCol = new JFormattedTextField(createFormatter("UU"));
-	txtCustAddrCol = new JFormattedTextField(createFormatter("UU"));
-	txtCustZipCol = new JFormattedTextField(createFormatter("UU"));
-	txtCustPhoneCol = new JFormattedTextField(createFormatter("UU"));
-	txtCustInfCol = new JFormattedTextField(createFormatter("UU"));
-	txtFirstRow = new JFormattedTextField(createFormatter("###"));
-	
+	/////////////////  CREATE FORMATTED TEXT FIELDS FOR EXCEL COLUMNS  //////////////////
+	txtCustNameCol = new JTextField();
+
+	txtCustNameCol.setColumns(2);
+	txtCustAddrCol = new JTextField();
+	txtCustAddrCol.setColumns(2);
+	txtCustZipCol = new JTextField();
+	txtCustZipCol.setColumns(2);
+	txtCustPhoneCol = new JTextField();
+	txtCustPhoneCol.setColumns(2);
+	txtCustInfCol = new JTextField();
+	txtCustInfCol.setColumns(2);
+	txtFirstRow = new JTextField();
+	txtFirstRow.setColumns(3);
 	
 	btnSelectInputFile = new JButton("Select Input File...");
 	
@@ -186,7 +192,7 @@ private void initComponents() {
 	spnrNameTol.setModel(new SpinnerNumberModel(new Integer(90), null, null, new Integer(1)));
 	
 	btnRunMatcher = new JButton("Run Matcher!");
-	btnRunMatcher.setEnabled(false);
+	btnRunMatcher.setEnabled(true);
 	
 	lblErrNameCol = new JLabel("*");
 	lblErrNameCol.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -213,16 +219,10 @@ private void initComponents() {
 	lblErrFirstRow.setForeground(new Color(255, 0, 0));
 	
 	ckbxIgnrName = new JCheckBox("");
-	
-	
 	ckbxIgnrAddr = new JCheckBox("");
-	
 	ckbxIgnrZip = new JCheckBox("");
-	
 	ckbxIgnrPhone = new JCheckBox("");
-	
 	ckbxIgnrInfl = new JCheckBox("");
-	
 	lblIgnore = new JLabel("Ignore?");
 
 	GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -384,41 +384,48 @@ private void initComponents() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Initiate popup for progress bar
 				//TODO handle if user exes out program bar popup before done running
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							if (progBarFrame == null){
-								progBarFrame = new ProgressBar();
-								System.out.println("created prog bar");
-							}
-							progBarFrame.setVisible(true);
-							System.out.println("prog bar visible");
-							CustomerMatcher matcherProg = null;
-							//create array of column locations
-							int[] colLocs = new int[6];
-							colLocs[0] =  getTxtFirstRow();
-							colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
-							colLocs[2] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
-							colLocs[3] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
-							colLocs[4] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
-							colLocs[5] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
+				if (readyToRun == true){
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
 							try {
-								System.out.println("starting run");
-								matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs);
+								if (progBarFrame == null){
+									progBarFrame = new ProgressBar();
+									System.out.println("created prog bar");
+								}
+								progBarFrame.setVisible(true);
+								System.out.println("prog bar visible");
+								CustomerMatcher matcherProg = null;
+								//create array of column locations
+								int[] colLocs = new int[6];
+								colLocs[0] =  getTxtFirstRow();
+								colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
+								colLocs[2] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
+								colLocs[3] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
+								colLocs[4] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
+								colLocs[5] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
+								try {
+									System.out.println("starting run");
+									matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs);
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								progBarFrame.setVisible(false);
+								//TODO this isn't correct, need to restart
+								progBarFrame.setPBGenMatches(0);
+								progBarFrame.setPBImportDBS(0);
+								progBarFrame.setPBReadCusts(0);
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							progBarFrame.setVisible(false);
-							//TODO this isn't correct, need to restart
-							progBarFrame.setPBGenMatches(0);
-							progBarFrame.setPBImportDBS(0);
-							progBarFrame.setPBReadCusts(0);
-						} catch (Exception e) {
-							e.printStackTrace();
 						}
-					}
-				});
+					});
+				} else {
+					JOptionPane.showMessageDialog(null,
+						    "Cannot Run, Please add required fields",
+						    "Not Ready to Run",
+						    JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 
@@ -506,78 +513,55 @@ private void initComponents() {
 		//When the user presses Enter while the field has the focus.
 		//By default, when the field loses the focus, for example, when the user presses the Tab key to change the focus to another component. You can use the setFocusLostBehavior method to specify a different outcome when the field loses the focus. 
 		//https://docs.oracle.com/javase/tutorial/uiswing/components/formattedtextfield.html
-		txtCustNameCol.addFocusListener(new FocusAdapter() {
+		
+		//checkColTextInput(JTextField tf, JLabel jl, KeyEvent ke)
+		txtCustNameCol.addKeyListener(new KeyAdapter() {
 			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (checkCol(txtCustNameCol.getText())){
-					txtCustNameCol.setText(txtCustNameCol.getText().toUpperCase());
-					lblErrNameCol.setText("");
-					checkReadyToRun();
-				} else {
-					lblErrNameCol.setText("*");
-					btnRunMatcher.setEnabled(false);
-				}
+			public void keyTyped(KeyEvent arg0) {
+				checkColTextInput(txtCustNameCol, lblErrNameCol, arg0);
 			}
 		});
 		
-		txtCustAddrCol.addFocusListener(new FocusAdapter() {
+		txtCustAddrCol.addKeyListener(new KeyAdapter() {
 			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (checkCol(txtCustAddrCol.getText())){
-					txtCustAddrCol.setText(txtCustAddrCol.getText().toUpperCase());
-					lblErrAddrCol.setText("");
-					checkReadyToRun();
-				} else {
-					lblErrAddrCol.setText("*");
-					btnRunMatcher.setEnabled(false);
-				}
+			public void keyTyped(KeyEvent arg0) {
+				checkColTextInput(txtCustAddrCol, lblErrAddrCol, arg0);
+			}
+		});
+//		txtCustAddrCol.addFocusListener(new FocusAdapter() {
+//			@Override
+//			public void focusLost(FocusEvent arg0) {
+//				if (checkCol(txtCustAddrCol.getText())){
+//					txtCustAddrCol.setText(txtCustAddrCol.getText().toUpperCase());
+//					lblErrAddrCol.setText("");
+//					checkReadyToRun();
+//				} else {
+//					lblErrAddrCol.setText("*");
+//					readyToRun = false;
+//				}
+//			}
+//		});
+		
+		txtCustPhoneCol.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				checkColTextInput(txtCustPhoneCol, lblErrPhoneCol, arg0);
 			}
 		});
 		
-		txtCustPhoneCol.addFocusListener(new FocusAdapter() {
+		txtCustZipCol.addKeyListener(new KeyAdapter() {
 			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (checkCol(txtCustPhoneCol.getText())){
-					txtCustPhoneCol.setText(txtCustPhoneCol.getText().toUpperCase());
-					lblErrPhoneCol.setText("");
-					checkReadyToRun();
-				} else {
-					lblErrPhoneCol.setText("*");
-					btnRunMatcher.setEnabled(false);
-				}
+			public void keyTyped(KeyEvent arg0) {
+				checkColTextInput(txtCustZipCol, lblErrZipCol, arg0);
 			}
 		});
 		
-		txtCustZipCol.addFocusListener(new FocusAdapter() {
+		txtCustInfCol.addKeyListener(new KeyAdapter() {
 			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (checkCol(txtCustZipCol.getText())){
-					txtCustZipCol.setText(txtCustZipCol.getText().toUpperCase());
-					lblErrZipCol.setText("");
-					checkReadyToRun();
-				} else {
-					lblErrZipCol.setText("*");
-					btnRunMatcher.setEnabled(false);
-				}
+			public void keyTyped(KeyEvent arg0) {
+				checkColTextInput(txtCustInfCol, lblErrInflCol, arg0);
 			}
 		});
-		
-		
-		txtCustInfCol.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (checkCol(txtCustInfCol.getText())){
-					txtCustInfCol.setText(txtCustInfCol.getText().toUpperCase());
-					lblErrInflCol.setText("");
-					checkReadyToRun();
-					//TESTING ONLY System.out.println(getTxtCustInfCol());
-				} else {
-					lblErrInflCol.setText("*");
-					btnRunMatcher.setEnabled(false);
-				}
-			}
-		});
-		
 		
 		txtFirstRow.addFocusListener(new FocusAdapter() {
 			@Override
@@ -588,7 +572,7 @@ private void initComponents() {
 					checkReadyToRun();
 				} else {
 					lblErrFirstRow.setText("*");
-					btnRunMatcher.setEnabled(false);
+					readyToRun = false;
 				}
 			}
 		});
@@ -604,7 +588,7 @@ private void initComponents() {
 				} else {
 					txtCustNameCol.setEditable(true);
 					lblErrNameCol.setText("*");
-					btnRunMatcher.setEnabled(false);
+					readyToRun = false;
 				}
 			}
 		});
@@ -619,7 +603,7 @@ private void initComponents() {
 				} else {
 					txtCustAddrCol.setEditable(true);
 					lblErrAddrCol.setText("*");
-					btnRunMatcher.setEnabled(false);
+					readyToRun = false;
 				}
 			}
 		});
@@ -634,7 +618,7 @@ private void initComponents() {
 				} else {
 					txtCustZipCol.setEditable(true);
 					lblErrZipCol.setText("*");
-					btnRunMatcher.setEnabled(false);
+					readyToRun = false;
 				}
 			}
 		});
@@ -649,7 +633,7 @@ private void initComponents() {
 				} else {
 					txtCustPhoneCol.setEditable(true);
 					lblErrPhoneCol.setText("*");
-					btnRunMatcher.setEnabled(false);
+					readyToRun = false;
 				}
 			}
 		});
@@ -664,7 +648,7 @@ private void initComponents() {
 				} else {
 					txtCustInfCol.setEditable(true);
 					lblErrInflCol.setText("*");
-					btnRunMatcher.setEnabled(false);
+					readyToRun = false;
 				}
 			}
 		});
@@ -810,14 +794,7 @@ private void initComponents() {
 	}
 	
 	////////////////////////////////////HELPER METHODS/////////////////////////////////////////
-	//check columns are appropriate format as entered
-	private boolean checkCol(String col){
-		if(col.trim().length()>0 && col.trim().length() < 3 && col.trim().matches("[a-zA-Z]+")){
-			return true;
-		} else {
-			return false;
-		}
-	}
+	
 	//checks for error indicators, will enable button if no indicators exist
 	private void checkReadyToRun(){
 		
@@ -825,24 +802,47 @@ private void initComponents() {
 		if(lblErrNameCol.getText().equals("*") || lblErrAddrCol.getText().equals("*")|| lblErrZipCol.getText().equals("*") || 
 			lblErrPhoneCol.getText().equals("*") || lblErrInflCol.getText().equals("*") || lblErrFirstRow.getText().equals("*")
 			|| lblSelectInputFile.getText().equals("No File Choosen") || txtOutputFileName.getText().trim().length() < 1 ){
-			btnRunMatcher.setEnabled(false);
+			readyToRun = true;
 		} else {
-			btnRunMatcher.setEnabled(true);
+			readyToRun = false;
 		}
 	}
 	
 	public boolean getMatcherStart(){
 		return matcherStart;
 	}
-	//helper method for creating formatted text fields
-	protected MaskFormatter createFormatter(String s){
-		MaskFormatter formatter = null;
-		try {
-			formatter = new MaskFormatter(s);
-		} catch(java.text.ParseException exc) {
-	        System.err.println("formatter is bad: " + exc.getMessage());
-	        System.exit(-1);
+//	//helper method for creating formatted text fields
+//	protected MaskFormatter createFormatter(String s){
+//		MaskFormatter formatter = null;
+//		try {
+//			formatter = new MaskFormatter(s);
+//		} catch(java.text.ParseException exc) {
+//	        System.err.println("formatter is bad: " + exc.getMessage());
+//	        System.exit(-1);
+//		}
+//		return formatter;
+//	}
+	
+	private void checkColTextInput(JTextField tf, JLabel jl, KeyEvent ke){
+		if((tf.getText()!= "" && tf.getText().length() >1) ){
+			ke.consume();
+		} else if (ke.getExtendedKeyCode() != KeyEvent.VK_DELETE && ke.getKeyChar() != '\b' && ke.getExtendedKeyCode() != KeyEvent.VK_SHIFT){
+			if(Character.toString(ke.getKeyChar()).matches("[a-z]")){
+				ke.setKeyChar(Character.toUpperCase(ke.getKeyChar()));
+				jl.setText("");
+				checkReadyToRun();
+			} else if (Character.toString(ke.getKeyChar()).matches("[A-Z]")){
+				jl.setText("");
+				checkReadyToRun();
+			} else {
+				ke.consume();
+			}
+		} else if (ke.getExtendedKeyCode() == KeyEvent.VK_DELETE || ke.getKeyChar() == '\b'){
+			if(tf.getText().length()<2){
+				jl.setText("*");
+				checkReadyToRun();
+			}
 		}
-		return formatter;
 	}
+	
 }
