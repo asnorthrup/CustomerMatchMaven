@@ -92,6 +92,8 @@ public class MatcherStart extends JFrame {
 	//tells main class whether to start executing or not
 	public static volatile boolean matcherStart = false;
 	private boolean readyToRun = false;
+	private JLabel lblErrTabName;
+	private JTextField txtTabName;
 	
 //	*****************ONLY NEEDED FOR TESTING*************************
 	public static void main(String args[]){
@@ -138,7 +140,7 @@ private void initComponents() {
 	setTitle("Customer Matcher Program");
 	
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setBounds(100, 100, 705, 482);
+	setBounds(100, 100, 705, 525);
 	contentPane = new JPanel();
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	setContentPane(contentPane);
@@ -224,87 +226,106 @@ private void initComponents() {
 	ckbxIgnrPhone = new JCheckBox("");
 	ckbxIgnrInfl = new JCheckBox("");
 	lblIgnore = new JLabel("Ignore?");
+	
+	JLabel lblNewLabel = new JLabel("Tab Name:");
+	
+	txtTabName = new JTextField();
+	txtTabName.setColumns(10);
+	
+	lblErrTabName = new JLabel("*");
+	lblErrTabName.setForeground(Color.RED);
+	lblErrTabName.setFont(new Font("Tahoma", Font.BOLD, 13));
 
 	GroupLayout gl_contentPane = new GroupLayout(contentPane);
 	gl_contentPane.setHorizontalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
 			.addGroup(gl_contentPane.createSequentialGroup()
-				.addGap(241)
-				.addComponent(btnRunMatcher)
-				.addGap(317))
-			.addGroup(gl_contentPane.createSequentialGroup()
-				.addContainerGap()
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-					.addComponent(ckbxIgnrName)
-					.addComponent(ckbxIgnrAddr)
-					.addComponent(ckbxIgnrZip)
-					.addComponent(ckbxIgnrPhone)
-					.addComponent(ckbxIgnrInfl)
-					.addComponent(lblIgnore))
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createSequentialGroup()
+						.addContainerGap()
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(lblCustZipCol)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(lblErrZipCol))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(lblCustInfCol)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(lblErrInflCol))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(lblFirstRow)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(lblErrFirstRow))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(lblMatchFileName)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
+								.addGap(229)
+								.addComponent(btnRunMatcher)
+								.addGap(317))
 							.addGroup(gl_contentPane.createSequentialGroup()
 								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+									.addComponent(ckbxIgnrName)
+									.addComponent(ckbxIgnrAddr)
+									.addComponent(ckbxIgnrZip)
+									.addComponent(ckbxIgnrPhone)
+									.addComponent(ckbxIgnrInfl)
+									.addComponent(lblIgnore))
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(lblCustZipCol)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(lblErrZipCol))
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(lblCustInfCol)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(lblErrInflCol))
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(lblFirstRow)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(lblErrFirstRow))
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(lblMatchFileName)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 											.addGroup(gl_contentPane.createSequentialGroup()
-												.addComponent(lblCustNameCol)
-												.addPreferredGap(ComponentPlacement.UNRELATED)
-												.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+												.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+													.addGroup(gl_contentPane.createSequentialGroup()
+														.addComponent(lblCustNameCol)
+														.addPreferredGap(ComponentPlacement.UNRELATED)
+														.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(ComponentPlacement.RELATED)
+														.addComponent(lblErrNameCol))
+													.addGroup(gl_contentPane.createSequentialGroup()
+														.addComponent(lblCustAddrCol)
+														.addPreferredGap(ComponentPlacement.UNRELATED)
+														.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)))
 												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(lblErrNameCol))
+												.addComponent(lblErrAddrCol))
 											.addGroup(gl_contentPane.createSequentialGroup()
-												.addComponent(lblCustAddrCol)
+												.addComponent(lblCustPhoneCol)
 												.addPreferredGap(ComponentPlacement.UNRELATED)
-												.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)))
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(lblErrAddrCol))
+												.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+												.addPreferredGap(ComponentPlacement.RELATED)
+												.addComponent(lblErrPhoneCol)))
+										.addGap(52)
+										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+											.addComponent(rdbtnUCC)
+											.addComponent(rdbtnCustom)
+											.addComponent(rdbtnDom))
+										.addGap(257))
 									.addGroup(gl_contentPane.createSequentialGroup()
-										.addComponent(lblCustPhoneCol)
+										.addComponent(lblModifyCustomerName)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(lblErrPhoneCol)))
-								.addGap(52)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-									.addComponent(rdbtnUCC)
-									.addComponent(rdbtnCustom)
-									.addComponent(rdbtnDom))
-								.addGap(257)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblModifyCustomerName)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+										.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(btnSelectInputFile)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(lblSelectInputFile, GroupLayout.PREFERRED_SIZE, 392, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(96, Short.MAX_VALUE))))
+						.addGap(62)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addComponent(lblNewLabel)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, 235, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(lblErrTabName, GroupLayout.PREFERRED_SIZE, 8, GroupLayout.PREFERRED_SIZE))
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addComponent(btnSelectInputFile)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(lblSelectInputFile, GroupLayout.PREFERRED_SIZE, 392, GroupLayout.PREFERRED_SIZE)))))
+				.addContainerGap())
 	);
 	gl_contentPane.setVerticalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -313,7 +334,12 @@ private void initComponents() {
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 					.addComponent(btnSelectInputFile)
 					.addComponent(lblSelectInputFile))
-				.addPreferredGap(ComponentPlacement.RELATED)
+				.addPreferredGap(ComponentPlacement.UNRELATED)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addComponent(lblNewLabel)
+					.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(lblErrTabName))
+				.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup()
 						.addComponent(lblIgnore)
@@ -369,7 +395,7 @@ private void initComponents() {
 					.addComponent(lblModifyCustomerName))
 				.addPreferredGap(ComponentPlacement.RELATED)
 				.addComponent(btnRunMatcher)
-				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				.addGap(29))
 	);
 	contentPane.setLayout(gl_contentPane);
 }
@@ -405,7 +431,7 @@ private void initComponents() {
 								colLocs[5] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
 								try {
 									System.out.println("starting run");
-									matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs);
+									matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -456,8 +482,9 @@ private void initComponents() {
 		rdbtnUCC.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnUCC.isSelected()){
-					//TODO set up presets for a UCC EDA file
 					//TODO give room for a concatenation field
+					txtTabName.setText("QueryResults");
+					lblErrTabName.setText("");
 					txtCustNameCol.setText("H");
 					lblErrNameCol.setText(""); //clears error indicator
 					txtCustAddrCol.setText("I");
@@ -473,10 +500,13 @@ private void initComponents() {
 				}
 			}
 		});
+		
+		//TODO when manually add a tab name, check
 		rdbtnDom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnDom.isSelected()){
-					//TODO set up presets for a UCC EDA file
+					txtTabName.setText("Results");
+					lblErrTabName.setText("");
 					txtCustNameCol.setText("A");
 					lblErrNameCol.setText(""); //clears error indicator
 					txtCustAddrCol.setText("D");
@@ -489,6 +519,7 @@ private void initComponents() {
 					lblErrInflCol.setText("");
 					txtFirstRow.setText("2");
 					lblErrFirstRow.setText("");
+					checkReadyToRun();
 				}
 			}
 		});		
@@ -496,11 +527,18 @@ private void initComponents() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnCustom.isSelected()){
 					txtCustNameCol.setText("");
+					lblErrNameCol.setText("*");
 					txtCustAddrCol.setText("");
+					lblErrAddrCol.setText("*");
 					txtCustZipCol.setText("");
+					lblErrZipCol.setText("*");
 					txtCustPhoneCol.setText("");
+					lblErrPhoneCol.setText("*");
 					txtCustInfCol.setText("");
+					lblErrInflCol.setText("*");
 					txtFirstRow.setText("");
+					lblErrFirstRow.setText("*");
+					checkReadyToRun();
 				}
 			}
 		});		
@@ -528,19 +566,6 @@ private void initComponents() {
 				checkColTextInput(txtCustAddrCol, lblErrAddrCol, arg0);
 			}
 		});
-//		txtCustAddrCol.addFocusListener(new FocusAdapter() {
-//			@Override
-//			public void focusLost(FocusEvent arg0) {
-//				if (checkCol(txtCustAddrCol.getText())){
-//					txtCustAddrCol.setText(txtCustAddrCol.getText().toUpperCase());
-//					lblErrAddrCol.setText("");
-//					checkReadyToRun();
-//				} else {
-//					lblErrAddrCol.setText("*");
-//					readyToRun = false;
-//				}
-//			}
-//		});
 		
 		txtCustPhoneCol.addKeyListener(new KeyAdapter() {
 			@Override
@@ -562,7 +587,7 @@ private void initComponents() {
 				checkColTextInput(txtCustInfCol, lblErrInflCol, arg0);
 			}
 		});
-		
+		//TODO this should be key listener
 		txtFirstRow.addFocusListener(new FocusAdapter() {
 			@Override
 			//TODO this isn't correct need to check agaist number not checkCol method
@@ -765,6 +790,14 @@ private void initComponents() {
 		return lblSelectInputFile.getText();
 	}
 
+	/**Gets the absolute path of the output file as a string
+	 * @return the txtOutputFileName
+	 */
+	public String getTabName() {
+		return txtTabName.getText();
+	}
+
+	
 	/**
 	 * @return the selected input file
 	 */
@@ -776,7 +809,13 @@ private void initComponents() {
 	 * @return the spnrNameTol
 	 */
 	public int getSpnrNameTol() {
-		return (int) spnrNameTol.getValue();
+		try {
+			spnrNameTol.commitEdit();
+		} catch ( java.text.ParseException e ) { 
+			e.printStackTrace(); 
+		}
+		return (Integer) spnrNameTol.getValue();
+		
 	}
 	////////////////////////////////////END GETTERS////////////////////////////////////////////
 	
@@ -797,14 +836,14 @@ private void initComponents() {
 	
 	//checks for error indicators, will enable button if no indicators exist
 	private void checkReadyToRun(){
-		
 		//probably should put error labels in an array
 		if(lblErrNameCol.getText().equals("*") || lblErrAddrCol.getText().equals("*")|| lblErrZipCol.getText().equals("*") || 
 			lblErrPhoneCol.getText().equals("*") || lblErrInflCol.getText().equals("*") || lblErrFirstRow.getText().equals("*")
-			|| lblSelectInputFile.getText().equals("No File Choosen") || txtOutputFileName.getText().trim().length() < 1 ){
-			readyToRun = true;
-		} else {
+			|| lblSelectInputFile.getText().equals("No File Choosen") || txtOutputFileName.getText().trim().length() < 1
+			|| txtTabName.getText().trim().length() < 1){
 			readyToRun = false;
+		} else {
+			readyToRun = true;
 		}
 	}
 	
@@ -838,11 +877,10 @@ private void initComponents() {
 				ke.consume();
 			}
 		} else if (ke.getExtendedKeyCode() == KeyEvent.VK_DELETE || ke.getKeyChar() == '\b'){
-			if(tf.getText().length()<2){
+			if(tf.getText().length()<1){
 				jl.setText("*");
 				checkReadyToRun();
 			}
 		}
 	}
-	
 }

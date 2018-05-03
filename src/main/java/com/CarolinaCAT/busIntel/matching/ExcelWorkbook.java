@@ -39,8 +39,9 @@ public class ExcelWorkbook {
 	 * Constructor that takes an excel path and creates an object called an excel workbook.
 	 * @param path to xlsx file as string for where to find the file with potential matches
 	 * @param inputs 
+	 * @param tabName 
 	 */
-	public ExcelWorkbook(String path, ProgressBar progBarFrame, int[] inputs){
+	public ExcelWorkbook(String path, ProgressBar progBarFrame, int[] inputs, String tabName){
 		//check that this is a xlsx file
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
@@ -53,7 +54,7 @@ public class ExcelWorkbook {
 			wb = new XSSFWorkbook(excelFile);
 			//The name of the worksheet in the file
 			//TODO need to ask user for sheet name
-			Sheet myExcelSheet = wb.getSheet("Results");
+			Sheet myExcelSheet = wb.getSheet(tabName);
 			populateCustomers(myExcelSheet, progBarFrame, inputs);
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
@@ -63,9 +64,7 @@ public class ExcelWorkbook {
 	}	
 	
 	private void populateCustomers(Sheet myExcelSheet, ProgressBar progBarFrame, int[] inputs) {
-		//array of inputs is passed to 
-		//TODO must check if these are equal to -1 when setting up excel customer obs
-		//TODO start row can't be null
+		//array of inputs is passed in to show which column each value is in for the excel sheet
 		int startRow = inputs[0]; //rows are 0 based index
 		int colCustName = inputs[1]; //col A
 		int colCustInfluencer = inputs[2]; //col B
@@ -91,7 +90,7 @@ public class ExcelWorkbook {
 			String zipCode = null;
 			String ph = null;
 			if (row == null){
-				//whole row is blank
+				//whole row is blank - this shouldn't exist
 			} else {
 				Cell cnm = row.getCell(colCustName);
 				if(cnm != null){
