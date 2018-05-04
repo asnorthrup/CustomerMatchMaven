@@ -26,9 +26,9 @@ public class MatcherHelpers {
 		return 0;
 	}
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-	}
+//	public static void main(String[] args) {
+//		// TODO Auto-generated method stub
+//	}
 
 	//TODO this should be more robust to check street and city/county if it exists
 	public static int getAddressScore(String addressDBS, String zipCodeDBS,
