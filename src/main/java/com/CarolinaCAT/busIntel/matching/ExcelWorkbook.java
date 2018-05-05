@@ -190,34 +190,6 @@ public class ExcelWorkbook {
 		} catch (IOException e){
 			e.printStackTrace();
 		}
-		//OLD CODE
-//		try {
-//			fileOut = new FileOutputStream(file);
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
-
-		
-		//TODO need to figure out how to save, the sheet isn't getting added to the workbook
-//		if ( fileOut != null){
-//			try {
-//				wb.write(fileOut);
-//				opPackage.close();
-//				fileOut.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			try {
-//				fileOut.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-
 	}
 	
 	private void setExcelCustToRow(Row r, excelCustomerObj xlCust, CustomerObj topMatch){
