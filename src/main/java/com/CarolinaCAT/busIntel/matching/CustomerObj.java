@@ -106,6 +106,7 @@ public class CustomerObj{
 	//based on the text files.
 	//extract name from DBA
 	private void nameTranslations(){
+		//TODO this is where we will be using the translators class
 		int index;
 		name = name.toUpperCase();
 		if ( (index = name.lastIndexOf("DBA") ) != - 1){
