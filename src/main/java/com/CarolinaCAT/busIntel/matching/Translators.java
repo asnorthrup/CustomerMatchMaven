@@ -159,7 +159,13 @@ public class Translators {
 	
 	
 	public String modPOBox(String addr){
-		return null;
+		addr = addr.toUpperCase();
+		for(String trans: poBoxList){
+			if(addr.contains(trans)){
+				addr = addr.replace(trans, "P.O. BOX");
+			}
+		}		
+		return addr;
 	}
 	
 }

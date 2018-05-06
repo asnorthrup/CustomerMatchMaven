@@ -22,6 +22,10 @@ public class TranslatorsTest {
 	String n2;
 	String n3;
 	
+	String a1;
+	String a2;
+	String a3;
+	
 	@Before
 	public void setUp() throws Exception {
 		t1 = "John D/B/A John Trucking";
@@ -36,6 +40,10 @@ public class TranslatorsTest {
 		n1 = "John's MTN Home";
 		n2 = "CLT MTN House";
 		n3 = "MTN HOUSE CORP GRDNG CO";
+		
+		a1 = "PO Box 144";
+		a2 = "Post OFfice BoX 144";
+		a3 = "PO. BoX 144";
 	}
 	
 	@Test
@@ -66,6 +74,16 @@ public class TranslatorsTest {
 		assertEquals(test, "CHARLOTTE MOUNTAIN HOUSE");
 		test = t.customerNameTranslations(n3);
 		assertEquals(test, "MOUNTAIN HOUSE CORPORATION GRADING COMPANY");
+	}
+	
+	@Test
+	public void testPOBoxTrans(){
+		String test = t.modPOBox(a1);
+		assertEquals(test, "P.O. BOX 144");
+		test = t.modPOBox(a2);
+		assertEquals(test, "P.O. BOX 144");
+		test = t.modPOBox(a3);
+		assertEquals(test, "P.O. BOX 144");
 	}
 	
 }
