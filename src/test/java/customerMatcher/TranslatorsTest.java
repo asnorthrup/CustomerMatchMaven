@@ -18,15 +18,24 @@ public class TranslatorsTest {
 	String te2;
 	String te3;
 	
+	String n1;
+	String n2;
+	String n3;
+	
 	@Before
 	public void setUp() throws Exception {
 		t1 = "John D/B/A John Trucking";
 		t2 = "John DBA John Trucking";
 		t3 = "John D.B.A. John Trucking";
-		t = new Translators();
+		
 		te1 = "John - CASH SALE";
 		te2 = "John --- C ASH SALE";
 		te3 = "JOHN   - CASH SA LE";
+		
+		t = new Translators();
+		n1 = "John's MTN Home";
+		n2 = "CLT MTN House";
+		n3 = "MTN HOUSE CORP GRDNG CO";
 	}
 	
 	@Test
@@ -43,10 +52,20 @@ public class TranslatorsTest {
 	public void testCashSale(){
 		String test = t.stripEndings(te1);
 		assertEquals(test, "JOHN");
-		test = t.stripBeginning(te2);
+		test = t.stripEndings(te2);
 		assertEquals(test, "JOHN");
-		test = t.stripBeginning(te3);
+		test = t.stripEndings(te3);
 		assertEquals(test, "JOHN");
+	}
+	
+	@Test
+	public void testnameTrans(){
+		String test = t.customerNameTranslations(n1);
+		assertEquals(test, "JOHN'S MOUNTAIN HOME");
+		test = t.customerNameTranslations(n2);
+		assertEquals(test, "CHARLOTTE MOUNTAIN HOUSE");
+		test = t.customerNameTranslations(n3);
+		assertEquals(test, "MOUNTAIN HOUSE CORPORATION GRADING COMPANY");
 	}
 	
 }

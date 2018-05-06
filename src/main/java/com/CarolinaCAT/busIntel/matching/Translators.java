@@ -3,21 +3,24 @@ package com.CarolinaCAT.busIntel.matching;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Translators {
 	
-	private ArrayList<String> transList;
+	private List<StringPair> transList;
 	private ArrayList<String> dbaList;
 	private ArrayList<String> extraAtEndList;
+	private ArrayList<String> poBoxList;
 	
 	/**
 	 * Initialize translator
 	 */
 	public Translators(){
-		transList = new ArrayList<String>();
+		transList = new ArrayList<StringPair>();
 		dbaList = new ArrayList<String>();
 		extraAtEndList = new ArrayList<String>();
+		poBoxList = new ArrayList<String>();
 		
 		//read in for part only to keep at end
 		Scanner s;
@@ -48,7 +51,33 @@ public class Translators {
 		try {
 			s = new Scanner(new File("NameTranslations.txt"));
 			while (s.hasNextLine()){
-				extraAtEndList.add(s.nextLine());
+				String temp = s.nextLine().trim();
+				int spaceCount = 0;
+				for (char c : temp.toCharArray()) { //should only be two spaces in string
+				    if (c == ' ') {
+				         spaceCount++;
+				    }
+				}
+				if (spaceCount == 2 && temp.contains(" TO ")){
+					String[] arr = temp.split(" TO ");
+					StringPair p = new StringPair(arr[0],arr[1]);
+					transList.add(p);
+				} else {
+					//TODO note to user, wasn't read in because didn't match format
+				}
+
+			}
+			s.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//read in for PO box tranlations to perform before matching
+		try {
+			s = new Scanner(new File("POboxTranslations.txt"));
+			while (s.hasNextLine()){
+				poBoxList.add(s.nextLine());
 			}
 			s.close();
 		} catch (FileNotFoundException e) {
@@ -113,34 +142,24 @@ public class Translators {
 		return custName;
 	}
 	
+	public String customerNameTranslations(String custName){
+		custName = custName.toUpperCase();
+		String [] arr = custName.split(" ");
+		for(StringPair pairs: transList){
+			//TODO this isn't right, need to check first, second, last words
+			for (int i=0; i < arr.length; i++){
+				if( arr[i].equals(pairs.first) ){
+					arr[i] = pairs.second;
+				}
+			}
+		}
+		return String.join(" ", arr);
+	}
+	
+	
 	
 	public String modPOBox(String addr){
 		return null;
 	}
+	
 }
-
-
-//removes Cash Sale from customer name - this probably could be refined
-
-//if (name.contains("CASH SALE")){
-//	name = name.replace("CASH SALE","");
-//	name = name.trim();
-//} else if (name.contains("CASH SA LE")){
-//	name = name.replace("CASH SA LE","");
-//	name = name.trim();
-//} else if (name.contains("CASH S ALE")){
-//	name = name.replace("CASH S ALE","");
-//	name = name.trim();
-//} else if (name.contains("CASH SAL E")){
-//	name = name.replace("CASH SAL E","");
-//	name = name.trim();
-//} else if (name.contains("CA SH SALE")){
-//	name = name.replace("CA SH SALE","");
-//	name = name.trim();
-//}else if (name.contains("CAS H SALE")){
-//	name = name.replace("CAS H SALE","");
-//	name = name.trim();
-//}else if (name.contains("C ASH SALE")){
-//	name = name.replace("C ASH SALE","");
-//	name = name.trim();
-//}
