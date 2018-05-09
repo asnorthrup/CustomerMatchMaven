@@ -35,6 +35,9 @@ public class CustomerMatcher {
 	
 	public CustomerMatcher(String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, int[] inputs, String tabName, int minNameScore) throws Exception
 	{
+		//class used to make name translations
+		Translators translator = new Translators();
+		
 		MIN_CUSTNAME_SCORE = minNameScore;
 		//DBS Query setup
 		String queryCode = "SELECT CUNO, CUNM, CUNM2, PRCUNO, CUADD2, PHNO, ZIPCD9 "
@@ -66,7 +69,7 @@ public class CustomerMatcher {
 		while(result.next()){
 			//create the customer object
 			//TODO add physical address
-			CustomerObj co = new CustomerObj(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7));
+			CustomerObj co = new CustomerObj(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7), translator);
 			//add to arraylist of customer objects
 			ourCustomers.add(co);
 			//give an indicator to user as to how far along in reading goes

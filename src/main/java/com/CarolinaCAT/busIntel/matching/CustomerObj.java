@@ -8,6 +8,8 @@ import javax.swing.DebugGraphics;
 public class CustomerObj{
 	public String cuno;
 	public String name;
+	//TODO use this instead for matching
+	public String name_translated;
 	public String parent;
 	public String address;
 	public String zipCode;
@@ -27,7 +29,7 @@ public class CustomerObj{
 	 * @param ph String for phone number
 	 * @param zipCode String for zip code
 	 */
-	public CustomerObj(String custNum, String nm, String nm2, String parentNum, String addr, String ph, String zipCode){
+	public CustomerObj(String custNum, String nm, String nm2, String parentNum, String addr, String ph, String zipCode, Translators t){
 		//trim and check for length before assigning
 		if (custNum != null && custNum.trim().length()>0){
 			cuno = custNum.trim();
@@ -39,7 +41,13 @@ public class CustomerObj{
 			} else {
 				name = nm.trim();
 			}
-		nameTranslations();
+			//OLDER
+			//nameTranslations();
+			//USE TRANSLATOR
+			name_translated = t.customerNameTranslations(name);
+			name_translated = t.stripBeginning(name_translated);
+			name_translated = t.stripEndings(name_translated);
+			
 		}
 		if (parentNum != null && parentNum.trim().length()>0){
 			parent = parentNum;
@@ -47,7 +55,10 @@ public class CustomerObj{
 		if (addr != null && addr.trim().length()>0){
 			//TODO Need to do some translations of road to Rd, Avenue to Ave, etc.
 			address = addr.trim();
-			modPOBox();
+			//OLDER
+			//modPOBox();
+			//USE TRANSLATOR
+			t.modPOBox(address);
 		}
 		if (zipCode != null && zipCode.trim().length()>0){
 			this.zipCode = zipCode.trim();
@@ -91,6 +102,7 @@ public class CustomerObj{
 		}
 	}
 	
+	//OLDER CODE for POBox Mod
 	//address transformations
 	private void modPOBox(){
 		if( address.contains("Post Office") ){
