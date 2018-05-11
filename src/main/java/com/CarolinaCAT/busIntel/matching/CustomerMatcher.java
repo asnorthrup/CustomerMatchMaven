@@ -197,7 +197,7 @@ public class CustomerMatcher {
 	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double matchScore, String matchType, Translators tr) {
 		// TODO Auto-generated method stub
 		//create a deep copy of this DBS customer and add a match score
-		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zipCode, null);//pass null translator 
+		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zipCode);//pass null translator 
 		for(String inf : matchedCO.influencers){
 			matchedDBSCust.addInfluencer(inf);
 		}

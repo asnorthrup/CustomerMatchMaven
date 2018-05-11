@@ -41,7 +41,7 @@ public class ExcelWorkbook {
 	 * @param inputs 
 	 * @param tabName 
 	 */
-	public ExcelWorkbook(String path, ProgressBar progBarFrame, int[] inputs, String tabName, Translators tr){
+	public ExcelWorkbook(String path, ProgressBar progBarFrame, int[] inputs, String tabName, Translators translator){
 		//check that this is a xlsx file
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
@@ -55,7 +55,7 @@ public class ExcelWorkbook {
 			//The name of the worksheet in the file
 			//TODO need to ask user for sheet name
 			Sheet myExcelSheet = wb.getSheet(tabName);
-			populateCustomers(myExcelSheet, progBarFrame, inputs, tr);
+			populateCustomers(myExcelSheet, progBarFrame, inputs, translator);
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		} catch (IOException e){
@@ -63,7 +63,7 @@ public class ExcelWorkbook {
 		}
 	}	
 	
-	private void populateCustomers(Sheet myExcelSheet, ProgressBar progBarFrame, int[] inputs, Translators tr) {
+	private void populateCustomers(Sheet myExcelSheet, ProgressBar progBarFrame, int[] inputs, Translators translator) {
 		//array of inputs is passed in to show which column each value is in for the excel sheet
 		int startRow = inputs[0]; //rows are 0 based index
 		int colCustName = inputs[1]; //col A
@@ -126,7 +126,15 @@ public class ExcelWorkbook {
 				//create an excel customer object and add it to arraylist
 				//TODO what is all of the nulls, check on this
 				//i+1 is because row indexing starts at 0
-				excelCustomerObj cust = new excelCustomerObj(null, nm, null, null, addr, zipCode, ph, i + 1,tr);
+				excelCustomerObj cust = new excelCustomerObj(null, nm, null, null, addr, zipCode, ph, i + 1);
+				if(cust.name != null){
+					cust.name_translated = translator.customerNameTranslations(cust.name);
+					cust.name_translated = translator.stripBeginning(cust.name_translated);
+					cust.name_translated = translator.stripEndings(cust.name_translated);
+				}
+				if(cust.address != null){
+					cust.address = translator.modPOBox(cust.address);
+				}
 				customersInWB.add(cust);
 			}
 		}
