@@ -23,8 +23,8 @@ public class excelCustomerObj extends CustomerObj {
 	 * @param cr as the current row the iterator is on in the excel sheet
 	 */
 	public excelCustomerObj(String c, String nm, String nm2, String pc,
-			String addr, String zipCode,String ph, int cr) {
-		super(c, nm, nm2, pc, addr, ph, zipCode);
+			String addr, String zipCode,String ph, int cr, Translators tr) {
+		super(c, nm, nm2, pc, addr, ph, zipCode, tr);
 		// TODO Auto-generated constructor stub
 		custCellRow = cr;
 		//created the excelCustomerObj

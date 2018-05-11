@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import com.CarolinaCAT.busIntel.matching.CustomerMatcher;
+import com.CarolinaCAT.busIntel.matching.Translators;
 import com.CarolinaCAT.busIntel.view.MatcherStart;
 
 

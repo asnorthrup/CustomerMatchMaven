@@ -129,7 +129,11 @@ public class Translators {
 			if ( (index = custName.lastIndexOf(trans) ) != - 1){
 				if( custName.length() > index ){
 					custName = custName.substring(0, index);
-					while(custName != null && !Character.isLetter(custName.charAt(custName.length() - 1))){
+					//TODO this next line is throwing error
+					if(custName.contains("NICARAGUA")){
+						System.out.println(custName);
+					}
+					while(custName != null && custName.length() > 0 && !Character.isLetter(custName.charAt(custName.length() - 1))){
 						custName = custName.substring(0, custName.length() - 1);
 					}
 					return custName;

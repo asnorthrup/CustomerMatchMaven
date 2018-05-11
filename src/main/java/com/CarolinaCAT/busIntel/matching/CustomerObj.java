@@ -29,7 +29,7 @@ public class CustomerObj{
 	 * @param ph String for phone number
 	 * @param zipCode String for zip code
 	 */
-	public CustomerObj(String custNum, String nm, String nm2, String parentNum, String addr, String ph, String zipCode, Translators t){
+	public CustomerObj(String custNum, String nm, String nm2, String parentNum, String addr, String ph, String zipCode){
 		//trim and check for length before assigning
 		if (custNum != null && custNum.trim().length()>0){
 			cuno = custNum.trim();
@@ -44,9 +44,7 @@ public class CustomerObj{
 			//OLDER
 			//nameTranslations();
 			//USE TRANSLATOR
-			name_translated = t.customerNameTranslations(name);
-			name_translated = t.stripBeginning(name_translated);
-			name_translated = t.stripEndings(name_translated);
+
 			
 		}
 		if (parentNum != null && parentNum.trim().length()>0){
@@ -57,8 +55,8 @@ public class CustomerObj{
 			address = addr.trim();
 			//OLDER
 			//modPOBox();
-			//USE TRANSLATOR
-			t.modPOBox(address);
+			//USE TRANSLATOR - moved to matcher class (saves memory)
+			//address = t.modPOBox(address);
 		}
 		if (zipCode != null && zipCode.trim().length()>0){
 			this.zipCode = zipCode.trim();
