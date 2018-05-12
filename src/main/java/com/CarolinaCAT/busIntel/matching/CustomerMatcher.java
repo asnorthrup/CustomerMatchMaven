@@ -3,6 +3,7 @@ package com.CarolinaCAT.busIntel.matching;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 
@@ -40,6 +41,7 @@ public class CustomerMatcher {
 		
 		MIN_CUSTNAME_SCORE = minNameScore;
 		//DBS Query setup
+		//TODO improve query to get physical address
 		String queryCode = "SELECT CUNO, CUNM, CUNM2, PRCUNO, CUADD2, PHNO, ZIPCD9 "
 				+ "FROM D09IL01.LIBD09.CIPNAME0 "
 				+ "WHERE CUNO NOT LIKE ('I%')";
@@ -62,7 +64,9 @@ public class CustomerMatcher {
 		int approxDBSCustomers = 80000;
 		int numReadIn = 1;
 		int initArrayListCap = (int) (.25 * 80000);
-		ArrayList<CustomerObj> ourCustomers = new ArrayList<CustomerObj>(initArrayListCap); 
+		//ArrayList<CustomerObj> ourCustomers = new ArrayList<CustomerObj>(initArrayListCap);
+		HashMap<String, CustomerObj> ourCustomers = new HashMap<String, CustomerObj>(approxDBSCustomers);
+		
 		
 		
 		ResultSet result = customersQuery.getResultSet(); 
@@ -79,7 +83,7 @@ public class CustomerMatcher {
 				co.address = translator.modPOBox(co.address);
 			}
 			//add to arraylist of customer objects
-			ourCustomers.add(co);
+			ourCustomers.put(co.cuno, co);
 			//give an indicator to user as to how far along in reading goes
 			if((numReadIn % 1000) == 0){
 				double pct = ((double)numReadIn / approxDBSCustomers) * 100;
@@ -121,6 +125,15 @@ public class CustomerMatcher {
 				System.out.println("Approx " + pct + " % of Matching Complete") ;
 				progBarFrame.setPBGenMatches((int) pct);
 			}
+			
+//			for (Map.Entry<String, Object> entry : map.entrySet()) {
+//			    String key = entry.getKey();
+//			    Object value = entry.getValue();
+//			    // ...
+//			}
+			
+			
+			
 			for (CustomerObj dbsCust : ourCustomers){
 				//check the 'c' customer against dbs customers to find matches
 				boolean exactMatch = false;
@@ -198,10 +211,12 @@ public class CustomerMatcher {
 		// TODO Auto-generated method stub
 		//create a deep copy of this DBS customer and add a match score
 		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zipCode);//pass null translator 
-		for(String inf : matchedCO.influencers){
-			matchedDBSCust.addInfluencer(inf);
-		}
+//		for(String inf : matchedCO.influencers){
+//			matchedDBSCust.addInfluencer(inf);
+//		}
 		//create match score then add to potential customer list for Customer
+		
+		//TODO create hashmap of customer objects, just save score, type, and customer num; Need to create a dbs match object
 		matchedDBSCust.setMatchScore( matchScore );
 		matchedDBSCust.setMatchType( matchType );
 		excelCO.addPotentialDBSCustomer(matchedDBSCust);

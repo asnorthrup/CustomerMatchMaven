@@ -15,7 +15,8 @@ public class CustomerObj{
 	public String zipCode;
 	//TODO need to add second address and second ZIP
 	public String phone;
-	public ArrayList<String> influencers; //use this to store all of the influencers for the customer
+	//we will be doing influencers differently -- an arraylist is too much overhead for this purpose
+	//public ArrayList<String> influencers; //use this to store all of the influencers for the customer
 	public double matchScore;
 	public String matchType;
 
@@ -66,13 +67,13 @@ public class CustomerObj{
 			phone = formatPhone(ph);
 		}
 		//set up for influencers, if exist, initial constructor has, which is plenty for most
-		influencers = new ArrayList<String>();
+		//influencers = new ArrayList<String>();
 	}
 	
 	//add an influencer
-	public void addInfluencer(String inf){
-		influencers.add(inf);
-	}
+//	public void addInfluencer(String inf){
+//		influencers.add(inf);
+//	}
 
 	
 	private String formatZip(String zipCode) {
@@ -102,63 +103,63 @@ public class CustomerObj{
 	
 	//OLDER CODE for POBox Mod
 	//address transformations
-	private void modPOBox(){
-		if( address.contains("Post Office") ){
-			address = address.replace("Post", "P.");
-			address = address.replace("Office", "O.");
-		} else if ( address.substring(0,3).equals("PO ") ){
-			address = address.replace("PO ", "P.O. ");
-		}
-		//TODO go through different versions of PO Box to change to P.O. Box
-	}
+//	private void modPOBox(){
+//		if( address.contains("Post Office") ){
+//			address = address.replace("Post", "P.");
+//			address = address.replace("Office", "O.");
+//		} else if ( address.substring(0,3).equals("PO ") ){
+//			address = address.replace("PO ", "P.O. ");
+//		}
+//		//TODO go through different versions of PO Box to change to P.O. Box
+//	}
 	
 	//TODO change this from using brute force to creating a global(?) array/hash (probably a static array) of lookups
 	//based on the text files.
 	//extract name from DBA
-	private void nameTranslations(){
-		//TODO this is where we will be using the translators class
-		int index;
-		name = name.toUpperCase();
-		if ( (index = name.lastIndexOf("DBA") ) != - 1){
-			if( name.length() > index + 3){
-				name = name.substring(index + 3).trim();
-			} else {
-				name = "No Company Name"; //if nothing listed after dba
-			}
-		} else if ((index = name.lastIndexOf("D/B/A") ) != - 1){
-			//System.out.println(name);
-			if(name.length()> index + 6 ){
-				name = name.substring(index + 6).trim(); //some records have D/B/A and then blank
-			} else {
-				name = "No Company Name";
-			}
-			
-		} 
-		//removes Cash Sale from customer name - this probably could be refined
-
-		if (name.contains("CASH SALE")){
-			name = name.replace("CASH SALE","");
-			name = name.trim();
-		} else if (name.contains("CASH SA LE")){
-			name = name.replace("CASH SA LE","");
-			name = name.trim();
-		} else if (name.contains("CASH S ALE")){
-			name = name.replace("CASH S ALE","");
-			name = name.trim();
-		} else if (name.contains("CASH SAL E")){
-			name = name.replace("CASH SAL E","");
-			name = name.trim();
-		} else if (name.contains("CA SH SALE")){
-			name = name.replace("CA SH SALE","");
-			name = name.trim();
-		}else if (name.contains("CAS H SALE")){
-			name = name.replace("CAS H SALE","");
-			name = name.trim();
-		}else if (name.contains("C ASH SALE")){
-			name = name.replace("C ASH SALE","");
-			name = name.trim();
-		}
-	}
+//	private void nameTranslations(){
+//		//TODO this is where we will be using the translators class
+//		int index;
+//		name = name.toUpperCase();
+//		if ( (index = name.lastIndexOf("DBA") ) != - 1){
+//			if( name.length() > index + 3){
+//				name = name.substring(index + 3).trim();
+//			} else {
+//				name = "No Company Name"; //if nothing listed after dba
+//			}
+//		} else if ((index = name.lastIndexOf("D/B/A") ) != - 1){
+//			//System.out.println(name);
+//			if(name.length()> index + 6 ){
+//				name = name.substring(index + 6).trim(); //some records have D/B/A and then blank
+//			} else {
+//				name = "No Company Name";
+//			}
+//			
+//		} 
+//		//removes Cash Sale from customer name - this probably could be refined
+//
+//		if (name.contains("CASH SALE")){
+//			name = name.replace("CASH SALE","");
+//			name = name.trim();
+//		} else if (name.contains("CASH SA LE")){
+//			name = name.replace("CASH SA LE","");
+//			name = name.trim();
+//		} else if (name.contains("CASH S ALE")){
+//			name = name.replace("CASH S ALE","");
+//			name = name.trim();
+//		} else if (name.contains("CASH SAL E")){
+//			name = name.replace("CASH SAL E","");
+//			name = name.trim();
+//		} else if (name.contains("CA SH SALE")){
+//			name = name.replace("CA SH SALE","");
+//			name = name.trim();
+//		}else if (name.contains("CAS H SALE")){
+//			name = name.replace("CAS H SALE","");
+//			name = name.trim();
+//		}else if (name.contains("C ASH SALE")){
+//			name = name.replace("C ASH SALE","");
+//			name = name.trim();
+//		}
+//	}
 	
 	
 	

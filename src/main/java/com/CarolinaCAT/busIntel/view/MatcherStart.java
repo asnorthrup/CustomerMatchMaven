@@ -119,12 +119,8 @@ public class MatcherStart extends JFrame {
 	 * Create the frame.
 	 */
 	public MatcherStart() {
-
 		initComponents();
 		createEvents();
-		
-
-
 	}
 	
 

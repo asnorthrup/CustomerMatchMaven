@@ -33,7 +33,7 @@ public class ExcelWorkbook {
 	//Excel workbook with data and where matches will be added
 	public XSSFWorkbook wb;
 	private File file;
-	private OPCPackage opPackage;
+	//private OPCPackage opPackage;
 
 	/**
 	 * Constructor that takes an excel path and creates an object called an excel workbook.
@@ -47,20 +47,29 @@ public class ExcelWorkbook {
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
 		}
 		file = new File(path);
-		opPackage = null;
+		//opPackage = null;
+		FileInputStream excelFile = null;
 		try {
-			FileInputStream excelFile = new FileInputStream(file);
+			//TODO do I need to close file input stream?
+			excelFile = new FileInputStream(file);
 			//opPackage = OPCPackage.open(file.getAbsolutePath());
 			wb = new XSSFWorkbook(excelFile);
-			//The name of the worksheet in the file
-			//TODO need to ask user for sheet name
 			Sheet myExcelSheet = wb.getSheet(tabName);
 			populateCustomers(myExcelSheet, progBarFrame, inputs, translator);
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		} catch (IOException e){
 			e.printStackTrace();
-		}
+		} //finally {
+//			if (excelFile != null) {
+//				try {
+//					excelFile.close();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 	}	
 	
 	private void populateCustomers(Sheet myExcelSheet, ProgressBar progBarFrame, int[] inputs, Translators translator) {

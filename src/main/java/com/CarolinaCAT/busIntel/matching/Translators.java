@@ -55,7 +55,7 @@ public class Translators {
 				int spaceCount = 0;
 				for (char c : temp.toCharArray()) { //should only be two spaces in string
 				    if (c == ' ') {
-				         spaceCount++;
+				    	spaceCount++;
 				    }
 				}
 				if (spaceCount == 2 && temp.contains(" TO ")){
