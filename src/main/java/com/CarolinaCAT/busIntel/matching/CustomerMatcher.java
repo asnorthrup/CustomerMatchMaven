@@ -4,6 +4,7 @@ package com.CarolinaCAT.busIntel.matching;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 
@@ -134,7 +135,7 @@ public class CustomerMatcher {
 			
 			
 			
-			for (CustomerObj dbsCust : ourCustomers){
+			for (Map.Entry<String, CustomerObj> dbsCust : ourCustomers.entrySet()){
 				//check the 'c' customer against dbs customers to find matches
 				boolean exactMatch = false;
 				boolean partialMatchAddr = false;
@@ -146,20 +147,20 @@ public class CustomerMatcher {
 				int custNameScore = 0;
 				//need to short circuit if already true -- actually don't do this, you'll use match score to figure out
 				
-				phoneScore = MatcherHelpers.getPhoneScore(dbsCust.phone, c.phone);
-				if ( dbsCust.phone != null && c.phone != null && dbsCust.phone.length() > 6 && c.phone.length() > 6 && dbsCust.phone.equals(c.phone)){
+				phoneScore = MatcherHelpers.getPhoneScore(dbsCust.getValue().phone, c.phone);
+				if ( dbsCust.getValue().phone != null && c.phone != null && dbsCust.getValue().phone.length() > 6 && c.phone.length() > 6 && dbsCust.getValue().phone.equals(c.phone)){
 					phoneScore = 100;
 					exactMatch = true;
 					if (exactMatch){
 						//TODO create enum for match type
-						createDBSCustomerwithMatchScore(c, dbsCust, phoneScore, "Phone", translator);
+						createDBSCustomerwithMatchScore(c, dbsCust.getValue().cuno, phoneScore, "Phone");
 					}
 				}
 				if (!exactMatch){
-					addrScore = MatcherHelpers.getAddressScore(dbsCust.address, dbsCust.zipCode, c.address, c.zipCode);
+					addrScore = MatcherHelpers.getAddressScore(dbsCust.getValue().address, dbsCust.getValue().zipCode, c.address, c.zipCode);
 					if (addrScore == 100){ exactMatch = true; }
 					if(exactMatch){
-						createDBSCustomerwithMatchScore(c, dbsCust, addrScore, "Address", translator);
+						createDBSCustomerwithMatchScore(c, dbsCust.getValue().cuno, addrScore, "Address");
 					}
 					if (addrScore > MIN_ADDR_SCORE){ partialMatchAddr = true; }
 				}
@@ -168,10 +169,10 @@ public class CustomerMatcher {
 //						System.out.println("Start debug");
 //					}
 					//Use name translated for matching of name purposes
-					custNameScore = MatcherHelpers.getNameScore(dbsCust.name_translated, c.name_translated);
+					custNameScore = MatcherHelpers.getNameScore(dbsCust.getValue().name_translated, c.name_translated);
 					if (custNameScore == 100){ exactMatch = true; }
 					if(exactMatch){
-						createDBSCustomerwithMatchScore(c, dbsCust, custNameScore,"Customer Name", translator);
+						createDBSCustomerwithMatchScore(c, dbsCust.getValue().cuno, custNameScore,"Customer Name");
 					}
 					if (custNameScore > MIN_CUSTNAME_SCORE){ partialMatchName = true; }
 				}
@@ -180,17 +181,17 @@ public class CustomerMatcher {
 				
 				//TODO no exact matches found, so need to create a composite score if there is a partial match? probably need a composite score for each match type
 				if(partialMatchAddr && partialMatchName){
-					createDBSCustomerwithMatchScore(c, dbsCust,MatcherHelpers.aggrScore(addrScore, custNameScore), "Composite", translator);				
+					createDBSCustomerwithMatchScore(c, dbsCust.getValue().cuno, MatcherHelpers.aggrScore(addrScore, custNameScore), "Composite");				
 				} else if (partialMatchName){
-					createDBSCustomerwithMatchScore(c, dbsCust,custNameScore, "Customer Name", translator);
+					createDBSCustomerwithMatchScore(c, dbsCust.getValue().cuno, custNameScore, "Customer Name");
 				} else if (partialMatchAddr){
-					createDBSCustomerwithMatchScore(c, dbsCust, addrScore, "Address", translator);
+					createDBSCustomerwithMatchScore(c, dbsCust.getValue().cuno, addrScore, "Address");
 				}
 
 			} //end of loop checking each DBS record for matches
 			pctCompleteCounter++;
 		} //end of list of customers in excel file
-		wbOfCusts.addSheetOfMatches(outputFileNameAndPath);
+		wbOfCusts.addSheetOfMatches(outputFileNameAndPath, ourCustomers);
 		progBarFrame.setPBGenMatches(100);
 		System.out.println("Done!") ;
 	}
@@ -207,18 +208,19 @@ public class CustomerMatcher {
 	 */
 	//TODO think about the storage vs access of the dbs customers. Creating potentially a lot of space use for customers taht aren't
 	//really being used
-	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, CustomerObj matchedCO, double matchScore, String matchType, Translators tr) {
+	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, String custNum, double matchScore, String matchType) {
 		// TODO Auto-generated method stub
 		//create a deep copy of this DBS customer and add a match score
-		CustomerObj matchedDBSCust = new CustomerObj(matchedCO.cuno, matchedCO.name, null, matchedCO.parent, matchedCO.address, matchedCO.phone, matchedCO.zipCode);//pass null translator 
+		PotentialMatch potentialMatchedDBSCust = new PotentialMatch(custNum, matchScore, matchType);//pass null translator
+		//TODO deal with influencers differently
 //		for(String inf : matchedCO.influencers){
 //			matchedDBSCust.addInfluencer(inf);
 //		}
 		//create match score then add to potential customer list for Customer
 		
 		//TODO create hashmap of customer objects, just save score, type, and customer num; Need to create a dbs match object
-		matchedDBSCust.setMatchScore( matchScore );
-		matchedDBSCust.setMatchType( matchType );
-		excelCO.addPotentialDBSCustomer(matchedDBSCust);
+//		matchedDBSCust.setMatchScore( matchScore );
+//		matchedDBSCust.setMatchType( matchType );
+		excelCO.addPotentialDBSCustomer(potentialMatchedDBSCust);
 	}
 }

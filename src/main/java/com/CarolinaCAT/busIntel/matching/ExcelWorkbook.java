@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
@@ -154,9 +155,10 @@ public class ExcelWorkbook {
 	/**
 	 * Populate a worksheet in the original workbook with the highest rated match. Before calling this function, the customers should
 	 * have been matched with a DBS customer (if one exists) and assigned a specific match score.
+	 * @param ourCustomers 
 	 */
 	//TODO finish this logic, still need to output the excel customer snad the top match to excel. Also, need to write test cases
-	public void addSheetOfMatches(String path){
+	public void addSheetOfMatches(String path, HashMap<String, CustomerObj> ourCustomers){
 		XSSFWorkbook outputBook = new XSSFWorkbook();
 		//may not be able to name by passing string in
 		Sheet matchesSheet = outputBook.createSheet("DBSmatches");
@@ -176,15 +178,17 @@ public class ExcelWorkbook {
 			r = matchesSheet.createRow(rowCounter);
 			if (excelCust.potenDBSMatches.isEmpty()){
 				//no match, just copy Excel Customer data
-				setExcelCustToRow(r, excelCust, null);
+				setExcelCustToRow(r, excelCust, null, null);
 								
 			} else {
 				if (excelCust.potenDBSMatches.size() > 1){
 					Collections.sort(excelCust.potenDBSMatches,new matchSorting());
 				}
-				CustomerObj bestMatch = excelCust.potenDBSMatches.get(0);
+				PotentialMatch bestPotentialMatch = excelCust.potenDBSMatches.get(0);
+				//TODO search matches
+				
 				//populate excel sheet 'matchesSheet' with customer and matches
-				setExcelCustToRow(r, excelCust, bestMatch);
+				setExcelCustToRow(r, excelCust, ourCustomers.get(bestPotentialMatch.customerNum), bestPotentialMatch);
 			}
 			rowCounter++;
 		}
@@ -209,7 +213,7 @@ public class ExcelWorkbook {
 		}
 	}
 	
-	private void setExcelCustToRow(Row r, excelCustomerObj xlCust, CustomerObj topMatch){
+	private void setExcelCustToRow(Row r, excelCustomerObj xlCust, CustomerObj topMatch, PotentialMatch bestPotentialMatch){
 		String tmpPhone = null;
 		if (topMatch == null){
 			Cell c = r.createCell(0);
@@ -252,9 +256,9 @@ public class ExcelWorkbook {
 			c = r.createCell(9);
 			c.setCellValue(topMatch.parent);
 			c = r.createCell(10);
-			c.setCellValue(topMatch.matchType);
+			c.setCellValue(bestPotentialMatch.matchType);
 			c = r.createCell(11);
-			c.setCellValue(topMatch.matchScore);
+			c.setCellValue(bestPotentialMatch.matchScore);
 		}
 	}
 	

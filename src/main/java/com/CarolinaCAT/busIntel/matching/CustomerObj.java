@@ -17,8 +17,8 @@ public class CustomerObj{
 	public String phone;
 	//we will be doing influencers differently -- an arraylist is too much overhead for this purpose
 	//public ArrayList<String> influencers; //use this to store all of the influencers for the customer
-	public double matchScore;
-	public String matchType;
+//	public double matchScore;
+//	public String matchType;
 
 	/**
 	 * Constructor for customer object
@@ -165,12 +165,12 @@ public class CustomerObj{
 	
 	//Careful - If match score gets updated as it goes through list and then adds to array then no good. There doesn't need to be a match
 	//score assigned to DBS customer, in fact, there shouldn't
-	public void setMatchScore(double score){
-		matchScore = score;
-	}
-	public void setMatchType(String type){
-		matchType = type;
-	}
+//	public void setMatchScore(double score){
+//		matchScore = score;
+//	}
+//	public void setMatchType(String type){
+//		matchType = type;
+//	}
 	
 	public void printCustomer(){
 		System.out.println(cuno + " " + name);

@@ -8,7 +8,7 @@ public class excelCustomerObj extends CustomerObj {
 	//row of custCellRow
 	public int custCellRow;
 	/**Each customer in excel will have a list of potential matches from DBS, this variable stores those customers in arraylist*/
-	public ArrayList<CustomerObj> potenDBSMatches;
+	public ArrayList<PotentialMatch> potenDBSMatches;
 	
 	//this will need a cell, won't have a second nm2, wont have a pc
 	/**
@@ -28,16 +28,16 @@ public class excelCustomerObj extends CustomerObj {
 		// TODO Auto-generated constructor stub
 		custCellRow = cr;
 		//created the excelCustomerObj
-		potenDBSMatches= new ArrayList<CustomerObj>(); 
+		potenDBSMatches= new ArrayList<PotentialMatch>(); 
 	}
 	
 	//use this to add potential DBS matches
 	/**
 	 * Adds a potential match to the excel customer. Must create a copy first that has a match score associated with it
-	 * @param cust customer object with a match score
+	 * @param matchedDBSCust customer object with a match score
 	 */
-	public void addPotentialDBSCustomer(CustomerObj cust){
-		potenDBSMatches.add(cust);
+	public void addPotentialDBSCustomer(PotentialMatch matchedDBSCust){
+		potenDBSMatches.add(matchedDBSCust);
 	}
 
 }
