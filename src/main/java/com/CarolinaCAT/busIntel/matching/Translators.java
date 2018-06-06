@@ -126,7 +126,7 @@ public class Translators {
 		custName = custName.toUpperCase();
 		for (String trans: extraAtEndList){
 			trans = trans.trim();
-			if ( (index = custName.lastIndexOf(trans) ) != - 1){
+			if ( trans.length()>0 && (index = custName.lastIndexOf(trans) ) != - 1){
 				if( custName.length() > index ){
 					custName = custName.substring(0, index);
 					//TODO this next line is throwing error

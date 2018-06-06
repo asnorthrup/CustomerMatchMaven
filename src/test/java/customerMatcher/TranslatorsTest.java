@@ -12,6 +12,7 @@ public class TranslatorsTest {
 	String t1;
 	String t2;
 	String t3;
+	String t4;
 	Translators t;
 	
 	String te1;
@@ -31,6 +32,7 @@ public class TranslatorsTest {
 		t1 = "John D/B/A John Trucking";
 		t2 = "John DBA John Trucking";
 		t3 = "John D.B.A. John Trucking";
+		t4 = "John's Trucking Biz";
 		
 		te1 = "John - CASH SALE";
 		te2 = "John --- C ASH SALE";
@@ -54,6 +56,8 @@ public class TranslatorsTest {
 		assertEquals(test, "JOHN TRUCKING");
 		test = t.stripBeginning(t3);
 		assertEquals(test, "JOHN TRUCKING");
+		test = t.stripBeginning(t4);
+		assertEquals(test, "JOHN'S TRUCKING BIZ");
 	}
 	
 	@Test
@@ -64,6 +68,8 @@ public class TranslatorsTest {
 		assertEquals(test, "JOHN");
 		test = t.stripEndings(te3);
 		assertEquals(test, "JOHN");
+		test = t.stripEndings(t4);
+		assertEquals(test, "JOHN'S TRUCKING BIZ");
 	}
 	
 	@Test
@@ -74,6 +80,8 @@ public class TranslatorsTest {
 		assertEquals(test, "CHARLOTTE MOUNTAIN HOUSE");
 		test = t.customerNameTranslations(n3);
 		assertEquals(test, "MOUNTAIN HOUSE CORPORATION GRADING COMPANY");
+		test = t.customerNameTranslations(t4);
+		assertEquals(test, "JOHN'S TRUCKING BIZ");
 	}
 	
 	@Test

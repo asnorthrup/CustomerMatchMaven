@@ -2,8 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.CarolinaCAT.busintel</groupId>
   <artifactId>customerMatcher</artifactId>
+  
+  <packaging>jar</packaging>
+  
   <version>0.0.1-SNAPSHOT</version>
   <name>Customer Match From Excel</name>
+
   <description>This application takes an Excel file and matches it to customers based on attributes of the customer in the Excel file (name, address, phone, etc.)</description>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
@@ -45,6 +49,22 @@
 		
 	</dependencies>
 	
-	
+	<build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.CarolinaCAT.busIntel.main.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 	
 </project>

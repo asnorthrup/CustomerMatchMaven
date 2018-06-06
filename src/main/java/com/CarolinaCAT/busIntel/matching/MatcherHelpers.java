@@ -26,15 +26,23 @@ public class MatcherHelpers {
 		return 0;
 	}
 
+// Use for testing if needed
 //	public static void main(String[] args) {
 //		// TODO Auto-generated method stub
 //	}
 
 	//TODO this should be more robust to check street and city/county if it exists
+	/**
+	 * This method does fuzzy matching on address scores
+	 * @param addressDBS string for DBS address
+	 * @param zipCodeDBS string for DBS zip code
+	 * @param addressCust string for customer (being matched against our customers) address
+	 * @param zipCust string for customer (being matched against our customers) zip
+	 * @return int for fuzzy matching score between two addresses
+	 */
 	public static int getAddressScore(String addressDBS, String zipCodeDBS,
 		String addressCust, String zipCust) {
 		if (addressDBS != null && addressCust != null){
-			//TODO match score on address should be very high
 			if (addressCust.toLowerCase().contains(" box ")){
 				//if its a PO BOX, then need to match with a zip code, and zip code must match exactly
 				if(zipCodeDBS == null || zipCust == null || !zipCodeDBS.equals(zipCust) ){

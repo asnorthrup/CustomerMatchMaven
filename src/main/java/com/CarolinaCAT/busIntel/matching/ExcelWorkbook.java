@@ -34,7 +34,7 @@ public class ExcelWorkbook {
 	//Excel workbook with data and where matches will be added
 	public XSSFWorkbook wb;
 	private File file;
-	//private OPCPackage opPackage;
+	private OPCPackage pkg;
 
 	/**
 	 * Constructor that takes an excel path and creates an object called an excel workbook.
@@ -42,6 +42,8 @@ public class ExcelWorkbook {
 	 * @param inputs 
 	 * @param tabName 
 	 */
+	
+
 	public ExcelWorkbook(String path, ProgressBar progBarFrame, int[] inputs, String tabName, Translators translator){
 		//check that this is a xlsx file
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
@@ -51,10 +53,19 @@ public class ExcelWorkbook {
 		//opPackage = null;
 		FileInputStream excelFile = null;
 		try {
+			pkg = OPCPackage.open(file);
+		} catch (InvalidFormatException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
 			//TODO do I need to close file input stream?
-			excelFile = new FileInputStream(file);
+			//excelFile = new FileInputStream(file);
+			
 			//opPackage = OPCPackage.open(file.getAbsolutePath());
-			wb = new XSSFWorkbook(excelFile);
+			//wb = new XSSFWorkbook(excelFile);
+			wb = new XSSFWorkbook(pkg);
 			Sheet myExcelSheet = wb.getSheet(tabName);
 			populateCustomers(myExcelSheet, progBarFrame, inputs, translator);
 		} catch (FileNotFoundException e){
@@ -71,23 +82,38 @@ public class ExcelWorkbook {
 //				}
 //			}
 //		}
+		try {
+			pkg.close();
+		} catch (IOException e) {
+			System.out.println("File not closeable because open by another program");
+		}
 	}	
 	
 	private void populateCustomers(Sheet myExcelSheet, ProgressBar progBarFrame, int[] inputs, Translators translator) {
 		//array of inputs is passed in to show which column each value is in for the excel sheet
-		int startRow = inputs[0]; //rows are 0 based index
-		int colCustName = inputs[1]; //col A
-		int colCustInfluencer = inputs[2]; //col B
-		int colCustAddr = inputs[3]; //col D
-		int colCustPhone = inputs[4]; //col k
-		int colCustZip = inputs[5]; //col G
+		int startRow = inputs[0]; //rows are 0 based index, user entered as 1 based
+		int colCustName = inputs[1]; 
+		int colCustName2 = inputs[2];
+		int colCustInfluencer = inputs[3];
+		int colCustInfluencer2 = inputs[4];
+		int colCustInfluencer3 = inputs[5];
+		int colCustInfluencer4 = inputs[6];
+		int colCustAddr = inputs[7];
+		int colCustAddr2 = inputs[8];
+		int colCustPhone = inputs[9];
+		int colCustZip = inputs[10];
+		int colCustZip2 = inputs[11];
 		
 		int numInSheet = myExcelSheet.getLastRowNum();
+		int physInSheet = myExcelSheet.getPhysicalNumberOfRows();
+		int physFirstInSheet = myExcelSheet.getFirstRowNum();
+		System.out.println(myExcelSheet.getSheetName());
 		customersInWB = new ArrayList<excelCustomerObj>(numInSheet);
 		
 		//set up to process sheet
 		//note the first row will likely be header, skip 1 with iterator
-		for (int i= startRow; i<=numInSheet; i++){
+		//TODO make sure matching goes all the way to the end of the excel sheet
+		for (int i= startRow  - 1; i<=numInSheet; i++){
 			if((i % 10) == 0){
 				double pct = ((double)i / numInSheet) * 100;
 				System.out.println("Read in"+ pct + "of Excel file");
@@ -96,16 +122,36 @@ public class ExcelWorkbook {
 			Row row = myExcelSheet.getRow( i );
 			String nm = null;
 			String inf = null;
+			String inf2 = null;
 			String addr = null;
+			String addr2 = null;
 			String zipCode = null;
+			String zipCode2 = null;
 			String ph = null;
 			if (row == null){
 				//whole row is blank - this shouldn't exist
 			} else {
-				Cell cnm = row.getCell(colCustName);
-				if(cnm != null){
-					nm = cnm.getStringCellValue();
+				//read in customer name
+				Cell companyName = null;
+				Cell companyName2 = null;
+				if(colCustName != -1 && colCustName2 == -1){ //only a first
+					companyName = row.getCell(colCustName);
+					if(companyName != null){
+						nm = companyName.getStringCellValue();
+					}
+				} else if (colCustName != -1 && colCustName2 != -1) {
+					companyName = row.getCell(colCustName);
+					companyName2 = row.getCell(colCustName2);
+					if(companyName != null && companyName2 != null){
+						nm = companyName.getStringCellValue() + companyName2.getStringCellValue();
+					} else if (companyName != null && companyName2 == null) {
+						nm = companyName.getStringCellValue();
+					} else if (companyName == null && companyName2 != null) {
+						nm = companyName2.getStringCellValue();
+					}
 				}
+
+				//TODO once implement influencers, then we need to check all the influencers and first/last name
 				if(colCustInfluencer != -1){ //only if we are using influencer
 					Cell cinf = row.getCell(colCustInfluencer);
 					if (cinf != null){
@@ -118,10 +164,22 @@ public class ExcelWorkbook {
 						addr = caddr.getStringCellValue();
 					}
 				}
+				if(colCustAddr2 != -1){
+					Cell caddr2 = row.getCell(colCustAddr2);
+					if (caddr2 != null){
+						addr2 = caddr2.getStringCellValue();
+					}
+				}
 				if(colCustZip != -1){
 					Cell czip = row.getCell(colCustZip);
 					if (czip != null){
 						zipCode = czip.getStringCellValue();
+					}
+				}
+				if(colCustZip2 != -1){
+					Cell czip2 = row.getCell(colCustZip2);
+					if (czip2 != null){
+						zipCode = czip2.getStringCellValue();
 					}
 				}
 				if(colCustPhone != -1){
@@ -132,18 +190,20 @@ public class ExcelWorkbook {
 				}
 			}
 			//check if nm, inf, addr or ph has info in it
-			if (nm != null || inf != null || addr !=null || ph != null){
+			if (nm != null || inf != null || addr !=null || addr2 !=null || ph != null){
 				//create an excel customer object and add it to arraylist
-				//TODO what is all of the nulls, check on this
 				//i+1 is because row indexing starts at 0
-				excelCustomerObj cust = new excelCustomerObj(null, nm, null, null, addr, zipCode, ph, i + 1);
+				excelCustomerObj cust = new excelCustomerObj(null, nm, null, null, addr, zipCode, addr2, zipCode2, ph, i + 1);
 				if(cust.name != null){
 					cust.name_translated = translator.customerNameTranslations(cust.name);
 					cust.name_translated = translator.stripBeginning(cust.name_translated);
 					cust.name_translated = translator.stripEndings(cust.name_translated);
 				}
-				if(cust.address != null){
-					cust.address = translator.modPOBox(cust.address);
+				if(cust.billAddress != null){
+					cust.billAddress = translator.modPOBox(cust.billAddress);
+				}
+				if(cust.physAddress != null){
+					cust.physAddress = translator.modPOBox(cust.physAddress);
 				}
 				customersInWB.add(cust);
 			}
@@ -167,7 +227,7 @@ public class ExcelWorkbook {
 		//create header for excel file
 		setHeaders(matchesSheet);
 		int rowCounter = 1;
-		for( excelCustomerObj excelCust : customersInWB){
+		for( excelCustomerObj excelCust : customersInWB ){
 			//Helper for checking how fast writer is working
 //			if((rowCounter % 10) == 0){
 //				double pct = ((double)rowCounter / customersInWB.size()) * 100;
@@ -175,25 +235,24 @@ public class ExcelWorkbook {
 //			}
 //			
 			Row r = null;
-			r = matchesSheet.createRow(rowCounter);
+			r = matchesSheet.createRow( rowCounter );
 			if (excelCust.potenDBSMatches.isEmpty()){
 				//no match, just copy Excel Customer data
 				setExcelCustToRow(r, excelCust, null, null);
-								
 			} else {
-				if (excelCust.potenDBSMatches.size() > 1){
+				//sort all the potential matches by match score
+				if ( excelCust.potenDBSMatches.size() > 1 ){
 					Collections.sort(excelCust.potenDBSMatches,new matchSorting());
 				}
 				PotentialMatch bestPotentialMatch = excelCust.potenDBSMatches.get(0);
-				//TODO search matches
 				
-				//populate excel sheet 'matchesSheet' with customer and matches
+				//populate excel sheet 'matchesSheet' with customer and matches, use the potential customer num to get out of dbs customer hash
 				setExcelCustToRow(r, excelCust, ourCustomers.get(bestPotentialMatch.customerNum), bestPotentialMatch);
 			}
 			rowCounter++;
 		}
-	        
-
+		
+		//TODO KEEP REVIEWING/FOLLOWING CODE FROM HERE
 		//create an output stream for writing
 		FileOutputStream fileOut = null;
 		try {
@@ -213,6 +272,7 @@ public class ExcelWorkbook {
 		}
 	}
 	
+	//topMatch is the customer object that has been identified as the best object, need to use bestpotential match type to figure out if this is phys addr or billing
 	private void setExcelCustToRow(Row r, excelCustomerObj xlCust, CustomerObj topMatch, PotentialMatch bestPotentialMatch){
 		String tmpPhone = null;
 		if (topMatch == null){
@@ -220,9 +280,9 @@ public class ExcelWorkbook {
 			//c.setCellType(STRING);
 			c.setCellValue(xlCust.name);
 			c = r.createCell(1);
-			c.setCellValue(xlCust.address);
+			c.setCellValue(xlCust.billAddress);
 			c = r.createCell(2);
-			c.setCellValue(xlCust.zipCode);
+			c.setCellValue(xlCust.billZipCode);
 			c = r.createCell(3);
 			if(xlCust.phone != null && xlCust.phone.length()>6){
 				tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
@@ -232,9 +292,9 @@ public class ExcelWorkbook {
 			Cell c = r.createCell(0);
 			c.setCellValue(xlCust.name);
 			c = r.createCell(1);
-			c.setCellValue(xlCust.address);
+			c.setCellValue(xlCust.billAddress);
 			c = r.createCell(2);
-			c.setCellValue(xlCust.zipCode);
+			c.setCellValue(xlCust.billZipCode);
 			c = r.createCell(3);
 			if(xlCust.phone != null && xlCust.phone.length()>6){
 				tmpPhone = xlCust.phone.substring(0,3)+"-"+xlCust.phone.substring(3,6)+"-"+xlCust.phone.substring(6);
@@ -245,9 +305,18 @@ public class ExcelWorkbook {
 			c = r.createCell(5);
 			c.setCellValue(topMatch.name);
 			c = r.createCell(6);
-			c.setCellValue(topMatch.address);
+			if(bestPotentialMatch.matchType.equals("Physical Address")){
+				c.setCellValue(topMatch.physAddress);
+			} else { //anything other than physical match address, output billing address
+				c.setCellValue(topMatch.billAddress);
+			}
 			c = r.createCell(7);
-			c.setCellValue(topMatch.zipCode);
+			//Determine which address and zip to use, physical or billing
+			if(bestPotentialMatch.matchType.equals("Physical Address")){
+				c.setCellValue(topMatch.physZipCode);
+			} else { //anything other than physical match address, output billing address
+				c.setCellValue(topMatch.billZipCode);
+			}
 			c = r.createCell(8);
 			if(topMatch.phone != null && topMatch.phone.length() == 10){
 				tmpPhone = topMatch.phone.substring(0,3)+"-"+topMatch.phone.substring(3,6)+"-"+topMatch.phone.substring(6);

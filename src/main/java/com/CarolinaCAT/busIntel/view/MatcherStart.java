@@ -56,12 +56,20 @@ public class MatcherStart extends JFrame {
 	
 	//Change text field to JFormattedTextField
 	private static final long serialVersionUID = -6712151586227499454L;
+	/*Customer matcher main panel*/
 	private JPanel contentPane;
+	/*User input text boxes*/
 	private JTextField txtCustNameCol;
+	private JTextField txtCustNameCol2;
 	private JTextField txtCustAddrCol;
+	private JTextField txtCustAddrCol2;
 	private JTextField txtCustZipCol;
+	private JTextField txtCustZipCol2;
 	private JTextField txtCustPhoneCol;
 	private JTextField txtCustInfCol;
+	private JTextField txtCustInfCol2;
+	private JTextField txtCustInfCol3;
+	private JTextField txtCustInfCol4;
 	private JTextField txtFirstRow;
 	private JTextField txtOutputFileName;
 	private final JFileChooser openFileChooser = new JFileChooser();
@@ -70,10 +78,8 @@ public class MatcherStart extends JFrame {
 	private JRadioButton rdbtnUCC;
 	private JRadioButton rdbtnDom;
 	private JRadioButton rdbtnCustom;
-	//TODO need getter on button group
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnRunMatcher;
-	//TOD need getter on spinner name tolerance
 	private JSpinner spnrNameTol;
 	private File inputFile;
 	private JLabel lblErrFirstRow;
@@ -94,26 +100,28 @@ public class MatcherStart extends JFrame {
 	private boolean readyToRun = false;
 	private JLabel lblErrTabName;
 	private JTextField txtTabName;
+
+
 	
 //	*****************ONLY NEEDED FOR TESTING*************************
-	public static void main(String args[]){
-		//create the GUI frame
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MatcherStart frame = new MatcherStart();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String args[]){
+//		//create the GUI frame
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		} catch (Throwable e) {
+//			e.printStackTrace();
+//		}
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					MatcherStart frame = new MatcherStart();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 	
 	/**
 	 * Create the frame.
@@ -142,7 +150,7 @@ private void initComponents() {
 	setContentPane(contentPane);
 	
 	////////////// CREATE LABELS FOR EXCEL INPUT COLUMNS /////////////////
-	JLabel lblCustNameCol = new JLabel("Customer Name Column:");
+	JLabel lblCustNameCol = new JLabel("Company Name Column:");
 	JLabel lblCustAddrCol = new JLabel("Customer Address Column:");
 	JLabel lblCustZipCol = new JLabel("Customer Zip Column:");
 	JLabel lblCustPhoneCol = new JLabel("Customer Phone Column:");
@@ -160,6 +168,7 @@ private void initComponents() {
 	txtCustPhoneCol = new JTextField();
 	txtCustPhoneCol.setColumns(2);
 	txtCustInfCol = new JTextField();
+	txtCustInfCol.setToolTipText("First and Last Column OR First Name to be concatenated with (optional) last name column 1, if supplied.");
 	txtCustInfCol.setColumns(2);
 	txtFirstRow = new JTextField();
 	txtFirstRow.setColumns(3);
@@ -231,6 +240,30 @@ private void initComponents() {
 	lblErrTabName = new JLabel("*");
 	lblErrTabName.setForeground(Color.RED);
 	lblErrTabName.setFont(new Font("Tahoma", Font.BOLD, 13));
+	
+	txtCustNameCol2 = new JTextField();
+	txtCustNameCol2.setToolTipText("Optional second column in Excel sheet to concatenate to the first column (i.e. company name split across two columns)");
+	txtCustNameCol2.setColumns(2);
+	
+	txtCustAddrCol2 = new JTextField();
+	txtCustAddrCol2.setToolTipText("Optional second address column. Treated as a second address to use in lookup. This is NOT concatenated tot he first address column. If no second zip column provided, zip will be used from first column.");
+	txtCustAddrCol2.setColumns(2);
+	
+	txtCustZipCol2 = new JTextField();
+	txtCustZipCol2.setToolTipText("Optional second zip. Used with second address column if second address column is supplied.");
+	txtCustZipCol2.setColumns(2);
+	
+	txtCustInfCol2 = new JTextField();
+	txtCustInfCol2.setToolTipText("Optional last name column 1 to concatenate to first column entered");
+	txtCustInfCol2.setColumns(2);
+	
+	txtCustInfCol3 = new JTextField();
+	txtCustInfCol3.setToolTipText("Optional first and last column for second influencer OR second influencers first name.");
+	txtCustInfCol3.setColumns(2);
+	
+	txtCustInfCol4 = new JTextField();
+	txtCustInfCol4.setToolTipText("Second influencer last name will be concatenated with optional second influencer first name if this field is filled in");
+	txtCustInfCol4.setColumns(2);
 
 	GroupLayout gl_contentPane = new GroupLayout(contentPane);
 	gl_contentPane.setHorizontalGroup(
@@ -257,53 +290,64 @@ private void initComponents() {
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblCustZipCol)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+										.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+										.addGap(2)
+										.addComponent(lblErrZipCol)
 										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(lblErrZipCol))
+										.addComponent(txtCustZipCol2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblCustInfCol)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+										.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+										.addGap(2)
+										.addComponent(lblErrInflCol)
 										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(lblErrInflCol))
+										.addComponent(txtCustInfCol2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(txtCustInfCol3, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(txtCustInfCol4, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblFirstRow)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+										.addGap(2)
 										.addComponent(lblErrFirstRow))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblMatchFileName)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
+										.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 											.addGroup(gl_contentPane.createSequentialGroup()
-												.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-													.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(lblCustNameCol)
-														.addPreferredGap(ComponentPlacement.UNRELATED)
-														.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-														.addPreferredGap(ComponentPlacement.RELATED)
-														.addComponent(lblErrNameCol))
-													.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(lblCustAddrCol)
-														.addPreferredGap(ComponentPlacement.UNRELATED)
-														.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)))
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(lblErrAddrCol))
-											.addGroup(gl_contentPane.createSequentialGroup()
-												.addComponent(lblCustPhoneCol)
+												.addComponent(lblCustNameCol)
 												.addPreferredGap(ComponentPlacement.UNRELATED)
-												.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(lblErrPhoneCol)))
-										.addGap(52)
+												.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+												.addGap(2)
+												.addComponent(lblErrNameCol))
+											.addGroup(gl_contentPane.createSequentialGroup()
+												.addComponent(lblCustAddrCol)
+												.addPreferredGap(ComponentPlacement.UNRELATED)
+												.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)))
+										.addGap(2)
 										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-											.addComponent(rdbtnUCC)
-											.addComponent(rdbtnCustom)
-											.addComponent(rdbtnDom))
-										.addGap(257))
+											.addGroup(gl_contentPane.createSequentialGroup()
+												.addComponent(lblErrAddrCol)
+												.addPreferredGap(ComponentPlacement.RELATED)
+												.addComponent(txtCustAddrCol2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
+											.addGroup(gl_contentPane.createSequentialGroup()
+												.addComponent(txtCustNameCol2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+												.addGap(135)
+												.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+													.addComponent(rdbtnUCC)
+													.addComponent(rdbtnCustom)
+													.addComponent(rdbtnDom)))))
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(lblCustPhoneCol)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+										.addGap(2)
+										.addComponent(lblErrPhoneCol))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblModifyCustomerName)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -331,32 +375,35 @@ private void initComponents() {
 					.addComponent(btnSelectInputFile)
 					.addComponent(lblSelectInputFile))
 				.addPreferredGap(ComponentPlacement.UNRELATED)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblNewLabel)
-					.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(lblErrTabName))
-				.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup()
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblNewLabel)
+							.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblErrTabName))
+						.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(lblIgnore)
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustNameCol)
 							.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblErrNameCol)
-							.addComponent(ckbxIgnrName))
+							.addComponent(ckbxIgnrName)
+							.addComponent(txtCustNameCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustAddrCol)
 							.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblErrAddrCol)
-							.addComponent(ckbxIgnrAddr))
+							.addComponent(ckbxIgnrAddr)
+							.addComponent(txtCustAddrCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustZipCol)
 							.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblErrZipCol)
-							.addComponent(ckbxIgnrZip))
+							.addComponent(ckbxIgnrZip)
+							.addComponent(txtCustZipCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustPhoneCol)
@@ -368,20 +415,23 @@ private void initComponents() {
 							.addComponent(lblCustInfCol)
 							.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblErrInflCol)
-							.addComponent(ckbxIgnrInfl))
+							.addComponent(ckbxIgnrInfl)
+							.addComponent(txtCustInfCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(txtCustInfCol3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(txtCustInfCol4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addPreferredGap(ComponentPlacement.UNRELATED)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblFirstRow)
 							.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrFirstRow)))
+							.addComponent(lblErrFirstRow))
+						.addGap(18))
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addGap(3)
 						.addComponent(rdbtnCustom)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
 						.addComponent(rdbtnUCC)
 						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(rdbtnDom)))
-				.addGap(18)
+						.addComponent(rdbtnDom)
+						.addPreferredGap(ComponentPlacement.RELATED)))
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 					.addComponent(lblMatchFileName)
 					.addComponent(txtOutputFileName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -401,7 +451,6 @@ private void initComponents() {
 ///This method contains all of the code for creating events
 ////////////////////////////////////////////
 	private void createEvents() {
-	
 		btnRunMatcher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Initiate popup for progress bar
@@ -418,13 +467,19 @@ private void initComponents() {
 								System.out.println("prog bar visible");
 								CustomerMatcher matcherProg = null;
 								//create array of column locations
-								int[] colLocs = new int[6];
+								int[] colLocs = new int[12];
 								colLocs[0] =  getTxtFirstRow();
 								colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
-								colLocs[2] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
-								colLocs[3] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
-								colLocs[4] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
-								colLocs[5] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
+								colLocs[2] = (getTxtCustNameCol2() == -1) ?  -1 : getTxtCustNameCol2();
+								colLocs[3] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
+								colLocs[4] = (getTxtCustInfCol2() == -1) ?  -1 : getTxtCustInfCol2();
+								colLocs[5] = (getTxtCustInfCol3() == -1) ?  -1 : getTxtCustInfCol3();
+								colLocs[6] = (getTxtCustInfCol4() == -1) ?  -1 : getTxtCustInfCol4();
+								colLocs[7] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
+								colLocs[8] = (getTxtCustAddrCol2() == -1) ?  -1 : getTxtCustAddrCol2();
+								colLocs[9] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
+								colLocs[10] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
+								colLocs[11] = (getTxtCustZipCol2() == -1) ?  -1 : getTxtCustZipCol2();
 								try {
 									System.out.println("starting run");
 									matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
@@ -432,11 +487,13 @@ private void initComponents() {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
+								JOptionPane.showMessageDialog(null,
+									    "Matching Complete!",
+									    "Complete",
+									    JOptionPane.INFORMATION_MESSAGE);
 								progBarFrame.setVisible(false);
 								//TODO this isn't correct, need to restart
-								progBarFrame.setPBGenMatches(0);
-								progBarFrame.setPBImportDBS(0);
-								progBarFrame.setPBReadCusts(0);
+								progBarFrame = null;
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -493,6 +550,7 @@ private void initComponents() {
 					lblErrInflCol.setText("");
 					txtFirstRow.setText("2");
 					lblErrFirstRow.setText("");
+					checkReadyToRun();
 				}
 			}
 		});
@@ -605,10 +663,13 @@ private void initComponents() {
 					lblErrNameCol.setText("");
 					txtCustNameCol.setText("");
 					txtCustNameCol.setEditable(false);
+					txtCustNameCol2.setText("");
+					txtCustNameCol2.setEditable(false);
 					checkReadyToRun();
 				} else {
 					txtCustNameCol.setEditable(true);
 					lblErrNameCol.setText("*");
+					txtCustNameCol2.setEditable(true);
 					readyToRun = false;
 				}
 			}
@@ -620,10 +681,13 @@ private void initComponents() {
 					lblErrAddrCol.setText("");
 					txtCustAddrCol.setText("");
 					txtCustAddrCol.setEditable(false);
+					txtCustAddrCol2.setText("");
+					txtCustAddrCol2.setEditable(false);
 					checkReadyToRun();
 				} else {
 					txtCustAddrCol.setEditable(true);
 					lblErrAddrCol.setText("*");
+					txtCustAddrCol2.setEditable(true);
 					readyToRun = false;
 				}
 			}
@@ -635,10 +699,13 @@ private void initComponents() {
 					lblErrZipCol.setText("");
 					txtCustZipCol.setText("");
 					txtCustZipCol.setEditable(false);
+					txtCustZipCol2.setText("");
+					txtCustZipCol2.setEditable(false);
 					checkReadyToRun();
 				} else {
 					txtCustZipCol.setEditable(true);
 					lblErrZipCol.setText("*");
+					txtCustZipCol2.setEditable(true);
 					readyToRun = false;
 				}
 			}
@@ -665,10 +732,19 @@ private void initComponents() {
 					lblErrInflCol.setText("");
 					txtCustInfCol.setText("");
 					txtCustInfCol.setEditable(false);
+					txtCustInfCol2.setText("");
+					txtCustInfCol2.setEditable(false);
+					txtCustInfCol3.setText("");
+					txtCustInfCol3.setEditable(false);
+					txtCustInfCol4.setText("");
+					txtCustInfCol4.setEditable(false);
 					checkReadyToRun();
 				} else {
 					txtCustInfCol.setEditable(true);
 					lblErrInflCol.setText("*");
+					txtCustInfCol2.setEditable(true);
+					txtCustInfCol3.setEditable(true);
+					txtCustInfCol4.setEditable(true);
 					readyToRun = false;
 				}
 			}
@@ -676,83 +752,105 @@ private void initComponents() {
 	}
 
 	//////////////////////////////*** GETTERS FOR PROGRAM INPUT ****//////////////////////////////////////////////////////////////////////
-	/**
+	/** gets the first company name column text
 	 * @return the txtCustNameCol
 	 */
-	public int getTxtCustNameCol() {
+	private int getTxtCustNameCol() {
+		if(txtCustNameCol.getText() == null || txtCustNameCol.getText().equals("")) {return -1;}
 		String tmp = txtCustNameCol.getText();
-		if(tmp.length()==1){
-			char c1 = tmp.charAt(0);
-			//A is 65
-			return ((int) c1) - 65;
-		} else {
-			char c1 = tmp.charAt(0);
-			char c2 = tmp.charAt(1);
-			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
-			return i;
-		}
+		return getNumberCol(tmp);
+	}
+	
+	private int getTxtCustNameCol2() {
+		if(txtCustNameCol2.getText() == null || txtCustNameCol2.getText().equals("")) {return -1;}
+		String tmp = txtCustNameCol2.getText();
+		return getNumberCol(tmp);
 	}
 
 	/**
 	 * @return the txtCustAddrCol
 	 */
-	public int getTxtCustAddrCol() {
-		if(txtCustAddrCol.getText() == null ) {return -1;}
+	private int getTxtCustAddrCol() {
+		if(txtCustAddrCol.getText() == null || txtCustAddrCol.getText().equals("")) {return -1;}
 		String tmp = txtCustAddrCol.getText();
-		if(tmp.length()==1){
-			char c1 = tmp.charAt(0);
-			//A is 65
-			return ((int) c1) - 65;
-		} else {
-			char c1 = tmp.charAt(0);
-			char c2 = tmp.charAt(1);
-			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
-			return i;
-		}
+		return getNumberCol(tmp);
 	}
 
+
+	/**
+	 * @return the txtCustAddrCol2 column number, if it exists
+	 */
+	private int getTxtCustAddrCol2() {
+		if(txtCustAddrCol2.getText() == null || txtCustAddrCol2.getText().equals("")) {return -1;}
+		String tmp = txtCustAddrCol2.getText();
+		return getNumberCol(tmp);
+	}
+	
 	/**
 	 * @return the txtCustZipCol
 	 */
-	public int getTxtCustZipCol() {
-		if(txtCustZipCol.getText() == null ) {return -1;}
+	private int getTxtCustZipCol() {
+		if(txtCustZipCol.getText() == null || txtCustZipCol.getText().equals("")) {return -1;}
 		String tmp = txtCustZipCol.getText();
-		if(tmp.length()==1){
-			char c1 = tmp.charAt(0);
-			//A is 65
-			return ((int) c1) - 65;
-		} else {
-			char c1 = tmp.charAt(0);
-			char c2 = tmp.charAt(1);
-			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
-			return i;
-		}
+		return getNumberCol(tmp);
+	}
+	
+	/**
+	 * @return the txtCustZipCol2
+	 */
+	private int getTxtCustZipCol2() {
+		if(txtCustZipCol2.getText() == null || txtCustZipCol2.getText().equals("")) {return -1;}
+		String tmp = txtCustZipCol2.getText();
+		return getNumberCol(tmp);
 	}
 
 	/**
 	 * @return the txtCustPhoneCol
 	 */
-	public int getTxtCustPhoneCol() {
-		if(txtCustPhoneCol.getText() == null ) {return -1;}
+	private int getTxtCustPhoneCol() {
+		if(txtCustPhoneCol.getText() == null || txtCustPhoneCol.getText().equals("")) {return -1;}
 		String tmp = txtCustPhoneCol.getText();
-		if(tmp.length()==1){
-			char c1 = tmp.charAt(0);
-			//A is 65
-			return ((int) c1) - 65;
-		} else {
-			char c1 = tmp.charAt(0);
-			char c2 = tmp.charAt(1);
-			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
-			return i;
-		}
+		return getNumberCol(tmp);
 	}
 
 	/**
 	 * @return the txtCustInfCol
 	 */
-	public int getTxtCustInfCol() {
-		if(txtCustInfCol.getText() == null ) {return -1;}
+	private int getTxtCustInfCol() {
+		if(txtCustInfCol.getText() == null || txtCustInfCol.getText().equals("")) {return -1;}
 		String tmp = txtCustInfCol.getText().toUpperCase();
+		return getNumberCol(tmp);
+	}
+	
+	/**
+	 * @return the txtCustInfCol2
+	 */
+	private int getTxtCustInfCol2() {
+		if(txtCustInfCol2.getText() == null || txtCustInfCol2.getText().equals("")) {return -1;}
+		String tmp = txtCustInfCol2.getText().toUpperCase();
+		return getNumberCol(tmp);
+	}
+	
+	/**
+	 * @return the txtCustInfCol3
+	 */
+	private int getTxtCustInfCol3() {
+		if(txtCustInfCol3.getText() == null || txtCustInfCol3.getText().equals("")) {return -1;}
+		String tmp = txtCustInfCol3.getText().toUpperCase();
+		return getNumberCol(tmp);
+	}
+	
+	/**
+	 * @return the txtCustInfCol4
+	 */
+	private int getTxtCustInfCol4() {
+		if(txtCustInfCol4.getText() == null || txtCustInfCol4.getText().equals("")) {return -1;}
+		String tmp = txtCustInfCol4.getText().toUpperCase();
+		return getNumberCol(tmp);
+
+	}
+
+	private int getNumberCol(String tmp) {
 		if(tmp.length()==1){
 			char c1 = tmp.charAt(0);
 			//A is 65
@@ -763,7 +861,11 @@ private void initComponents() {
 			int i = 26 + ((int) c1) - 65 + ((int) c2) - 65;
 			return i;
 		}
+		
 	}
+
+
+
 
 	/**
 	 * @return the txtFirstRow

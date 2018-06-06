@@ -11,8 +11,10 @@ public class CustomerObj{
 	//TODO use this instead for matching
 	public String name_translated;
 	public String parent;
-	public String address;
-	public String zipCode;
+	public String billAddress;
+	public String billZipCode;
+	public String physAddress;
+	public String physZipCode;
 	//TODO need to add second address and second ZIP
 	public String phone;
 	//we will be doing influencers differently -- an arraylist is too much overhead for this purpose
@@ -20,17 +22,20 @@ public class CustomerObj{
 //	public double matchScore;
 //	public String matchType;
 
+
 	/**
-	 * Constructor for customer object
-	 * @param custNum String for customer number 
+	 * Constructor for a customer objects
+	 * @param custNum String for customer number
 	 * @param nm String for company name of customer
 	 * @param nm2 String for second company name of customer
-	 * @param parentNum String for parent customer number
-	 * @param addr String for address
+	 * @param parentNum parentNum String for parent customer number
 	 * @param ph String for phone number
-	 * @param zipCode String for zip code
+	 * @param billAddr String for billing address
+	 * @param billZipCode String for billing zip code
+	 * @param physAddr String for physical address
+	 * @param physZipCode String for billing zip code
 	 */
-	public CustomerObj(String custNum, String nm, String nm2, String parentNum, String addr, String ph, String zipCode){
+	public CustomerObj(String custNum, String nm, String nm2, String parentNum, String ph, String billAddr, String billZipCode, String physAddr, String physZipCode){
 		//trim and check for length before assigning
 		if (custNum != null && custNum.trim().length()>0){
 			cuno = custNum.trim();
@@ -42,39 +47,41 @@ public class CustomerObj{
 			} else {
 				name = nm.trim();
 			}
-			//OLDER
-			//nameTranslations();
-			//USE TRANSLATOR
-
-			
 		}
 		if (parentNum != null && parentNum.trim().length()>0){
 			parent = parentNum;
 		}
-		if (addr != null && addr.trim().length()>0){
+		//set billing addr and zip
+		if (billAddr != null && billAddr.trim().length()>0){
 			//TODO Need to do some translations of road to Rd, Avenue to Ave, etc.
-			address = addr.trim();
-			//OLDER
-			//modPOBox();
-			//USE TRANSLATOR - moved to matcher class (saves memory)
-			//address = t.modPOBox(address);
+			this.billAddress = billAddr.trim();
 		}
-		if (zipCode != null && zipCode.trim().length()>0){
-			this.zipCode = zipCode.trim();
-			this.zipCode = formatZip(this.zipCode);
+		if (billZipCode != null && billZipCode.trim().length()>0){
+			this.billZipCode = billZipCode.trim();
+			this.billZipCode = formatZip(this.billZipCode);
 		}
+		
+		//set phys addr and zip
+		if (physAddr != null && physAddr.trim().length()>0){
+			//TODO Need to do some translations of road to Rd, Avenue to Ave, etc.
+			this.physAddress = physAddr.trim();
+		}
+		if (physZipCode != null && physZipCode.trim().length()>0){
+			this.physZipCode = physZipCode.trim();
+			this.physZipCode = formatZip(this.physZipCode);
+		}
+		//if one one zip is supplied, use it for both
+		if (this.billAddress != null && this.billZipCode == null && this.physZipCode != null){
+			this.billZipCode = this.physZipCode;
+		} else if (this.physAddress != null && this.physZipCode == null && this.billZipCode != null) {
+			this.physZipCode = this.billZipCode;
+		}
+		
 		if (ph != null && ph.trim().length()>0){
 			phone = formatPhone(ph);
 		}
-		//set up for influencers, if exist, initial constructor has, which is plenty for most
-		//influencers = new ArrayList<String>();
+		//TODO handle influencers differently
 	}
-	
-	//add an influencer
-//	public void addInfluencer(String inf){
-//		influencers.add(inf);
-//	}
-
 	
 	private String formatZip(String zipCode) {
 		if(zipCode.equals("00000") || zipCode.equals("99999")){
