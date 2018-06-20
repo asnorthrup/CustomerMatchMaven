@@ -70,6 +70,11 @@ public class CustomerMatcher {
 		
 		DBSquery customersQuery = new DBSquery(queryCode);
 		
+		AccessProspectsQuery prospectsQuery = new AccessProspectsQuery();
+		//prospect results: Custnum, Cust name, phys addr, bill addr, addr3, city, zip, phone
+		
+	
+		
 		//Saleslink query set up -- Remove for now
 		//String prospectQueryCode = "SELECT [CustomerNo],[CustomerName],isnull([Address1],'')+' '+isnull([Address2],'')+' '+isnull([Address3],''),"
 		//		+ "[PostalCode],[Phone] FROM [AppDb_SalesLink].[dbo].[SalesLink_vCustomer] WHERE [CustomerNo] like ('$%')";
@@ -83,7 +88,8 @@ public class CustomerMatcher {
 		/*Execute customer queries and store customers in an array list called customerList*/
 		//ResultSetMetaData stores properties of a ResultSet object, including column count
 		
-		int approxDBSCustomers = 60000;
+		//Variable for approximate number of customers to read in
+		int approxDBSCustomers = 70000;
 		int numReadIn = 1;
 		int custHashSize = (int) (1.3 * approxDBSCustomers); //recommended size is number of expected / .75 for hash
 		//ArrayList<CustomerObj> ourCustomers = new ArrayList<CustomerObj>(initArrayListCap);
@@ -117,6 +123,34 @@ public class CustomerMatcher {
 			}
 			numReadIn++;
 		}
+		
+		//get prospect result set and parse from the MS Access query of prospects (already embedded in the Access Prospects query object
+		ResultSet prospectRS = prospectsQuery.getResultSet();	
+		while(prospectRS.next()){
+			CustomerObj co = new CustomerObj(prospectRS.getString(1), prospectRS.getString(2), null, null, prospectRS.getString(8),prospectRS.getString(4), prospectRS.getString(7), prospectRS.getString(3), prospectRS.getString(7));
+			//perform translations on the customer object
+			if(co.name != null){
+				co.name_translated = translator.customerNameTranslations(co.name);
+				co.name_translated = translator.stripBeginning(co.name_translated);
+				co.name_translated = translator.stripEndings(co.name_translated);
+			}
+			if(co.billAddress != null && !co.billAddress.equals("No Bill Adr")){
+				co.billAddress = translator.modPOBox(co.billAddress);
+			}
+			if(co.physAddress != null && !co.physAddress.equals("No Phys Adr")){
+				co.physAddress = translator.modPOBox(co.physAddress);
+			}
+		
+			//add to hashmap of customer objects for our customer
+			ourCustomers.put(co.cuno, co);
+			if((numReadIn % 1000) == 0){
+				double pct = ((double)numReadIn / approxDBSCustomers) * 100;
+				System.out.println("Approx " + pct + "% DBS loaded") ;
+				progBarFrame.setPBImportDBS((int) pct);
+			}
+			numReadIn++;
+		}
+		
 		
 		/////////////////////////////////***   SALESLINK QUERY   ***///////////////////////////
 		//TODO check this worked
