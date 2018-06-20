@@ -58,16 +58,29 @@ public class ExcelWorkbook {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+	    Sheet myExcelSheet = null;
 		try {
 			//TODO do I need to close file input stream?
 			//excelFile = new FileInputStream(file);
 			
 			//opPackage = OPCPackage.open(file.getAbsolutePath());
 			//wb = new XSSFWorkbook(excelFile);
+			boolean wsExists = false;
 			wb = new XSSFWorkbook(pkg);
-			Sheet myExcelSheet = wb.getSheet(tabName);
-			populateCustomers(myExcelSheet, progBarFrame, inputs, translator);
+		    if (wb.getNumberOfSheets() != 0) {
+		        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+		           if (wb.getSheetName(i).equals(tabName)) {
+		                wsExists = true;
+		            }
+		        }
+		    }
+
+			if (wsExists){
+				myExcelSheet = wb.getSheet(tabName);
+			} else {
+
+			}
+
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		} catch (IOException e){
@@ -82,6 +95,7 @@ public class ExcelWorkbook {
 //				}
 //			}
 //		}
+		populateCustomers(myExcelSheet, progBarFrame, inputs, translator);
 		try {
 			pkg.close();
 		} catch (IOException e) {

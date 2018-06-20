@@ -485,7 +485,10 @@ private void initComponents() {
 									matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
-									e.printStackTrace();
+									JOptionPane.showMessageDialog(null, 
+						                    "Error, file not loaded properly. Check file exists, tab name is correct", 
+						                    "Cannot Write Warning", 
+						                    JOptionPane.WARNING_MESSAGE);;
 								}
 								JOptionPane.showMessageDialog(null,
 									    "Matching Complete!",
@@ -541,6 +544,7 @@ private void initComponents() {
 					txtCustNameCol.setText("H");
 					lblErrNameCol.setText(""); //clears error indicator
 					txtCustAddrCol.setText("I");
+					txtCustAddrCol2.setText("J");
 					lblErrAddrCol.setText("");
 					txtCustZipCol.setText("M");
 					lblErrZipCol.setText("");
@@ -614,10 +618,24 @@ private void initComponents() {
 			}
 		});
 		
+		txtCustNameCol2.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				checkExtraColTextInput(txtCustNameCol2, arg0);
+			}
+		});
+		
 		txtCustAddrCol.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
 				checkColTextInput(txtCustAddrCol, lblErrAddrCol, arg0);
+			}
+		});
+		
+		txtCustAddrCol2.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				checkExtraColTextInput(txtCustAddrCol2, arg0);
 			}
 		});
 		
@@ -635,6 +653,13 @@ private void initComponents() {
 			}
 		});
 		
+		txtCustZipCol2.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				checkExtraColTextInput(txtCustZipCol2, arg0);
+			}
+		});
+		
 		txtCustInfCol.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
@@ -644,7 +669,6 @@ private void initComponents() {
 		//TODO this should be key listener
 		txtFirstRow.addFocusListener(new FocusAdapter() {
 			@Override
-			//TODO this isn't correct need to check agaist number not checkCol method
 			public void focusLost(FocusEvent arg0) {
 				if (txtFirstRow.getText().length() > 0 && txtFirstRow.getText().matches("-?\\d+")){
 					lblErrFirstRow.setText("");
@@ -948,20 +972,9 @@ private void initComponents() {
 	public boolean getMatcherStart(){
 		return matcherStart;
 	}
-//	//helper method for creating formatted text fields
-//	protected MaskFormatter createFormatter(String s){
-//		MaskFormatter formatter = null;
-//		try {
-//			formatter = new MaskFormatter(s);
-//		} catch(java.text.ParseException exc) {
-//	        System.err.println("formatter is bad: " + exc.getMessage());
-//	        System.exit(-1);
-//		}
-//		return formatter;
-//	}
 	
 	private void checkColTextInput(JTextField tf, JLabel jl, KeyEvent ke){
-		if((tf.getText()!= "" && tf.getText().length() >1) ){
+		if((tf.getText() != "" && tf.getText().length() > 1) ){
 			ke.consume();
 		} else if (ke.getExtendedKeyCode() != KeyEvent.VK_DELETE && ke.getKeyChar() != '\b' && ke.getExtendedKeyCode() != KeyEvent.VK_SHIFT){
 			if(Character.toString(ke.getKeyChar()).matches("[a-z]")){
@@ -977,6 +990,25 @@ private void initComponents() {
 		} else if (ke.getExtendedKeyCode() == KeyEvent.VK_DELETE || ke.getKeyChar() == '\b'){
 			if(tf.getText().length()<1){
 				jl.setText("*");
+				checkReadyToRun();
+			}
+		}
+	}
+	
+	private void checkExtraColTextInput(JTextField tf, KeyEvent ke){
+		if((tf.getText() != "" && tf.getText().length() > 1) ){
+			ke.consume();
+		} else if (ke.getExtendedKeyCode() != KeyEvent.VK_DELETE && ke.getKeyChar() != '\b' && ke.getExtendedKeyCode() != KeyEvent.VK_SHIFT){
+			if(Character.toString(ke.getKeyChar()).matches("[a-z]")){
+				ke.setKeyChar(Character.toUpperCase(ke.getKeyChar()));
+				checkReadyToRun();
+			} else if (Character.toString(ke.getKeyChar()).matches("[A-Z]")){
+				checkReadyToRun();
+			} else {
+				ke.consume();
+			}
+		} else if (ke.getExtendedKeyCode() == KeyEvent.VK_DELETE || ke.getKeyChar() == '\b'){
+			if(tf.getText().length()<1){
 				checkReadyToRun();
 			}
 		}
