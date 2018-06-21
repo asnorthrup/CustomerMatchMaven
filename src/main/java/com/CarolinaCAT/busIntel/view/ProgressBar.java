@@ -1,6 +1,7 @@
 package com.CarolinaCAT.busIntel.view;
 
 import java.awt.BorderLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -10,7 +11,10 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
+
 import java.awt.Dialog.ModalExclusionType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
@@ -24,11 +28,25 @@ public class ProgressBar extends JFrame {
 	private JProgressBar pbImportDBS;
 	private JProgressBar pbReadCusts;
 	private JProgressBar pbGenMatches;
+	private JButton btnCancel;
 	
 	/**
 	 * Create the frame.
 	 */
 	public ProgressBar() {
+		initComponents();
+		createEvents();
+	}
+	
+	private void createEvents() {
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO how to cancel, probably need to look at having customer matcher called in a thread
+			}
+		});
+	}
+
+	private void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -36,15 +54,16 @@ public class ProgressBar extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		JPanel panel = new JPanel();
+		//JPanel panel = new JPanel();
+		contentPane.setOpaque(true);
 
-		contentPane.add(panel, BorderLayout.CENTER);
+		//contentPane.add(panel, BorderLayout.CENTER);
 		
 		pbReadCusts = new JProgressBar();
 		
 		pbGenMatches = new JProgressBar();
 		
-		JButton btnCancel = new JButton("Cancel");
+		btnCancel = new JButton("Cancel");
 		
 		JLabel lblReadCustFileStatus = new JLabel("Reading Customer File...");
 		
@@ -53,7 +72,7 @@ public class ProgressBar extends JFrame {
 		JLabel lblImportDBSStatus = new JLabel("Importing DBS Customers...");
 		
 		JLabel lblGenMatchStatus = new JLabel("Generating Matches...");
-		GroupLayout gl_panel = new GroupLayout(panel);
+		GroupLayout gl_panel = new GroupLayout(contentPane);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel.createSequentialGroup()
@@ -99,7 +118,10 @@ public class ProgressBar extends JFrame {
 					.addComponent(btnCancel)
 					.addContainerGap())
 		);
-		panel.setLayout(gl_panel);
+
+		contentPane.setLayout(gl_panel);
+		contentPane.validate();
+		setVisible(true);
 	}
 	
 //	panel.addPropertyChangeListener(new PropertyChangeListener() {
