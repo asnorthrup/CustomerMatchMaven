@@ -31,13 +31,14 @@ public class ProgressBar extends JFrame {
 	private JButton btnCancel;
 	
 	/**
-	 * Create the frame.
+	 * Create the frame for the progress bar inside of the EDT thread.
 	 */
 	public ProgressBar() {
 		initComponents();
 		createEvents();
 	}
 	
+	//create events, which only event should be clicking cancel button
 	private void createEvents() {
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -46,6 +47,7 @@ public class ProgressBar extends JFrame {
 		});
 	}
 
+	//initialize components of progress bar
 	private void initComponents() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -57,21 +59,17 @@ public class ProgressBar extends JFrame {
 		//JPanel panel = new JPanel();
 		contentPane.setOpaque(true);
 
-		//contentPane.add(panel, BorderLayout.CENTER);
-		
+		//create progress bars		
 		pbReadCusts = new JProgressBar();
-		
 		pbGenMatches = new JProgressBar();
+		pbImportDBS = new JProgressBar();
+		JLabel lblReadCustFileStatus = new JLabel("Reading Customer File...");
+		JLabel lblImportDBSStatus = new JLabel("Importing DBS Customers...");
+		JLabel lblGenMatchStatus = new JLabel("Generating Matches...");
 		
 		btnCancel = new JButton("Cancel");
-		
-		JLabel lblReadCustFileStatus = new JLabel("Reading Customer File...");
-		
-		pbImportDBS = new JProgressBar();
-		
-		JLabel lblImportDBSStatus = new JLabel("Importing DBS Customers...");
-		
-		JLabel lblGenMatchStatus = new JLabel("Generating Matches...");
+
+		//setup layout for progress bar panel
 		GroupLayout gl_panel = new GroupLayout(contentPane);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.TRAILING)
@@ -119,33 +117,35 @@ public class ProgressBar extends JFrame {
 					.addContainerGap())
 		);
 
+		//jpanel isn't showing up during second run
 		contentPane.setLayout(gl_panel);
 		contentPane.validate();
 		setVisible(true);
 	}
 	
-//	panel.addPropertyChangeListener(new PropertyChangeListener() {
-//		public void propertyChange(PropertyChangeEvent arg0) {
-//			if ("progress" == arg0.getPropertyName()){
-//				this.setValue(progress);
-//			}
-//		}
-//	});
-	
 	///////////////////*** SETTERS FOR UPDATING STATUS BARS ***////////////////////
+	/**
+	 * Allows program to update the progress bar for importing customers
+	 * @param pct as integer for percent complete
+	 */
 	public void setPBImportDBS(int pct){
 		pbImportDBS.setValue(pct);
 		pbImportDBS.update(pbImportDBS.getGraphics());
 	}
-	
+	/**
+	 * Allows program to update the progress bar for reading in of customers in selected Excel file
+	 * @param pct as integer for percent complete
+	 */
 	public void setPBReadCusts(int pct){
 		pbReadCusts.setValue(pct);
 		pbReadCusts.update(pbReadCusts.getGraphics());
 	}
-	
+	/**
+	 * Allows program to update the progress bar for creating matches of customer in CRM to customers in selected Excel file
+	 * @param pct as integer for percent complete
+	 */	
 	public void setPBGenMatches(int pct){
 		pbGenMatches.setValue(pct);
 		pbGenMatches.update(pbGenMatches.getGraphics());
 	}
-	
 }

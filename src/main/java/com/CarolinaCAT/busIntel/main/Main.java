@@ -6,7 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import com.CarolinaCAT.busIntel.matching.CustomerMatcher;
-import com.CarolinaCAT.busIntel.matching.Translators;
 import com.CarolinaCAT.busIntel.view.MatcherStart;
 
 
@@ -33,8 +32,6 @@ public class Main {
 					startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					System.out.println("step 4");
 					CustomerMatcher matcherProg = null;
-					
-
 					
 				} catch (Exception e) {
 					e.printStackTrace();

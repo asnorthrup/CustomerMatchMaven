@@ -18,6 +18,8 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
  * @author ANorthrup
  *
  */
+
+//TODO why did harvest pro gardent pro in EDA_Export_fullfile in lowman's data, match to jsut a PO box with no data
 public class CustomerMatcher {
 	/**Min Addr Score in fuzzy matcher */
 	private int MIN_ADDR_SCORE = 100;

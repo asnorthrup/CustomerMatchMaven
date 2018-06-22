@@ -47,18 +47,18 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
-
+/**
+ * Start class where Jframe is created for user input
+ * @author ANorthrup
+ *
+ */
 public class MatcherStart extends JFrame {
 
-	/**
-	 * Auto-gen serializable version id
-	 */
-	
-	//Change text field to JFormattedTextField
+	//Auto-gen serializable version id	
 	private static final long serialVersionUID = -6712151586227499454L;
-	/*Customer matcher main panel*/
+	//Customer matcher main panel
 	private JPanel contentPane;
-	/*User input text boxes*/
+	//text boxes for user input about excel file setup
 	private JTextField txtCustNameCol;
 	private JTextField txtCustNameCol2;
 	private JTextField txtCustAddrCol;
@@ -72,15 +72,20 @@ public class MatcherStart extends JFrame {
 	private JTextField txtCustInfCol4;
 	private JTextField txtFirstRow;
 	private JTextField txtOutputFileName;
+	private JSpinner spnrNameTol;
+	private JTextField txtTabName;
+	//opens file browser
 	private final JFileChooser openFileChooser = new JFileChooser();
+	//button that opens the file chooser
 	private JButton btnSelectInputFile; 
 	private JLabel lblSelectInputFile;
+	//radio buttons for pre-populated columns of standard reports
 	private JRadioButton rdbtnUCC;
 	private JRadioButton rdbtnDom;
 	private JRadioButton rdbtnCustom;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnRunMatcher;
-	private JSpinner spnrNameTol;
+	//labels for user input text boxes
 	private File inputFile;
 	private JLabel lblErrFirstRow;
 	private JLabel lblErrInflCol;
@@ -89,17 +94,21 @@ public class MatcherStart extends JFrame {
 	private JLabel lblErrAddrCol;
 	private JLabel lblErrNameCol;
 	private JLabel lblIgnore;
+	private JLabel lblErrTabName;
+	//check boxes to ignore certain columns
 	private JCheckBox ckbxIgnrName;
 	private JCheckBox ckbxIgnrAddr;
 	private JCheckBox ckbxIgnrZip;
 	private JCheckBox ckbxIgnrPhone;
 	private JCheckBox ckbxIgnrInfl;
+
+	//class that invokes the popup window for showing progress on matching
 	private ProgressBar progBarFrame;
 	//tells main class whether to start executing or not
 	public static volatile boolean matcherStart = false;
 	private boolean readyToRun = false;
-	private JLabel lblErrTabName;
-	private JTextField txtTabName;
+
+
 
 
 	
@@ -124,7 +133,7 @@ public class MatcherStart extends JFrame {
 //	}
 	
 	/**
-	 * Create the frame.
+	 * Constructor to create the GUI frame and events
 	 */
 	public MatcherStart() {
 		initComponents();
@@ -139,10 +148,8 @@ public class MatcherStart extends JFrame {
 ///components.
 ////////////////////////////////////////////
 private void initComponents() {
-	
-	//TODO need second columns for influencers, maybe address+zip? eh 
+	 
 	setTitle("Customer Matcher Program");
-	
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setBounds(100, 100, 705, 525);
 	contentPane = new JPanel();
@@ -157,50 +164,79 @@ private void initComponents() {
 	JLabel lblCustInfCol = new JLabel("Customer Influencer Column:");
 	JLabel lblFirstRow = new JLabel("First Row of Customers:");
 	
-	/////////////////  CREATE FORMATTED TEXT FIELDS FOR EXCEL COLUMNS  //////////////////
+	/////////////////  CREATE TEXT FIELDS FOR EXCEL COLUMNS  //////////////////
 	txtCustNameCol = new JTextField();
-
 	txtCustNameCol.setColumns(2);
+
+	
+	txtCustNameCol2 = new JTextField();
+	txtCustNameCol2.setToolTipText("Optional second column in Excel sheet to concatenate to the first column (i.e. company name split across two columns)");
+	txtCustNameCol2.setColumns(2);
+	
 	txtCustAddrCol = new JTextField();
 	txtCustAddrCol.setColumns(2);
+	
+	txtCustAddrCol2 = new JTextField();
+	txtCustAddrCol2.setToolTipText("Optional second address column. Treated as a second address to use in lookup. This is NOT concatenated tot he first address column. If no second zip column provided, zip will be used from first column.");
+	txtCustAddrCol2.setColumns(2);
+	
 	txtCustZipCol = new JTextField();
 	txtCustZipCol.setColumns(2);
+	
+	txtCustZipCol2 = new JTextField();
+	txtCustZipCol2.setToolTipText("Optional second zip. Used with second address column if second address column is supplied.");
+	txtCustZipCol2.setColumns(2);
+	
 	txtCustPhoneCol = new JTextField();
 	txtCustPhoneCol.setColumns(2);
+	
+	//note influencer columns aren't used yet in matching algorithm, still trying to figure out best way to do a match
 	txtCustInfCol = new JTextField();
 	txtCustInfCol.setToolTipText("First and Last Column OR First Name to be concatenated with (optional) last name column 1, if supplied.");
 	txtCustInfCol.setColumns(2);
+	
+	txtCustInfCol2 = new JTextField();
+	txtCustInfCol2.setToolTipText("Optional last name column 1 to concatenate to first column entered");
+	txtCustInfCol2.setColumns(2);
+	
+	txtCustInfCol3 = new JTextField();
+	txtCustInfCol3.setToolTipText("Optional first and last column for second influencer OR second influencers first name.");
+	txtCustInfCol3.setColumns(2);
+	
+	txtCustInfCol4 = new JTextField();
+	txtCustInfCol4.setToolTipText("Second influencer last name will be concatenated with optional second influencer first name if this field is filled in");
+	txtCustInfCol4.setColumns(2);
+	
 	txtFirstRow = new JTextField();
 	txtFirstRow.setColumns(3);
-	
+
 	btnSelectInputFile = new JButton("Select Input File...");
 	
 	txtOutputFileName = new JTextField();
-	txtOutputFileName.setColumns(10);
+	txtOutputFileName.setColumns(10); //test, don't think necessary
 	
 	lblSelectInputFile = new JLabel("No File Selected");
 	
 	JLabel lblMatchFileName = new JLabel("Matches File Name");
 	
+	//create preset radio buttons
 	rdbtnUCC = new JRadioButton("EDA UCC Download");
-
 	buttonGroup.add(rdbtnUCC);
-	
 	rdbtnDom = new JRadioButton("DOM File");
 	buttonGroup.add(rdbtnDom);
-	
 	rdbtnCustom = new JRadioButton("Custom");
 	rdbtnCustom.setSelected(true);
 	buttonGroup.add(rdbtnCustom);
 	
+	//spinner
 	JLabel lblModifyCustomerName = new JLabel("Modify Customer Name Tolerance:");
-	
 	spnrNameTol = new JSpinner();
 	spnrNameTol.setModel(new SpinnerNumberModel(new Integer(90), null, null, new Integer(1)));
 	
 	btnRunMatcher = new JButton("Run Matcher!");
 	btnRunMatcher.setEnabled(true);
 	
+	//error labels if required fields not set
 	lblErrNameCol = new JLabel("*");
 	lblErrNameCol.setFont(new Font("Tahoma", Font.BOLD, 13));
 	lblErrNameCol.setForeground(Color.RED);
@@ -225,6 +261,7 @@ private void initComponents() {
 	lblErrFirstRow.setFont(new Font("Tahoma", Font.BOLD, 13));
 	lblErrFirstRow.setForeground(new Color(255, 0, 0));
 	
+	//check boxes to ignore certain input options
 	ckbxIgnrName = new JCheckBox("");
 	ckbxIgnrAddr = new JCheckBox("");
 	ckbxIgnrZip = new JCheckBox("");
@@ -234,37 +271,14 @@ private void initComponents() {
 	
 	JLabel lblNewLabel = new JLabel("Tab Name:");
 	
+	//setup textbox for tab names
 	txtTabName = new JTextField();
 	txtTabName.setColumns(10);
-	
 	lblErrTabName = new JLabel("*");
 	lblErrTabName.setForeground(Color.RED);
 	lblErrTabName.setFont(new Font("Tahoma", Font.BOLD, 13));
 	
-	txtCustNameCol2 = new JTextField();
-	txtCustNameCol2.setToolTipText("Optional second column in Excel sheet to concatenate to the first column (i.e. company name split across two columns)");
-	txtCustNameCol2.setColumns(2);
-	
-	txtCustAddrCol2 = new JTextField();
-	txtCustAddrCol2.setToolTipText("Optional second address column. Treated as a second address to use in lookup. This is NOT concatenated tot he first address column. If no second zip column provided, zip will be used from first column.");
-	txtCustAddrCol2.setColumns(2);
-	
-	txtCustZipCol2 = new JTextField();
-	txtCustZipCol2.setToolTipText("Optional second zip. Used with second address column if second address column is supplied.");
-	txtCustZipCol2.setColumns(2);
-	
-	txtCustInfCol2 = new JTextField();
-	txtCustInfCol2.setToolTipText("Optional last name column 1 to concatenate to first column entered");
-	txtCustInfCol2.setColumns(2);
-	
-	txtCustInfCol3 = new JTextField();
-	txtCustInfCol3.setToolTipText("Optional first and last column for second influencer OR second influencers first name.");
-	txtCustInfCol3.setColumns(2);
-	
-	txtCustInfCol4 = new JTextField();
-	txtCustInfCol4.setToolTipText("Second influencer last name will be concatenated with optional second influencer first name if this field is filled in");
-	txtCustInfCol4.setColumns(2);
-
+	//setup the layout of the GUI
 	GroupLayout gl_contentPane = new GroupLayout(contentPane);
 	gl_contentPane.setHorizontalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -456,6 +470,7 @@ private void initComponents() {
 				//Initiate popup for progress bar
 				//TODO handle if user exes out program bar popup before done running
 				if (readyToRun == true){
+					//thread where GUI is processesed is EDT thread.
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							try {
@@ -463,10 +478,13 @@ private void initComponents() {
 									progBarFrame = new ProgressBar();
 									System.out.println("created prog bar");
 								}
+								//TODO try setting progree bars to 0 then set visible, without setting to null below
+								
 								progBarFrame.setVisible(true);
 								System.out.println("prog bar visible");
-								CustomerMatcher matcherProg = null;
-								//create array of column locations
+								//CustomerMatcher matcherProg = null;
+								//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)
+								//TODO should this be in the run block of the event queue?
 								int[] colLocs = new int[12];
 								colLocs[0] =  getTxtFirstRow();
 								colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
@@ -480,28 +498,63 @@ private void initComponents() {
 								colLocs[9] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
 								colLocs[10] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
 								colLocs[11] = (getTxtCustZipCol2() == -1) ?  -1 : getTxtCustZipCol2();
+								//TODO should this be inside the run event queue?
 								try {
 									System.out.println("starting run");
-									matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
+									CustomerMatcher matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
+									JOptionPane.showMessageDialog(null,
+										    "Matching Complete!",
+										    "Complete",
+										    JOptionPane.INFORMATION_MESSAGE);
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
 									JOptionPane.showMessageDialog(null, 
 						                    "Error, file not loaded properly. Check file exists, tab name is correct", 
 						                    "Cannot Write Warning", 
-						                    JOptionPane.WARNING_MESSAGE);;
+						                    JOptionPane.WARNING_MESSAGE);
 								}
-								JOptionPane.showMessageDialog(null,
-									    "Matching Complete!",
-									    "Complete",
-									    JOptionPane.INFORMATION_MESSAGE);
 								progBarFrame.setVisible(false);
-								//TODO this isn't correct, need to restart
+								//TODO check if setting this to null is creating an issue re-painting
 								progBarFrame = null;
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
 					});
+					//TODO should this be in the run block of the event queue?
+					//CustomerMatcher matcherProg = null;
+					//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)
+//					int[] colLocs = new int[12];
+//					colLocs[0] =  getTxtFirstRow();
+//					colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
+//					colLocs[2] = (getTxtCustNameCol2() == -1) ?  -1 : getTxtCustNameCol2();
+//					colLocs[3] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
+//					colLocs[4] = (getTxtCustInfCol2() == -1) ?  -1 : getTxtCustInfCol2();
+//					colLocs[5] = (getTxtCustInfCol3() == -1) ?  -1 : getTxtCustInfCol3();
+//					colLocs[6] = (getTxtCustInfCol4() == -1) ?  -1 : getTxtCustInfCol4();
+//					colLocs[7] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
+//					colLocs[8] = (getTxtCustAddrCol2() == -1) ?  -1 : getTxtCustAddrCol2();
+//					colLocs[9] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
+//					colLocs[10] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
+//					colLocs[11] = (getTxtCustZipCol2() == -1) ?  -1 : getTxtCustZipCol2();
+//					//TODO should this be inside the run event queue?
+//					try {
+//						System.out.println("starting run");
+//						CustomerMatcher matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
+//						JOptionPane.showMessageDialog(null,
+//							    "Matching Complete!",
+//							    "Complete",
+//							    JOptionPane.INFORMATION_MESSAGE);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//						JOptionPane.showMessageDialog(null, 
+//			                    "Error, file not loaded properly. Check file exists, tab name is correct", 
+//			                    "Cannot Write Warning", 
+//			                    JOptionPane.WARNING_MESSAGE);
+//					}
+//					progBarFrame.setVisible(false);
+//					//TODO check if setting this to null is creating an issue re-painting
+//					progBarFrame = null;
+					
 				} else {
 					JOptionPane.showMessageDialog(null,
 						    "Cannot Run, Please add required fields",
@@ -530,6 +583,7 @@ private void initComponents() {
 					checkReadyToRun();
 				} else {
 					lblSelectInputFile.setText("No File Choosen");
+					//TODO see if it is possible to run matcher with no file choosen
 				}
 			}
 		});
@@ -538,11 +592,10 @@ private void initComponents() {
 		rdbtnUCC.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnUCC.isSelected()){
-					//TODO give room for a concatenation field
 					txtTabName.setText("QueryResults");
-					lblErrTabName.setText("");
+					lblErrTabName.setText(""); //clears error indicator, same below
 					txtCustNameCol.setText("H");
-					lblErrNameCol.setText(""); //clears error indicator
+					lblErrNameCol.setText(""); 
 					txtCustAddrCol.setText("I");
 					txtCustAddrCol2.setText("J");
 					lblErrAddrCol.setText("");
@@ -559,7 +612,7 @@ private void initComponents() {
 			}
 		});
 		
-		//TODO when manually add a tab name, check
+		//TODO when manually add a tab name, check after presets are set
 		rdbtnDom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnDom.isSelected()){
@@ -580,7 +633,8 @@ private void initComponents() {
 					checkReadyToRun();
 				}
 			}
-		});		
+		});
+		//default start of program
 		rdbtnCustom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (rdbtnCustom.isSelected()){
@@ -776,9 +830,7 @@ private void initComponents() {
 	}
 
 	//////////////////////////////*** GETTERS FOR PROGRAM INPUT ****//////////////////////////////////////////////////////////////////////
-	/** gets the first company name column text
-	 * @return the txtCustNameCol
-	 */
+
 	private int getTxtCustNameCol() {
 		if(txtCustNameCol.getText() == null || txtCustNameCol.getText().equals("")) {return -1;}
 		String tmp = txtCustNameCol.getText();
@@ -791,93 +843,64 @@ private void initComponents() {
 		return getNumberCol(tmp);
 	}
 
-	/**
-	 * @return the txtCustAddrCol
-	 */
 	private int getTxtCustAddrCol() {
 		if(txtCustAddrCol.getText() == null || txtCustAddrCol.getText().equals("")) {return -1;}
 		String tmp = txtCustAddrCol.getText();
 		return getNumberCol(tmp);
 	}
 
-
-	/**
-	 * @return the txtCustAddrCol2 column number, if it exists
-	 */
 	private int getTxtCustAddrCol2() {
 		if(txtCustAddrCol2.getText() == null || txtCustAddrCol2.getText().equals("")) {return -1;}
 		String tmp = txtCustAddrCol2.getText();
 		return getNumberCol(tmp);
 	}
 	
-	/**
-	 * @return the txtCustZipCol
-	 */
 	private int getTxtCustZipCol() {
 		if(txtCustZipCol.getText() == null || txtCustZipCol.getText().equals("")) {return -1;}
 		String tmp = txtCustZipCol.getText();
 		return getNumberCol(tmp);
 	}
 	
-	/**
-	 * @return the txtCustZipCol2
-	 */
 	private int getTxtCustZipCol2() {
 		if(txtCustZipCol2.getText() == null || txtCustZipCol2.getText().equals("")) {return -1;}
 		String tmp = txtCustZipCol2.getText();
 		return getNumberCol(tmp);
 	}
 
-	/**
-	 * @return the txtCustPhoneCol
-	 */
 	private int getTxtCustPhoneCol() {
 		if(txtCustPhoneCol.getText() == null || txtCustPhoneCol.getText().equals("")) {return -1;}
 		String tmp = txtCustPhoneCol.getText();
 		return getNumberCol(tmp);
 	}
 
-	/**
-	 * @return the txtCustInfCol
-	 */
 	private int getTxtCustInfCol() {
 		if(txtCustInfCol.getText() == null || txtCustInfCol.getText().equals("")) {return -1;}
 		String tmp = txtCustInfCol.getText().toUpperCase();
 		return getNumberCol(tmp);
 	}
 	
-	/**
-	 * @return the txtCustInfCol2
-	 */
 	private int getTxtCustInfCol2() {
 		if(txtCustInfCol2.getText() == null || txtCustInfCol2.getText().equals("")) {return -1;}
 		String tmp = txtCustInfCol2.getText().toUpperCase();
 		return getNumberCol(tmp);
 	}
 	
-	/**
-	 * @return the txtCustInfCol3
-	 */
 	private int getTxtCustInfCol3() {
 		if(txtCustInfCol3.getText() == null || txtCustInfCol3.getText().equals("")) {return -1;}
 		String tmp = txtCustInfCol3.getText().toUpperCase();
 		return getNumberCol(tmp);
 	}
 	
-	/**
-	 * @return the txtCustInfCol4
-	 */
 	private int getTxtCustInfCol4() {
 		if(txtCustInfCol4.getText() == null || txtCustInfCol4.getText().equals("")) {return -1;}
 		String tmp = txtCustInfCol4.getText().toUpperCase();
 		return getNumberCol(tmp);
-
 	}
 
 	private int getNumberCol(String tmp) {
 		if(tmp.length()==1){
 			char c1 = tmp.charAt(0);
-			//A is 65
+			//A (uppercase) is 65
 			return ((int) c1) - 65;
 		} else {
 			char c1 = tmp.charAt(0);
@@ -888,47 +911,44 @@ private void initComponents() {
 		
 	}
 
-
-
-
-	/**
-	 * @return the txtFirstRow
+	/** Allows the program to check for what the firstrow is
+	 * @return the txtFirstRow first row of data to start looking in, (start at 1, not 0)
 	 */
 	public int getTxtFirstRow() {
 		return Integer.parseInt(txtFirstRow.getText());
 	}
 
 	/**Gets the absolute path of the output file as a string
-	 * @return the txtOutputFileName
+	 * @return the txtOutputFileName for path of output file as a string
 	 */
 	public String getTxtOutputFileAndAbsPath() {
 		return inputFile.getParent() + "\\" +txtOutputFileName.getText()+".xlsx";
 	}
 
-	/** This represents the inpt file selected
-	 * @return the lblSelectInputFile
+	/** This represents the input file selected
+	 * @return the lblSelectInputFile path as a string
 	 */
 	public String getTxtInputFileAndAbsPath() {
 		return lblSelectInputFile.getText();
 	}
 
-	/**Gets the absolute path of the output file as a string
-	 * @return the txtOutputFileName
+	/**Gets the tab name the user entered
+	 * @return the txtOutputFileName as a string
 	 */
 	public String getTabName() {
 		return txtTabName.getText();
 	}
 
-	
-	/**
+	//TODO does program access file or path name?
+	/** Returns the input file
 	 * @return the selected input file
 	 */
 	public File getSelectedInputFile() {
 		return inputFile;
 	}
 	
-	/**
-	 * @return the spnrNameTol
+	/** Gets the spinner tolerance selected by the user
+	 * @return the spnrNameTol spinner tolerance for minimum name match score
 	 */
 	public int getSpnrNameTol() {
 		try {
@@ -942,14 +962,25 @@ private void initComponents() {
 	////////////////////////////////////END GETTERS////////////////////////////////////////////
 	
 	//////////////////////////*** UPDATE PROGRESS BARS ***/////////////////////////////////////
+	/**
+	 * Access to update the progress bars through this class
+	 * @param pct as integer for customer loading status
+	 */
 	public void updateDBSLoadStatus(int pct){
 		progBarFrame.setPBImportDBS(pct);
 	}
-	
+	/**
+	 * Access to update the progress bars through this class
+	 * @param pct as integer for reading excel file status
+	 */	
 	public void updateReadExcelCustomersStatus(int pct){
 		progBarFrame.setPBReadCusts(pct);
 	}
-	
+
+	/**
+	 * Access to update the progress bars through this class
+	 * @param pct as integer for customer matching status
+	 */	
 	public void updateCustomerMatchingStatus(int pct){
 		progBarFrame.setPBGenMatches(pct);
 	}
@@ -969,10 +1000,12 @@ private void initComponents() {
 		}
 	}
 	
+	//TODO check, I don't think this is used
 	public boolean getMatcherStart(){
 		return matcherStart;
 	}
 	
+	//this method does the input translations for letter based columns, also sets the required field error flag if no longer a valid input
 	private void checkColTextInput(JTextField tf, JLabel jl, KeyEvent ke){
 		if((tf.getText() != "" && tf.getText().length() > 1) ){
 			ke.consume();
@@ -995,6 +1028,7 @@ private void initComponents() {
 		}
 	}
 	
+	//This does the translations for the extra column input boxes, difference is it doesn't change the required field indicator
 	private void checkExtraColTextInput(JTextField tf, KeyEvent ke){
 		if((tf.getText() != "" && tf.getText().length() > 1) ){
 			ke.consume();
