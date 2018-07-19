@@ -17,8 +17,13 @@ public class AccessProspectsQuery {
 	//private PreparedStatement getProspects;
 	private ResultSetMetaData rsmd;
 	
-	public AccessProspectsQuery(){
-
+	public AccessProspectsQuery(String qry, String dbPath){
+		String dbLoc = null;
+		if (dbPath == null){
+			dbLoc = "jdbc:ucanaccess://P:/Business Intelligence/SalesLinkCustomers.accdb";
+		} else {
+			dbLoc = "jdbc:ucanaccess://" + dbLoc;
+		}
 		try {
 			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 		} catch (ClassNotFoundException e1) {
@@ -26,10 +31,11 @@ public class AccessProspectsQuery {
 			e1.printStackTrace();
 		} /* often not required for Java 6 and later (JDBC 4.x) */
 		try {
-			con=DriverManager.getConnection("jdbc:ucanaccess://P:/Business Intelligence/SalesLinkCustomers.accdb");
+			con=DriverManager.getConnection(dbLoc);
 			s= con.createStatement();
 			//getProspects = con.prepareStatement();
-			result = s.executeQuery("SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))");
+			//result = s.executeQuery("SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))");
+			result = s.executeQuery(qry);
 			rsmd = result.getMetaData();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block

@@ -87,6 +87,7 @@ public class MatcherStart extends JFrame {
 	private JButton btnRunMatcher;
 	//labels for user input text boxes
 	private File inputFile;
+	private File accessDBFile;
 	private JLabel lblErrFirstRow;
 	private JLabel lblErrInflCol;
 	private JLabel lblErrPhoneCol;
@@ -107,6 +108,8 @@ public class MatcherStart extends JFrame {
 	//tells main class whether to start executing or not
 	public static volatile boolean matcherStart = false;
 	private boolean readyToRun = false;
+	private JLabel lblAccessDBLocation;
+	private JButton btnNavigateToDb;
 
 
 
@@ -151,7 +154,7 @@ private void initComponents() {
 	 
 	setTitle("Customer Matcher Program");
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setBounds(100, 100, 705, 525);
+	setBounds(100, 100, 988, 619);
 	contentPane = new JPanel();
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	setContentPane(contentPane);
@@ -278,29 +281,54 @@ private void initComponents() {
 	lblErrTabName.setForeground(Color.RED);
 	lblErrTabName.setFont(new Font("Tahoma", Font.BOLD, 13));
 	
+	btnNavigateToDb = new JButton("Navigate to DB");
+	
+	lblAccessDBLocation = new JLabel("No File Selected");
+	
+	JButton btnClearDBSelection = new JButton("Clear");
+	
 	//setup the layout of the GUI
 	GroupLayout gl_contentPane = new GroupLayout(contentPane);
 	gl_contentPane.setHorizontalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
 			.addGroup(gl_contentPane.createSequentialGroup()
+				.addGap(62)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGap(229)
-								.addComponent(btnRunMatcher)
-								.addGap(317))
+						.addComponent(rdbtnCustom, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+						.addGap(28)
+						.addComponent(rdbtnDom)
+						.addGap(31)
+						.addComponent(rdbtnUCC))
+					.addGroup(gl_contentPane.createSequentialGroup()
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+							.addComponent(btnSelectInputFile)
 							.addGroup(gl_contentPane.createSequentialGroup()
 								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-									.addComponent(ckbxIgnrName)
+									.addComponent(btnClearDBSelection, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+									.addComponent(lblNewLabel))
+								.addGap(44))
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 									.addComponent(ckbxIgnrAddr)
+									.addComponent(ckbxIgnrName)
 									.addComponent(ckbxIgnrZip)
 									.addComponent(ckbxIgnrPhone)
-									.addComponent(ckbxIgnrInfl)
-									.addComponent(lblIgnore))
+									.addComponent(ckbxIgnrInfl))
+								.addGap(11))
+							.addComponent(lblIgnore))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createSequentialGroup()
 								.addPreferredGap(ComponentPlacement.RELATED)
 								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, 346, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(lblErrTabName, GroupLayout.PREFERRED_SIZE, 16, GroupLayout.PREFERRED_SIZE))
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(btnNavigateToDb, GroupLayout.PREFERRED_SIZE, 131, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(lblAccessDBLocation, GroupLayout.PREFERRED_SIZE, 392, GroupLayout.PREFERRED_SIZE))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblCustZipCol)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -330,32 +358,27 @@ private void initComponents() {
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblMatchFileName)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE))
+										.addComponent(txtOutputFileName, GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+											.addGroup(gl_contentPane.createSequentialGroup()
+												.addComponent(lblCustAddrCol)
+												.addPreferredGap(ComponentPlacement.UNRELATED)
+												.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
 											.addGroup(gl_contentPane.createSequentialGroup()
 												.addComponent(lblCustNameCol)
 												.addPreferredGap(ComponentPlacement.UNRELATED)
 												.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
 												.addGap(2)
-												.addComponent(lblErrNameCol))
-											.addGroup(gl_contentPane.createSequentialGroup()
-												.addComponent(lblCustAddrCol)
-												.addPreferredGap(ComponentPlacement.UNRELATED)
-												.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)))
-										.addGap(2)
+												.addComponent(lblErrNameCol)))
+										.addPreferredGap(ComponentPlacement.UNRELATED)
 										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 											.addGroup(gl_contentPane.createSequentialGroup()
 												.addComponent(lblErrAddrCol)
-												.addPreferredGap(ComponentPlacement.RELATED)
+												.addPreferredGap(ComponentPlacement.UNRELATED)
 												.addComponent(txtCustAddrCol2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
-											.addGroup(gl_contentPane.createSequentialGroup()
-												.addComponent(txtCustNameCol2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-												.addGap(135)
-												.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-													.addComponent(rdbtnUCC)
-													.addComponent(rdbtnCustom)
-													.addComponent(rdbtnDom)))))
+											.addComponent(txtCustNameCol2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
+										.addGap(53))
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblCustPhoneCol)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -365,97 +388,95 @@ private void initComponents() {
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblModifyCustomerName)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))))
-					.addGroup(gl_contentPane.createSequentialGroup()
-						.addGap(62)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+											.addComponent(btnRunMatcher)
+											.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
 							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(lblNewLabel)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, 235, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(lblErrTabName, GroupLayout.PREFERRED_SIZE, 8, GroupLayout.PREFERRED_SIZE))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(btnSelectInputFile)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addGap(18)
 								.addComponent(lblSelectInputFile, GroupLayout.PREFERRED_SIZE, 392, GroupLayout.PREFERRED_SIZE)))))
 				.addContainerGap())
 	);
 	gl_contentPane.setVerticalGroup(
 		gl_contentPane.createParallelGroup(Alignment.LEADING)
 			.addGroup(gl_contentPane.createSequentialGroup()
-				.addContainerGap()
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(btnSelectInputFile)
-					.addComponent(lblSelectInputFile))
-				.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(rdbtnCustom)
+					.addComponent(rdbtnDom)
+					.addComponent(rdbtnUCC))
+				.addGap(7)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addComponent(lblSelectInputFile, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+					.addComponent(btnSelectInputFile))
+				.addGap(18)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(lblErrTabName))
+				.addGap(18)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addComponent(btnClearDBSelection)
+					.addComponent(btnNavigateToDb)
+					.addComponent(lblAccessDBLocation))
+				.addGap(19)
+				.addComponent(lblIgnore)
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+					.addComponent(ckbxIgnrName)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblCustNameCol)
+						.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblErrNameCol)
+						.addComponent(txtCustNameCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+				.addGap(18)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblCustAddrCol)
+						.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblErrAddrCol)
+						.addComponent(txtCustAddrCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(ckbxIgnrAddr))
+				.addGap(15)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblCustZipCol)
+						.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblErrZipCol)
+						.addComponent(txtCustZipCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(ckbxIgnrZip))
+				.addGap(15)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblCustPhoneCol)
+						.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblErrPhoneCol))
+					.addComponent(ckbxIgnrPhone))
+				.addGap(15)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_contentPane.createSequentialGroup()
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblNewLabel)
-							.addComponent(txtTabName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrTabName))
-						.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(lblIgnore)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblCustNameCol)
-							.addComponent(txtCustNameCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrNameCol)
-							.addComponent(ckbxIgnrName)
-							.addComponent(txtCustNameCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGap(18)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblCustAddrCol)
-							.addComponent(txtCustAddrCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrAddrCol)
-							.addComponent(ckbxIgnrAddr)
-							.addComponent(txtCustAddrCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGap(18)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblCustZipCol)
-							.addComponent(txtCustZipCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrZipCol)
-							.addComponent(ckbxIgnrZip)
-							.addComponent(txtCustZipCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGap(18)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblCustPhoneCol)
-							.addComponent(txtCustPhoneCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblErrPhoneCol)
-							.addComponent(ckbxIgnrPhone))
-						.addGap(18)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblCustInfCol)
 							.addComponent(txtCustInfCol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblErrInflCol)
-							.addComponent(ckbxIgnrInfl)
 							.addComponent(txtCustInfCol2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(txtCustInfCol3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(txtCustInfCol4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addGap(13)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblFirstRow)
 							.addComponent(txtFirstRow, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblErrFirstRow))
-						.addGap(18))
-					.addGroup(gl_contentPane.createSequentialGroup()
-						.addComponent(rdbtnCustom)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(rdbtnUCC)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(rdbtnDom)
-						.addPreferredGap(ComponentPlacement.RELATED)))
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(lblMatchFileName)
-					.addComponent(txtOutputFileName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGap(18)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-					.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(lblModifyCustomerName))
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addComponent(btnRunMatcher)
-				.addGap(29))
+						.addGap(15)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblMatchFileName)
+							.addComponent(txtOutputFileName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGap(18)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(spnrNameTol, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblModifyCustomerName))
+						.addGap(18)
+						.addComponent(btnRunMatcher))
+					.addComponent(ckbxIgnrInfl))
+				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	);
 	contentPane.setLayout(gl_contentPane);
 }
@@ -501,7 +522,20 @@ private void initComponents() {
 								//TODO should this be inside the run event queue?
 								try {
 									System.out.println("starting run");
-									CustomerMatcher matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
+									CustomerMatcher matcherProg = null;
+									String accessDBloc = null;
+									//TODO need to set string for access DB
+									if (lblAccessDBLocation.getText().trim().length() > 0){
+										accessDBloc = lblAccessDBLocation.getText().trim();
+									}
+									//check new location db
+									if (accessDBloc == null){
+										new CustomerMatcher(null, getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
+									} else {
+										new CustomerMatcher(accessDBloc, getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
+									}
+									
+									
 									JOptionPane.showMessageDialog(null,
 										    "Matching Complete!",
 										    "Complete",
@@ -587,6 +621,33 @@ private void initComponents() {
 				}
 			}
 		});
+		
+		//TODO need to clean these up to get right files and lbls correct
+		btnNavigateToDb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				openFileChooser.setFileFilter(new FileNameExtensionFilter("ACCDB files","accdb"));
+				int returnValue = openFileChooser.showOpenDialog(rootPane);
+				if (returnValue == JFileChooser.APPROVE_OPTION){
+					//accessDBfile is equiv to inputFile in prior action listener, changed to accessDBFile
+					accessDBFile = openFileChooser.getSelectedFile();
+					//System.out.println(inputFile.getCanonicalPath());
+					lblAccessDBLocation.setText(accessDBFile.getAbsolutePath());
+					//System.out.println(lblSelectInputFile.getText());
+					int start = accessDBFile.getAbsolutePath().lastIndexOf("\\") + 1;
+					System.out.println(start);
+					int end = accessDBFile.getAbsolutePath().lastIndexOf(".");
+					System.out.println(end);
+					//int start = lblSelectInputFile.getText().substring(lblSelectInputFile.getText().lastIndexOf("\\"+1));
+//					String outfile = openFileChooser.getSelectedFile().getAbsolutePath().substring(start,end) + "_match";
+//					lblAccessDBloc.setText(outfile);
+					checkReadyToRun();
+				} else {
+					lblAccessDBLocation.setText("No File Choosen");
+					//TODO see if it is possible to run matcher with no file choosen
+				}
+			}
+		});
+		
 		
 		///////////////////////////  DEFINE PRESETS FOR THE RADIO BUTTONS ///////////////////////////
 		rdbtnUCC.addActionListener(new ActionListener() {

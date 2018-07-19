@@ -53,7 +53,7 @@ public class CustomerMatcher {
 	 * @param minNameScore int send in by minimum name spinner set by user
 	 * @throws Exception
 	 */
-	public CustomerMatcher(String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, int[] inputs, String tabName, int minNameScore) throws Exception
+	public CustomerMatcher(String dbPath, String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, int[] inputs, String tabName, int minNameScore) throws Exception
 	{
 		//class used to make name translations
 		Translators translator = new Translators();
@@ -71,8 +71,14 @@ public class CustomerMatcher {
 		
 		
 		DBSquery customersQuery = new DBSquery(queryCode);
+		String qry = null;
+		if (dbPath == null){
+			qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))";
+		} else {
+			qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers";
+		}
 		
-		AccessProspectsQuery prospectsQuery = new AccessProspectsQuery();
+		AccessProspectsQuery prospectsQuery = new AccessProspectsQuery( qry, dbPath );
 		//prospect results: Custnum, Cust name, phys addr, bill addr, addr3, city, zip, phone
 		
 	
