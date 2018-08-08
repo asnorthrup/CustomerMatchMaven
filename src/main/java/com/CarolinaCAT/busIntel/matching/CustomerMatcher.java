@@ -53,34 +53,37 @@ public class CustomerMatcher {
 	 * @param minNameScore int send in by minimum name spinner set by user
 	 * @throws Exception
 	 */
-	public CustomerMatcher(String dbPath, String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, int[] inputs, String tabName, int minNameScore) throws Exception
+	public CustomerMatcher(String dBSOdbcConn, String dealerSchema, String dbPath, Boolean onlyProspects, int CustomerEst,String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, int[] inputs, String tabName, int minNameScore) throws Exception
 	{
 		//class used to make name translations
 		Translators translator = new Translators();
 		
 		MIN_CUSTNAME_SCORE = minNameScore;
+		String queryCode  = null;
+		DBSquery customersQuery = null;
+		AccessProspectsQuery prospectsQuery = null;
+		
 		//DBS Query string setup
-		String queryCode = "SELECT CIP.CUNO, CIP.CUNM, CIP.CUNM2, CIP.PRCUNO, CIP.PHNO, "
+		if (dBSOdbcConn != null && dealerSchema != null){ //TODO need to get dealer specific CIPNAME and CIPLADR location
+			queryCode = "SELECT CIP.CUNO, CIP.CUNM, CIP.CUNM2, CIP.PRCUNO, CIP.PHNO, "
 				+ "CASE WHEN length(trim(CIP.CUADD2)) > 0 THEN trim(CIP.CUADD2) WHEN length(trim(CIP.CUADD3)) > 0 THEN trim(CIP.CUADD3) "
 				+ "WHEN length(trim(CIP.CUADD1)) > 0 THEN trim(CIP.CUADD1) Else 'No Bill Adr' END AS BILL_ADR, CIP.ZIPCD9, "
 				+ "CASE WHEN length(trim(PHYS.CUADD2)) > 0 THEN trim(PHYS.CUADD2) WHEN length(trim(PHYS.CUADD3)) > 0 THEN trim(PHYS.CUADD3) "
 				+ "WHEN length(trim(PHYS.CUADD1)) > 0 THEN trim(PHYS.CUADD1) ELSE 'No Phys Adr' END AS PHYS_ADR, PHYS.ZIPCD9 AS PHYSZIP "
-				+ "FROM D09IL01.libd09.CIPNAME0 CIP LEFT JOIN libd09.CIPLADR0 PHYS ON (CIP.CUNO = PHYS.CUNO) "
+				+ "FROM " + dealerSchema + ".CIPNAME0 CIP LEFT JOIN " + dealerSchema + ".CIPLADR0 PHYS ON (CIP.CUNO = PHYS.CUNO) "
 				+ "WHERE CIP.CUNO NOT LIKE ('I%')";
-
-		
-		
-		DBSquery customersQuery = new DBSquery(queryCode);
-		String qry = null;
-		if (dbPath == null){
-			qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))";
-		} else {
-			qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers";
+			customersQuery = new DBSquery(queryCode, dBSOdbcConn);
 		}
-		
-		AccessProspectsQuery prospectsQuery = new AccessProspectsQuery( qry, dbPath );
-		//prospect results: Custnum, Cust name, phys addr, bill addr, addr3, city, zip, phone
-		
+		String qry = null;
+		if (dbPath != null){
+			if( onlyProspects ){
+				qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))";
+			} else {
+				qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers";
+			}		
+			prospectsQuery = new AccessProspectsQuery( qry, dbPath );
+			//prospect results: Custnum, Cust name, phys addr, bill addr, addr3, city, zip, phone
+		}
 	
 		
 		//Saleslink query set up -- Remove for now
@@ -97,86 +100,77 @@ public class CustomerMatcher {
 		//ResultSetMetaData stores properties of a ResultSet object, including column count
 		
 		//Variable for approximate number of customers to read in
+		//TODO need to use variable to determine
+		
 		int approxDBSCustomers = 70000;
+		
+		if ( CustomerEst > 0 ){
+			approxDBSCustomers = CustomerEst;
+		}
+		
 		int numReadIn = 1;
 		int custHashSize = (int) (1.3 * approxDBSCustomers); //recommended size is number of expected / .75 for hash
 		//ArrayList<CustomerObj> ourCustomers = new ArrayList<CustomerObj>(initArrayListCap);
 		HashMap<String, CustomerObj> ourCustomers = new HashMap<String, CustomerObj>(custHashSize);
 		
-		
-		ResultSet result = customersQuery.getResultSet();
-		//maybe the .next should be in try/catch
-		while(result.next()){
-			//create the customer object
-			CustomerObj co = new CustomerObj(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7), result.getString(8), result.getString(9));
-			//use the translator to modify customer name and customer address if it has PO Box
-			if(co.name != null){
-				co.name_translated = translator.customerNameTranslations(co.name);
-				co.name_translated = translator.stripBeginning(co.name_translated);
-				co.name_translated = translator.stripEndings(co.name_translated);
+		if(customersQuery != null){
+			ResultSet result = customersQuery.getResultSet();
+			//maybe the .next should be in try/catch
+			while(result.next()){
+				//create the customer object
+				CustomerObj co = new CustomerObj(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7), result.getString(8), result.getString(9));
+				//use the translator to modify customer name and customer address if it has PO Box
+				if(co.name != null){
+					co.name_translated = translator.customerNameTranslations(co.name);
+					co.name_translated = translator.stripBeginning(co.name_translated);
+					co.name_translated = translator.stripEndings(co.name_translated);
+				}
+				if(co.billAddress != null && !co.billAddress.equals("No Bill Adr")){
+					co.billAddress = translator.modPOBox(co.billAddress);
+				}
+				if(co.physAddress != null && !co.physAddress.equals("No Phys Adr")){
+					co.physAddress = translator.modPOBox(co.physAddress);
+				}
+				//add to hasmap of customer objects for our customer
+				ourCustomers.put(co.cuno, co);
+				//give an indicator to user as to how far along in reading goes
+				if((numReadIn % 1000) == 0){
+					double pct = ((double)numReadIn / approxDBSCustomers) * 100;
+					System.out.println("Approx " + pct + "% DBS loaded") ;
+					progBarFrame.setPBImportDBS((int) pct);
+				}
+				numReadIn++;
 			}
-			if(co.billAddress != null && !co.billAddress.equals("No Bill Adr")){
-				co.billAddress = translator.modPOBox(co.billAddress);
-			}
-			if(co.physAddress != null && !co.physAddress.equals("No Phys Adr")){
-				co.physAddress = translator.modPOBox(co.physAddress);
-			}
-			//add to hasmap of customer objects for our customer
-			ourCustomers.put(co.cuno, co);
-			//give an indicator to user as to how far along in reading goes
-			if((numReadIn % 1000) == 0){
-				double pct = ((double)numReadIn / approxDBSCustomers) * 100;
-				System.out.println("Approx " + pct + "% DBS loaded") ;
-				progBarFrame.setPBImportDBS((int) pct);
-			}
-			numReadIn++;
 		}
 		
-		//get prospect result set and parse from the MS Access query of prospects (already embedded in the Access Prospects query object
-		ResultSet prospectRS = prospectsQuery.getResultSet();	
-		while(prospectRS.next()){
-			CustomerObj co = new CustomerObj(prospectRS.getString(1), prospectRS.getString(2), null, null, prospectRS.getString(8),prospectRS.getString(4), prospectRS.getString(7), prospectRS.getString(3), prospectRS.getString(7));
-			//perform translations on the customer object
-			if(co.name != null){
-				co.name_translated = translator.customerNameTranslations(co.name);
-				co.name_translated = translator.stripBeginning(co.name_translated);
-				co.name_translated = translator.stripEndings(co.name_translated);
+		if(prospectsQuery != null){
+			//get prospect result set and parse from the MS Access query of prospects (already embedded in the Access Prospects query object
+			ResultSet prospectRS = prospectsQuery.getResultSet();	
+			while(prospectRS.next()){
+				CustomerObj co = new CustomerObj(prospectRS.getString(1), prospectRS.getString(2), null, null, prospectRS.getString(8),prospectRS.getString(4), prospectRS.getString(7), prospectRS.getString(3), prospectRS.getString(7));
+				//perform translations on the customer object
+				if(co.name != null){
+					co.name_translated = translator.customerNameTranslations(co.name);
+					co.name_translated = translator.stripBeginning(co.name_translated);
+					co.name_translated = translator.stripEndings(co.name_translated);
+				}
+				if(co.billAddress != null && !co.billAddress.equals("No Bill Adr")){
+					co.billAddress = translator.modPOBox(co.billAddress);
+				}
+				if(co.physAddress != null && !co.physAddress.equals("No Phys Adr")){
+					co.physAddress = translator.modPOBox(co.physAddress);
+				}
+			
+				//add to hashmap of customer objects for our customer
+				ourCustomers.put(co.cuno, co);
+				if((numReadIn % 1000) == 0){
+					double pct = ((double)numReadIn / approxDBSCustomers) * 100;
+					System.out.println("Approx " + pct + "% DBS loaded") ;
+					progBarFrame.setPBImportDBS((int) pct);
+				}
+				numReadIn++;
 			}
-			if(co.billAddress != null && !co.billAddress.equals("No Bill Adr")){
-				co.billAddress = translator.modPOBox(co.billAddress);
-			}
-			if(co.physAddress != null && !co.physAddress.equals("No Phys Adr")){
-				co.physAddress = translator.modPOBox(co.physAddress);
-			}
-		
-			//add to hashmap of customer objects for our customer
-			ourCustomers.put(co.cuno, co);
-			if((numReadIn % 1000) == 0){
-				double pct = ((double)numReadIn / approxDBSCustomers) * 100;
-				System.out.println("Approx " + pct + "% DBS loaded") ;
-				progBarFrame.setPBImportDBS((int) pct);
-			}
-			numReadIn++;
 		}
-		
-		
-		/////////////////////////////////***   SALESLINK QUERY   ***///////////////////////////
-		//TODO check this worked
-		//Parse the Saleslink query
-		//Num, name, addr, zip, phone
-//		ResultSet prospectResult = prospectsQuery.getResultSet();
-//		while(prospectResult.next()){
-//			CustomerObj co = new CustomerObj(prospectResult.getString(1), prospectResult.getString(2), null, null, prospectResult.getString(3), prospectResult.getString(5), prospectResult.getString(4));
-//			ourCustomers.add(co);
-//			//give an indicator to user as to how far along in reading goes
-//			if((numReadIn % 1000) == 0){
-//				double pct = ((double)numReadIn / approxDBSCustomers) * 100;
-//				System.out.println("Approx " + pct + "% DBS loaded") ;
-//				progBarFrame.setPBImportDBS((int) pct);
-//			}
-//			numReadIn++;
-//		}
-		/////////////////////////////////*** END SALESLINK QUERY   ***////////////////////////////
 		
 		progBarFrame.setPBImportDBS(100);
 		System.out.println("100% DBS loaded!") ;

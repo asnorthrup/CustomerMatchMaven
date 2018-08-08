@@ -15,7 +15,7 @@ public class DBSquery {
 	private PreparedStatement dbsCustomers;
 	private ResultSetMetaData rsmd;
 	
-	public DBSquery(String queryCode){
+	public DBSquery(String queryCode, String ODBCconn){
 		//access driver from JAR file
 		try {
 			Class.forName("com.ibm.as400.access.AS400JDBCDriver");
@@ -25,7 +25,7 @@ public class DBSquery {
 		}
 
 		try {
-			con = DriverManager.getConnection("jdbc:as400:DBSPROD;prompt=true");
+			con = DriverManager.getConnection("jdbc:as400:"+ODBCconn+";prompt=true");
 			dbsCustomers = con.prepareStatement(queryCode);
 			result = dbsCustomers.executeQuery();
 			rsmd = result.getMetaData();
