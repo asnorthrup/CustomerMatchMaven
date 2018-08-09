@@ -53,7 +53,9 @@ public class CustomerMatcher {
 	 * @param minNameScore int send in by minimum name spinner set by user
 	 * @throws Exception
 	 */
-	public CustomerMatcher(String dBSOdbcConn, String dealerSchema, String dbPath, Boolean onlyProspects, int CustomerEst,String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, int[] inputs, String tabName, int minNameScore) throws Exception
+	public CustomerMatcher(String dBSOdbcConn, String dealerSchema, String dbPath, Boolean onlyProspects, 
+			int CustomerEst,String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, 
+			int[] inputs, String tabName, int minNameScore) throws Exception
 	{
 		//class used to make name translations
 		Translators translator = new Translators();

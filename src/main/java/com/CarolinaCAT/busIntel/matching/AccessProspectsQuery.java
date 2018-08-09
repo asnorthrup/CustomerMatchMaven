@@ -22,6 +22,7 @@ public class AccessProspectsQuery {
 		if (dbPath == null){
 			dbLoc = "jdbc:ucanaccess://P:/Business Intelligence/SalesLinkCustomers.accdb";
 		} else {
+			//string is read in as: P:\Business Intelligence\SalesLinkCustomers.accdb, must use absolute path
 			dbLoc = "jdbc:ucanaccess://" + dbLoc;
 		}
 		try {

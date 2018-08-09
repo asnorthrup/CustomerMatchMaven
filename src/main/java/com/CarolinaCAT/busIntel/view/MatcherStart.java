@@ -586,8 +586,19 @@ private void initComponents() {
 		btnRunMatcher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Initiate popup for progress bar
-				//TODO handle if user exes out program bar popup before done running
-				if (readyToRun == true){
+				int connLen = txtDBSConn.getText().trim().length();
+				int schemaLen = txtSchema.getText().trim().length();
+				int dbLocLen = lblAccessDBLocation.getText().trim().length();
+				if( txtDBSConn.getText().trim().length() == 0 && txtSchema.getText().trim().length() == 0 &&
+						(lblAccessDBLocation.getText().trim().length() == 0 || lblAccessDBLocation.getText().trim().equals("No File Choosen") ) ){
+					System.out.println("conn:" + connLen + "schem:" + schemaLen + "dbloc:" + dbLocLen);
+			        JOptionPane.showMessageDialog(null, "No Customer Data Source Provided", "Customer Source Error", JOptionPane.WARNING_MESSAGE);
+				} else if(txtDBSConn.getText().trim().length() > 0 && txtSchema.getText().trim().length() == 0){
+			        JOptionPane.showMessageDialog(null, "Must Provide Schema for Database", "Customer Source Error", JOptionPane.WARNING_MESSAGE);
+				} else if(txtDBSConn.getText().trim().length() == 0 && txtSchema.getText().trim().length() > 0){
+			        JOptionPane.showMessageDialog(null, "Must ODBC Name", "Customer Source Error", JOptionPane.WARNING_MESSAGE);
+				} else if (readyToRun == true){
+					//TODO handle if user exes out program bar popup before done running
 					//thread where GUI is processed is EDT thread.
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
@@ -622,6 +633,7 @@ private void initComponents() {
 									CustomerMatcher matcherProg = null;
 									String accessDBloc = null;
 									String DbsODBC = null;
+									String schema = null;
 									int customerCount = 0;
 									//TODO need to set string for access DB
 									if (lblAccessDBLocation.getText().trim().length() > 0){
@@ -630,21 +642,16 @@ private void initComponents() {
 									if (txtDBSConn.getText().trim().length() > 0){
 										DbsODBC = txtDBSConn.getText().trim();
 									}
+									if (txtDBSConn.getText().trim().length() > 0){
+										DbsODBC = txtDBSConn.getText().trim();
+									}
 									if (txtEstCustomers.getText().trim().length() > 0){
 										String str = txtEstCustomers.getText().trim();
 										customerCount = Integer.parseInt(str);
 									}
-									//check new location db
-									if(accessDBloc == null && DbsODBC == null){
-										//TODO check a access db or DBS link is given
-										//EXIT because neither way selected
-									} else {
-										if(//odbc given but not accessdb, pass null to odbc, or vice versa or both)
-										new CustomerMatcher(DbsODBC, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
+
+									new CustomerMatcher(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
 												progBarFrame, colLocs, getTabName(),getSpnrNameTol());
-									}
-									
-									
 									JOptionPane.showMessageDialog(null,
 										    "Matching Complete!",
 										    "Complete",
