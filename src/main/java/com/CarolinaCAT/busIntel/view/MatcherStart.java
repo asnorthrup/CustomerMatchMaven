@@ -642,8 +642,8 @@ private void initComponents() {
 									if (txtDBSConn.getText().trim().length() > 0){
 										DbsODBC = txtDBSConn.getText().trim();
 									}
-									if (txtDBSConn.getText().trim().length() > 0){
-										DbsODBC = txtDBSConn.getText().trim();
+									if (txtSchema.getText().trim().length() > 0){
+										schema = txtSchema.getText().trim();
 									}
 									if (txtEstCustomers.getText().trim().length() > 0){
 										String str = txtEstCustomers.getText().trim();

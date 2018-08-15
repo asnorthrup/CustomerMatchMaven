@@ -2,8 +2,12 @@ package customerMatcher;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,11 +18,19 @@ import com.CarolinaCAT.busIntel.matching.AccessProspectsQuery;
 public class ProspectQueryTest {
 	
 	AccessProspectsQuery apq = null;
-	
-	
+	private File accessDBFile;
     @Before
     public void runBeforeTestMethod() {
-    	apq = new AccessProspectsQuery();
+    	//String qry, String dbPath
+    	String qry = "";
+    	String dbPath = "";
+    	//Gui g = new Gui();
+    	//dbPath = g.getAbsPath();
+    	accessDBFile= new File("P:\\Business Intelligence\\SalesLinkCustomers.accdb");
+    	qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))";
+    	dbPath = accessDBFile.getAbsolutePath();
+    	System.out.println(dbPath);
+    	apq = new AccessProspectsQuery(qry, dbPath);
     }
 	
 	

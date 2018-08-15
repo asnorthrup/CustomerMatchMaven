@@ -23,7 +23,9 @@ public class AccessProspectsQuery {
 			dbLoc = "jdbc:ucanaccess://P:/Business Intelligence/SalesLinkCustomers.accdb";
 		} else {
 			//string is read in as: P:\Business Intelligence\SalesLinkCustomers.accdb, must use absolute path
-			dbLoc = "jdbc:ucanaccess://" + dbLoc;
+			String replaceDbPath = dbPath.replace('\\', '/');
+			//dbLoc = "jdbc:ucanaccess://" + dbLoc;
+			dbLoc = "jdbc:ucanaccess://" + replaceDbPath;
 		}
 		try {
 			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
@@ -40,6 +42,7 @@ public class AccessProspectsQuery {
 			rsmd = result.getMetaData();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
+			System.out.println("Error in MS Access SQL statement or file dataase construction");
 			e1.printStackTrace();
 		} 
 	}
