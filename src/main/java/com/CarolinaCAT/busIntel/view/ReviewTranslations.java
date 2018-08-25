@@ -17,9 +17,11 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class ReviewTranslations extends JFrame {
 
@@ -29,10 +31,17 @@ public class ReviewTranslations extends JFrame {
 	private JTextArea taRmvAftr;
 	private JTextArea taNameTrans;
 	private JTextArea taPObox;
-
-//	/**
-//	 * REMOVE NOT NEEDED.
-//	 */
+	private String strDirName;
+	private Path userHome;
+	
+	private File directory;
+	private File poTrans;
+	private File nameTrans;
+	private File dbaTrans;
+	private File rmvAfterTrans;
+	/**
+	 * for testing
+	 */
 //	public static void main(String[] args) {
 //		EventQueue.invokeLater(new Runnable() {
 //			public void run() {
@@ -68,26 +77,85 @@ try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(yourFile))) {
 }taRmvBeg   
 		 */
 		FileReader reader = null;
+		strDirName = System.getProperty("user.home") + "/CustomerTranslations";
 	    try {
-	      reader = new FileReader("POboxTranslations.txt");
-	      taPObox.read(reader, "POboxTranslations.txt");
-	      reader = null;
-	      
-	      reader = new FileReader("NameTranslations.txt");
-	      taNameTrans.read(reader, "NameTranslations.txt");
-	      reader = null;
-	      
-	      reader = new FileReader("DoingBusAsLookups.txt");
-	      taRmvBeg.read(reader, "DoingBusAsLookups.txt");
-	      reader = null;
-	      
-	      reader = new FileReader("RemoveEnding.txt");
-	      taRmvAftr.read(reader, "RemoveEnding.txt");
-	      reader = null;
-	      
+	    	//what to do if files don't exist yet
+	    	directory = new File(strDirName);
+    		poTrans = new File (strDirName + File.separator + "POboxTranslations.txt");
+    		nameTrans = new File (strDirName + File.separator + "NameTranslations.txt");
+    		dbaTrans = new File (strDirName + File.separator + "DoingBusAsLookups.txt");
+    		rmvAfterTrans = new File (strDirName + File.separator + "RemoveEndings.txt");
+	    	if (directory.mkdir()){	    	    
+    	        FileWriter fw = new FileWriter(poTrans.getAbsoluteFile());
+    	        BufferedWriter bw = new BufferedWriter(fw);
+    	        //Need to write correct values to files
+    	        bw.write("PO BOX" + System.lineSeparator() + "POST OFFICE BOX" + System.lineSeparator() + "P.O BOX" +
+    	        		System.lineSeparator() + "PO. BOX" + System.lineSeparator() + "P O BOX");
+    	        bw.close();
+    	        //repeats
+    	        fw = new FileWriter(nameTrans.getAbsoluteFile());
+    	        bw = new BufferedWriter(fw);
+    	        bw.write("MTN TO MOUNTAIN" + System.lineSeparator() + "CONST TO CONSTRUCTION" + System.lineSeparator() + "CONTR TO CONTRACTOR" +
+    	        		System.lineSeparator() + "GRDNG TO GRADING" + System.lineSeparator() + "CO TO COMPANY" + System.lineSeparator() + "CORP TO CORPORATION"); 	        
+    	        bw.close();
+    	        fw = new FileWriter(dbaTrans.getAbsoluteFile());
+    	        bw = new BufferedWriter(fw);
+    	        bw.write("D/B/A" + System.lineSeparator() + "DBA" + System.lineSeparator() + "D B A" +
+    	        		System.lineSeparator() + "D.B.A." + System.lineSeparator() + "D BA" + System.lineSeparator() + "DB A"); 
+    	        bw.close();
+    	        fw = new FileWriter(rmvAfterTrans.getAbsoluteFile());
+    	        bw = new BufferedWriter(fw);
+    	        bw.write("CASH SALE" + System.lineSeparator() + "C ASH SALE" + System.lineSeparator() + "CA SH SALE" +
+    	        		System.lineSeparator() + "CAS H SALE" + System.lineSeparator() + "CASH S ALE" + System.lineSeparator() + "CASH SA LE" +
+    	        		System.lineSeparator() + "CASH SAL E" + System.lineSeparator() + "ASH SALE" + System.lineSeparator() + "ASH SA LE" +
+    	        		System.lineSeparator() + "CASH SAL");
+    	        bw.close();
+    	        
+				reader = new FileReader(poTrans.getAbsoluteFile());
+				taPObox.read(reader, poTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+				  
+				reader = new FileReader(nameTrans.getAbsoluteFile());
+				taNameTrans.read(reader, nameTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+				  
+				reader = new FileReader(dbaTrans.getAbsoluteFile());
+				taRmvBeg.read(reader, dbaTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+				  
+				reader = new FileReader(rmvAfterTrans.getAbsoluteFile());
+				taRmvAftr.read(reader, rmvAfterTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+    	        
+	    	} else {
+	    	//check if files exist
+				reader = new FileReader(poTrans.getAbsoluteFile());
+				taPObox.read(reader, poTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+				  
+				reader = new FileReader(nameTrans.getAbsoluteFile());
+				taNameTrans.read(reader, nameTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+				  
+				reader = new FileReader(dbaTrans.getAbsoluteFile());
+				taRmvBeg.read(reader, dbaTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+				  
+				reader = new FileReader(rmvAfterTrans.getAbsoluteFile());
+				taRmvAftr.read(reader, rmvAfterTrans.getAbsoluteFile());
+				reader.close();
+				reader = null;
+	    	}
 	    } catch (IOException exception) {
-	      System.err.println("Load oops");
-	      exception.printStackTrace();
+		      System.err.println("Load oops");
+		      exception.printStackTrace();
 	    } finally {
 	      if (reader != null) {
 	        try {
@@ -98,7 +166,6 @@ try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(yourFile))) {
 	        }
 	      }
 	    }
-		
 	}
 
 	private void initComponents() {
@@ -192,26 +259,30 @@ try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(yourFile))) {
 		btnSaveClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter("POboxTranslations.txt"))) {
+				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(poTrans.getAbsoluteFile()))) {
 					taPObox.write(fileOut);
+					fileOut.close();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter("NameTranslations.txt"))) {
+				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(nameTrans.getAbsoluteFile()))) {
 					taNameTrans.write(fileOut);
+					fileOut.close();
 				} catch (IOException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
-				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter("DoingBusAsLookups.txt"))) {
+				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(dbaTrans.getAbsoluteFile()))) {
 					taRmvBeg.write(fileOut);
+					fileOut.close();
 				} catch (IOException e3) {
 					// TODO Auto-generated catch block
 					e3.printStackTrace();
 				}
-				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter("RemoveEnding.txt"))) {
+				try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(rmvAfterTrans.getAbsoluteFile()))) {
 					taRmvAftr.write(fileOut);
+					fileOut.close();
 				} catch (IOException e4) {
 					// TODO Auto-generated catch block
 					e4.printStackTrace();

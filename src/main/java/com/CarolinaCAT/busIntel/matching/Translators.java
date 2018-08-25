@@ -12,7 +12,7 @@ public class Translators {
 	private ArrayList<String> dbaList;
 	private ArrayList<String> extraAtEndList;
 	private ArrayList<String> poBoxList;
-	
+	private String strDirName;
 	/**
 	 * Initialize translator
 	 */
@@ -24,8 +24,9 @@ public class Translators {
 		
 		//read in for part only to keep at end
 		Scanner s;
+		strDirName = System.getProperty("user.home") + "/CustomerTranslations";
 		try {
-			s = new Scanner(new File("DoingBusAsLookups.txt"));
+			s = new Scanner(new File(strDirName + File.separator + "DoingBusAsLookups.txt"));
 			while (s.hasNextLine()){
 				dbaList.add(s.nextLine());
 			}
@@ -37,7 +38,7 @@ public class Translators {
 
 		//read in for part to strip off the end of customer name
 		try {
-			s = new Scanner(new File("RemoveEnding.txt"));
+			s = new Scanner(new File(strDirName + File.separator + "RemoveEndings.txt"));
 			while (s.hasNextLine()){
 				extraAtEndList.add(s.nextLine());
 			}
@@ -49,7 +50,7 @@ public class Translators {
 		
 		//read in for name translations to perform before matching
 		try {
-			s = new Scanner(new File("NameTranslations.txt"));
+			s = new Scanner(new File(strDirName + File.separator + "NameTranslations.txt"));
 			while (s.hasNextLine()){
 				String temp = s.nextLine().trim();
 				int spaceCount = 0;
@@ -75,7 +76,7 @@ public class Translators {
 		
 		//read in for PO box tranlations to perform before matching
 		try {
-			s = new Scanner(new File("POboxTranslations.txt"));
+			s = new Scanner(new File(strDirName + File.separator + "POboxTranslations.txt"));
 			while (s.hasNextLine()){
 				poBoxList.add(s.nextLine());
 			}
@@ -129,10 +130,6 @@ public class Translators {
 			if ( trans.length()>0 && (index = custName.lastIndexOf(trans) ) != - 1){
 				if( custName.length() > index ){
 					custName = custName.substring(0, index);
-					//TODO this next line is throwing error
-					if(custName.contains("NICARAGUA")){
-						System.out.println(custName);
-					}
 					while(custName != null && custName.length() > 0 && !Character.isLetter(custName.charAt(custName.length() - 1))){
 						custName = custName.substring(0, custName.length() - 1);
 					}
