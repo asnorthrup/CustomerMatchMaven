@@ -49,12 +49,20 @@ public class ProgressBar extends JFrame {
 
 	//initialize components of progress bar
 	private void initComponents() {
+		
+		//added
+		//JFrame frame = new JFrame("Matcher Progress");
+		//end of added
+		//also added frame. to below
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		
+
 		
 		//JPanel panel = new JPanel();
 		contentPane.setOpaque(true);
@@ -120,6 +128,8 @@ public class ProgressBar extends JFrame {
 		//jpanel isn't showing up during second run
 		contentPane.setLayout(gl_panel);
 		contentPane.validate();
+		//frame.add(contentPane);//added
+		//frame.setVisible(true); //added frame.
 		setVisible(true);
 	}
 	

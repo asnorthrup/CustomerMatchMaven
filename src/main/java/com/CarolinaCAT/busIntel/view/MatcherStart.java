@@ -126,24 +126,24 @@ public class MatcherStart extends JFrame {
 
 	
 //	*****************ONLY NEEDED FOR TESTING*************************
-	public static void main(String args[]){
-		//create the GUI frame
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MatcherStart frame = new MatcherStart();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String args[]){
+//		//create the GUI frame
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		} catch (Throwable e) {
+//			e.printStackTrace();
+//		}
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					MatcherStart frame = new MatcherStart();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 	
 	/**
 	 * Constructor to create the GUI frame and events
@@ -610,6 +610,8 @@ private void initComponents() {
 								//TODO try setting progree bars to 0 then set visible, without setting to null below
 								
 								progBarFrame.setVisible(true);
+								//TODO check that this is okay
+								progBarFrame.repaint();
 								System.out.println("prog bar visible");
 								//CustomerMatcher matcherProg = null;
 								//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)

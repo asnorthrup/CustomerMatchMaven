@@ -57,6 +57,8 @@ public class CustomerMatcher {
 			int CustomerEst,String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, 
 			int[] inputs, String tabName, int minNameScore) throws Exception
 	{
+		progBarFrame.repaint();
+		
 		//class used to make name translations
 		Translators translator = new Translators();
 		
