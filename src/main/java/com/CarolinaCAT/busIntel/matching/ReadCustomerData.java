@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 
 import com.CarolinaCAT.busIntel.view.MatcherStart;
 import com.CarolinaCAT.busIntel.view.ProgressBar;
@@ -19,30 +20,27 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
  *
  */
 
-//TODO why did harvest pro gardent pro in EDA_Export_fullfile in lowman's data, match to jsut a PO box with no data
-public class CustomerMatcher {
+public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,Void> {
 	/**Min Addr Score in fuzzy matcher */
 	private int MIN_ADDR_SCORE = 100;
 	/**Min customer name score*/
 	private int MIN_CUSTNAME_SCORE = 90;
 	
-	//Note - this isn't set yet
-	/**
-	 * Set the minimum address match score for a potential match
-	 * @param MIN_ADDR_SCORE int for what to set the minimum address score to for potential match
-	 */
-	public void setMIN_ADDR_SCORE(int MIN_ADDR_SCORE) {
-		this.MIN_ADDR_SCORE = MIN_ADDR_SCORE;
-	}
-
-	/**
-	 * Set the minimum customer name match score for a potential match, this is set by a spinner for customer name
-	 * @param MIN_CUSTNAME_SCORE int for what to set the minimum name score to for potential match
-	 */
-	public void setMIN_CUSTNAME_SCORE(int MIN_CUSTNAME_SCORE) {
-		this.MIN_CUSTNAME_SCORE = MIN_CUSTNAME_SCORE;
-	}
-
+	//from the initialization method
+	private String dBSOdbcConn;
+	private String dealerSchema;
+	private String dbPath;
+	private Boolean onlyProspects;
+	private int CustomerEst;
+	private String inputFileNameAndPath;
+	private String outputFileNameAndPath;
+	private ProgressBar progBarFrame;  //may not need
+	private int[] inputs;
+	private String tabName;
+	private Translators translator;
+	
+	private HashMap<String, CustomerObj> ourCustomers;
+	
 	/**
 	 * Constructor for the customer matcher class, this class initiates the matching
 	 * @param inputFileNameAndPath as string for the xlsx file to read in customers from
@@ -53,20 +51,36 @@ public class CustomerMatcher {
 	 * @param minNameScore int send in by minimum name spinner set by user
 	 * @throws Exception
 	 */
-	public CustomerMatcher(String dBSOdbcConn, String dealerSchema, String dbPath, Boolean onlyProspects, 
+	public ReadCustomerData(String dBSOdbcConn, String dealerSchema, String dbPath, Boolean onlyProspects, 
 			int CustomerEst,String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, 
-			int[] inputs, String tabName, int minNameScore) throws Exception
+			int[] inputs, String tabName, int minNameScore, Translators translator) throws Exception
 	{
-		progBarFrame.repaint();
-		
-		//class used to make name translations
-		Translators translator = new Translators();
-		
+		//Set variables
 		MIN_CUSTNAME_SCORE = minNameScore;
+		this.dBSOdbcConn=dBSOdbcConn;
+		this.dealerSchema=dealerSchema;
+		this.dbPath=dbPath;
+		this.onlyProspects=onlyProspects;
+		this.CustomerEst=CustomerEst;
+		this.inputFileNameAndPath=inputFileNameAndPath;
+		this.outputFileNameAndPath=outputFileNameAndPath;
+		this.progBarFrame=progBarFrame;  //may not need
+		this.inputs=inputs;
+		this.tabName=tabName;
+		this.translator = translator;
+		
+		
+		//below should be background task
+		
+	}
+
+	@Override
+	protected HashMap<String, CustomerObj> doInBackground() throws Exception {
+
+		//Start query
 		String queryCode  = null;
 		DBSquery customersQuery = null;
 		AccessProspectsQuery prospectsQuery = null;
-		
 		//DBS Query string setup
 		if (dBSOdbcConn != null && dealerSchema != null){ //TODO need to get dealer specific CIPNAME and CIPLADR location
 			queryCode = "SELECT CIP.CUNO, CIP.CUNM, CIP.CUNM2, CIP.PRCUNO, CIP.PHNO, "
@@ -88,23 +102,6 @@ public class CustomerMatcher {
 			prospectsQuery = new AccessProspectsQuery( qry, dbPath );
 			//prospect results: Custnum, Cust name, phys addr, bill addr, addr3, city, zip, phone
 		}
-	
-		
-		//Saleslink query set up -- Remove for now
-		//String prospectQueryCode = "SELECT [CustomerNo],[CustomerName],isnull([Address1],'')+' '+isnull([Address2],'')+' '+isnull([Address3],''),"
-		//		+ "[PostalCode],[Phone] FROM [AppDb_SalesLink].[dbo].[SalesLink_vCustomer] WHERE [CustomerNo] like ('$%')";
-		//SaleslinkQuery prospectsQuery = new SaleslinkQuery(prospectQueryCode);
-		
-		// (NOTE THIS DIDN'T SEEM NECESSARY -- REMOVE AFTER TESTING)
-//		int prospectColumnCount = prospectsQuery.getResultSetMetaData().getColumnCount();
-//		int dbsColumnCount = customersQuery.getResultSetMetaData().getColumnCount();
-//		int size = dbsColumnCount;
-		
-		/*Execute customer queries and store customers in an array list called customerList*/
-		//ResultSetMetaData stores properties of a ResultSet object, including column count
-		
-		//Variable for approximate number of customers to read in
-		//TODO need to use variable to determine
 		
 		int approxDBSCustomers = 70000;
 		
@@ -115,7 +112,7 @@ public class CustomerMatcher {
 		int numReadIn = 1;
 		int custHashSize = (int) (1.3 * approxDBSCustomers); //recommended size is number of expected / .75 for hash
 		//ArrayList<CustomerObj> ourCustomers = new ArrayList<CustomerObj>(initArrayListCap);
-		HashMap<String, CustomerObj> ourCustomers = new HashMap<String, CustomerObj>(custHashSize);
+		ourCustomers = new HashMap<String, CustomerObj>(custHashSize);
 		
 		if(customersQuery != null){
 			ResultSet result = customersQuery.getResultSet();
@@ -179,9 +176,14 @@ public class CustomerMatcher {
 		progBarFrame.setPBImportDBS(100);
 		System.out.println("100% DBS loaded!") ;
 		
+		
+		//*****************SHOULD BE ITS OWN CLASS**************/
+		
 		/*Have all DBS customers read into an array called customerList, now need to get excel file path and populate that*/
 		ExcelWorkbook wbOfCusts = new ExcelWorkbook(inputFileNameAndPath, progBarFrame, inputs, tabName, translator);
 		translator = null; //free up space now that translator is no longer needed
+		
+		//***********SHOULD BE ITS OWN CLASS****************/
 		
 		int pctCompleteCounter = 1; //counter for pct complete calculator
 		for ( excelCustomerObj cExcelCust : wbOfCusts.customersInWB){
@@ -294,8 +296,25 @@ public class CustomerMatcher {
 		wbOfCusts.addSheetOfMatches(outputFileNameAndPath, ourCustomers);
 		progBarFrame.setPBGenMatches(100);
 		System.out.println("Done!") ;
+		return null;
+	}
+	
+	/**
+	 * Set the minimum address match score for a potential match
+	 * @param MIN_ADDR_SCORE int for what to set the minimum address score to for potential match
+	 */
+	public void setMIN_ADDR_SCORE(int MIN_ADDR_SCORE) {
+		this.MIN_ADDR_SCORE = MIN_ADDR_SCORE;
 	}
 
+	/**
+	 * Set the minimum customer name match score for a potential match, this is set by a spinner for customer name
+	 * @param MIN_CUSTNAME_SCORE int for what to set the minimum name score to for potential match
+	 */
+	public void setMIN_CUSTNAME_SCORE(int MIN_CUSTNAME_SCORE) {
+		this.MIN_CUSTNAME_SCORE = MIN_CUSTNAME_SCORE;
+	}
+	
 	/**
 	 * Method takes a excel customer object, that has a matched DBS customer object and adds it to the excel customer objects
 	 * potential match list with an aggregated score. This method creates a deep copy of the DBS customer object so it can add the
@@ -306,21 +325,10 @@ public class CustomerMatcher {
 	 * @param aScore address score of match
 	 * @param nScore customer name score of match
 	 */
-	//TODO think about the storage vs access of the dbs customers. Creating potentially a lot of space use for customers taht aren't
-	//really being used
 	private static void createDBSCustomerwithMatchScore(excelCustomerObj excelCO, String custNum, double matchScore, String matchType) {
-		// TODO Auto-generated method stub
 		//create a deep copy of this DBS customer and add a match score
 		PotentialMatch potentialMatchedDBSCust = new PotentialMatch(custNum, matchScore, matchType);
 		//TODO deal with influencers differently
-//		for(String inf : matchedCO.influencers){
-//			matchedDBSCust.addInfluencer(inf);
-//		}
-		//create match score then add to potential customer list for Customer
-		
-		//TODO create hashmap of customer objects, just save score, type, and customer num; Need to create a dbs match object
-//		matchedDBSCust.setMatchScore( matchScore );
-//		matchedDBSCust.setMatchType( matchType );
 		excelCO.addPotentialDBSCustomer(potentialMatchedDBSCust);
 	}
 }

@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -36,12 +37,15 @@ import javax.swing.ButtonGroup;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.File;
+import java.util.HashMap;
 import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JCheckBox;
 
-import com.CarolinaCAT.busIntel.matching.CustomerMatcher;
+import com.CarolinaCAT.busIntel.matching.CustomerObj;
+import com.CarolinaCAT.busIntel.matching.ReadCustomerData;
+import com.CarolinaCAT.busIntel.matching.Translators;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -156,7 +160,7 @@ public class MatcherStart extends JFrame {
 	}
 	
 
-	
+
 	
 ////////////////////////////////////////////
 ///This method contains all of the code for creating and initializing
@@ -577,8 +581,7 @@ private void initComponents() {
 	);
 	contentPane.setLayout(gl_contentPane);
 }
-	
-	
+
 ////////////////////////////////////////////
 ///This method contains all of the code for creating events
 ////////////////////////////////////////////
@@ -607,15 +610,13 @@ private void initComponents() {
 									progBarFrame = new ProgressBar();
 									System.out.println("created prog bar");
 								}
-								//TODO try setting progree bars to 0 then set visible, without setting to null below
 								
 								progBarFrame.setVisible(true);
 								//TODO check that this is okay
 								progBarFrame.repaint();
+								
 								System.out.println("prog bar visible");
-								//CustomerMatcher matcherProg = null;
 								//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)
-								//TODO should this be in the run block of the event queue?
 								int[] colLocs = new int[12];
 								colLocs[0] =  getTxtFirstRow();
 								colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
@@ -632,7 +633,7 @@ private void initComponents() {
 								//TODO should this be inside the run event queue?
 								try {
 									System.out.println("starting run");
-									CustomerMatcher matcherProg = null;
+									ReadCustomerData matcherProg = null;
 									String accessDBloc = null;
 									String DbsODBC = null;
 									String schema = null;
@@ -651,9 +652,24 @@ private void initComponents() {
 										String str = txtEstCustomers.getText().trim();
 										customerCount = Integer.parseInt(str);
 									}
-
-									new CustomerMatcher(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
-												progBarFrame, colLocs, getTabName(),getSpnrNameTol());
+									// TODO set translator to null after read in work book
+									//class used to make name translations
+									Translators translator = new Translators();
+									//TODO set the return variable and get progress correctly
+									ReadCustomerData custData = new ReadCustomerData(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
+												progBarFrame, colLocs, getTabName(),getSpnrNameTol(), translator);
+									while(!custData.isDone()){
+										//this is how to block
+										progBarFrame.setPBImportDBS(custData.getProgress());
+									}
+									
+									HashMap<String, CustomerObj> customerData = custData.get();
+									
+									//TODO create workbook thread
+									
+									
+									//TODO create matcher thread
+									
 									JOptionPane.showMessageDialog(null,
 										    "Matching Complete!",
 										    "Complete",
@@ -672,40 +688,6 @@ private void initComponents() {
 							}
 						}
 					});
-					//TODO should this be in the run block of the event queue?
-					//CustomerMatcher matcherProg = null;
-					//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)
-//					int[] colLocs = new int[12];
-//					colLocs[0] =  getTxtFirstRow();
-//					colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
-//					colLocs[2] = (getTxtCustNameCol2() == -1) ?  -1 : getTxtCustNameCol2();
-//					colLocs[3] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
-//					colLocs[4] = (getTxtCustInfCol2() == -1) ?  -1 : getTxtCustInfCol2();
-//					colLocs[5] = (getTxtCustInfCol3() == -1) ?  -1 : getTxtCustInfCol3();
-//					colLocs[6] = (getTxtCustInfCol4() == -1) ?  -1 : getTxtCustInfCol4();
-//					colLocs[7] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
-//					colLocs[8] = (getTxtCustAddrCol2() == -1) ?  -1 : getTxtCustAddrCol2();
-//					colLocs[9] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
-//					colLocs[10] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
-//					colLocs[11] = (getTxtCustZipCol2() == -1) ?  -1 : getTxtCustZipCol2();
-//					//TODO should this be inside the run event queue?
-//					try {
-//						System.out.println("starting run");
-//						CustomerMatcher matcherProg = new CustomerMatcher(getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(), progBarFrame, colLocs, getTabName(),getSpnrNameTol());
-//						JOptionPane.showMessageDialog(null,
-//							    "Matching Complete!",
-//							    "Complete",
-//							    JOptionPane.INFORMATION_MESSAGE);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						JOptionPane.showMessageDialog(null, 
-//			                    "Error, file not loaded properly. Check file exists, tab name is correct", 
-//			                    "Cannot Write Warning", 
-//			                    JOptionPane.WARNING_MESSAGE);
-//					}
-//					progBarFrame.setVisible(false);
-//					//TODO check if setting this to null is creating an issue re-painting
-//					progBarFrame = null;
 					
 				} else {
 					JOptionPane.showMessageDialog(null,

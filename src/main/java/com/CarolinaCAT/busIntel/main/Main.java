@@ -5,7 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import com.CarolinaCAT.busIntel.matching.CustomerMatcher;
+import com.CarolinaCAT.busIntel.matching.ReadCustomerData;
 import com.CarolinaCAT.busIntel.view.MatcherStart;
 
 
@@ -31,7 +31,7 @@ public class Main {
 					System.out.println("step 3");
 					startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					System.out.println("step 4");
-					CustomerMatcher matcherProg = null;
+					ReadCustomerData matcherProg = null;
 					
 				} catch (Exception e) {
 					e.printStackTrace();
