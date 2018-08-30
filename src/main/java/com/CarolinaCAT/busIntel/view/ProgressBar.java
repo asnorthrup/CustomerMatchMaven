@@ -26,7 +26,7 @@ public class ProgressBar extends JFrame {
 	private static final long serialVersionUID = 6850691244875716569L;
 	private JPanel contentPane;
 	private JProgressBar pbImportDBS;
-	private JProgressBar pbReadCusts;
+	private JProgressBar pbReadWBofUnknownCusts;
 	private JProgressBar pbGenMatches;
 	private JButton btnCancel;
 	
@@ -68,7 +68,7 @@ public class ProgressBar extends JFrame {
 		contentPane.setOpaque(true);
 
 		//create progress bars		
-		pbReadCusts = new JProgressBar();
+		pbReadWBofUnknownCusts = new JProgressBar();
 		pbGenMatches = new JProgressBar();
 		pbImportDBS = new JProgressBar();
 		JLabel lblReadCustFileStatus = new JLabel("Reading Customer File...");
@@ -97,7 +97,7 @@ public class ProgressBar extends JFrame {
 					.addGap(94)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(pbImportDBS, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
-						.addComponent(pbReadCusts, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+						.addComponent(pbReadWBofUnknownCusts, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
 						.addComponent(pbGenMatches, GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
 					.addGap(81))
 				.addGroup(gl_panel.createSequentialGroup()
@@ -115,7 +115,7 @@ public class ProgressBar extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblReadCustFileStatus)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(pbReadCusts, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+					.addComponent(pbReadWBofUnknownCusts, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblGenMatchStatus)
 					.addGap(5)
@@ -146,9 +146,9 @@ public class ProgressBar extends JFrame {
 	 * Allows program to update the progress bar for reading in of customers in selected Excel file
 	 * @param pct as integer for percent complete
 	 */
-	public void setPBReadCusts(int pct){
-		pbReadCusts.setValue(pct);
-		pbReadCusts.update(pbReadCusts.getGraphics());
+	public void setPBReadWBofUnknownCusts(int pct){
+		pbReadWBofUnknownCusts.setValue(pct);
+		pbReadWBofUnknownCusts.update(pbReadWBofUnknownCusts.getGraphics());
 	}
 	/**
 	 * Allows program to update the progress bar for creating matches of customer in CRM to customers in selected Excel file

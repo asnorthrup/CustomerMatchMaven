@@ -37,6 +37,7 @@ import javax.swing.ButtonGroup;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.Color;
 import java.awt.Font;
@@ -44,8 +45,10 @@ import java.awt.Font;
 import javax.swing.JCheckBox;
 
 import com.CarolinaCAT.busIntel.matching.CustomerObj;
+import com.CarolinaCAT.busIntel.matching.ExcelWorkbook;
 import com.CarolinaCAT.busIntel.matching.ReadCustomerData;
 import com.CarolinaCAT.busIntel.matching.Translators;
+import com.CarolinaCAT.busIntel.matching.excelCustomerObj;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -655,20 +658,32 @@ private void initComponents() {
 									// TODO set translator to null after read in work book
 									//class used to make name translations
 									Translators translator = new Translators();
+									
 									//TODO set the return variable and get progress correctly
 									ReadCustomerData custData = new ReadCustomerData(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
 												progBarFrame, colLocs, getTabName(),getSpnrNameTol(), translator);
 									while(!custData.isDone()){
-										//this is how to block
+										//update progress bar for reading customers
 										progBarFrame.setPBImportDBS(custData.getProgress());
 									}
+									progBarFrame.setPBImportDBS(100);
+									//our customers is hash map of our database customers known as string, customerobj and string is customer number
+									HashMap<String, CustomerObj> ourCustomers = custData.get();
 									
-									HashMap<String, CustomerObj> customerData = custData.get();
+									//Have all DBS customers read into an hashmap, now need to read unknown customer file and match against ourCustomers
+									String inputFileNameAndPath = getTxtInputFileAndAbsPath();
+									ExcelWorkbook wbOfUnknownCusts = new ExcelWorkbook(inputFileNameAndPath, progBarFrame, colLocs, getTabName(), translator);
+									while(!wbOfUnknownCusts.isDone()){
+										progBarFrame.setPBReadWBofUnknownCusts(wbOfUnknownCusts.getProgress());
+									}
+									progBarFrame.setPBReadWBofUnknownCusts(100);
+									ArrayList<excelCustomerObj> customersToMatch = wbOfUnknownCusts.get();
+									translator = null; //free up memory now that translator is no longer needed
 									
-									//TODO create workbook thread
-									
+									//curr state: have hashmap of all known customers, have arraylist of customers to match against known customers
 									
 									//TODO create matcher thread
+									//STOPPED HERE CUSTOMER MATCHER IS THREADED BUT NEEDS TO BE CALLED, ALREADY STARTED DECOUPLING THE LISTS FROM THE WORK BOOK OBJECTS
 									
 									JOptionPane.showMessageDialog(null,
 										    "Matching Complete!",
@@ -1145,7 +1160,7 @@ private void initComponents() {
 	 * @param pct as integer for reading excel file status
 	 */	
 	public void updateReadExcelCustomersStatus(int pct){
-		progBarFrame.setPBReadCusts(pct);
+		progBarFrame.setPBReadWBofUnknownCusts(pct);
 	}
 
 	/**
