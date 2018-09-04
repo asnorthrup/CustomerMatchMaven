@@ -79,7 +79,7 @@ public class CustomerMatcher {
 			customersQuery = new DBSquery(queryCode, dBSOdbcConn);
 		}
 		String qry = null;
-		if (dbPath != null){
+		if ( dbPath != null && dbPath.trim().length() > 0 && !dbPath.trim().equals("No File Choosen")){
 			if( onlyProspects ){
 				qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))";
 			} else {
