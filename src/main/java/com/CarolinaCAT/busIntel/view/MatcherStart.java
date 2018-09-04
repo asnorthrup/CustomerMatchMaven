@@ -46,6 +46,8 @@ import javax.swing.JCheckBox;
 
 import com.CarolinaCAT.busIntel.matching.CustomerObj;
 import com.CarolinaCAT.busIntel.matching.ExcelWorkbook;
+import com.CarolinaCAT.busIntel.matching.MatchGenerator;
+import com.CarolinaCAT.busIntel.matching.OutputWorkbook;
 import com.CarolinaCAT.busIntel.matching.ReadCustomerData;
 import com.CarolinaCAT.busIntel.matching.Translators;
 import com.CarolinaCAT.busIntel.matching.excelCustomerObj;
@@ -662,6 +664,7 @@ private void initComponents() {
 									//TODO set the return variable and get progress correctly
 									ReadCustomerData custData = new ReadCustomerData(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
 												progBarFrame, colLocs, getTabName(),getSpnrNameTol(), translator);
+									custData.execute();
 									while(!custData.isDone()){
 										//update progress bar for reading customers
 										progBarFrame.setPBImportDBS(custData.getProgress());
@@ -673,6 +676,7 @@ private void initComponents() {
 									//Have all DBS customers read into an hashmap, now need to read unknown customer file and match against ourCustomers
 									String inputFileNameAndPath = getTxtInputFileAndAbsPath();
 									ExcelWorkbook wbOfUnknownCusts = new ExcelWorkbook(inputFileNameAndPath, progBarFrame, colLocs, getTabName(), translator);
+									wbOfUnknownCusts.execute();
 									while(!wbOfUnknownCusts.isDone()){
 										progBarFrame.setPBReadWBofUnknownCusts(wbOfUnknownCusts.getProgress());
 									}
@@ -683,7 +687,19 @@ private void initComponents() {
 									//curr state: have hashmap of all known customers, have arraylist of customers to match against known customers
 									
 									//TODO create matcher thread
+									
 									//STOPPED HERE CUSTOMER MATCHER IS THREADED BUT NEEDS TO BE CALLED, ALREADY STARTED DECOUPLING THE LISTS FROM THE WORK BOOK OBJECTS
+									//-1 bc no address tolerance used
+									MatchGenerator genMatches = new MatchGenerator(customersToMatch, ourCustomers, -1, getSpnrNameTol());
+									genMatches.execute();
+									while(!genMatches.isDone()){
+										progBarFrame.setPBGenMatches(genMatches.getProgress());
+									}
+									progBarFrame.setPBGenMatches(100);
+									
+									//Write out the workbook -- do we need error handling?
+									OutputWorkbook outWB = new OutputWorkbook(getTxtOutputFileAndAbsPath(), ourCustomers, customersToMatch);
+									//Check should be done, but no testing done
 									
 									JOptionPane.showMessageDialog(null,
 										    "Matching Complete!",
