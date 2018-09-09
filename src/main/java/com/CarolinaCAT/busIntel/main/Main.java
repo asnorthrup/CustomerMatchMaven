@@ -23,19 +23,18 @@ public class Main {
 		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-					System.out.println("step 1");
-					JFrame startFrame = new MatcherStart();
-					System.out.println("step 2");
-					startFrame.setVisible(true);
-					System.out.println("step 3");
-					startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					System.out.println("step 4");
-					ReadCustomerData matcherProg = null;
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			try {
+				System.out.println("step 1");
+				JFrame startFrame = new MatcherStart();
+				System.out.println("step 2");
+				startFrame.setVisible(true);
+				System.out.println("step 3");
+				startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				System.out.println("step 4");
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			}
 		});
 		

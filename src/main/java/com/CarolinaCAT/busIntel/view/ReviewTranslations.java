@@ -175,11 +175,8 @@ try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(yourFile))) {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		
 		JScrollPane spRmvBeg = new JScrollPane();
-		
 		JLabel lblRemoveThisAnd = new JLabel("Remove This and Before");
-		
 		JScrollPane spRmvAftr = new JScrollPane();
 		
 		JLabel lblRemoveThisAnd_1 = new JLabel("Remove This and After");

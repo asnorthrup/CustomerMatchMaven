@@ -26,13 +26,15 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Facet;
 import org.apache.xmlbeans.impl.xb.xsdschema.impl.FacetImpl;
 
 import com.CarolinaCAT.busIntel.view.MatcherStart;
+import com.CarolinaCAT.busIntel.view.NewProgressBar;
 import com.CarolinaCAT.busIntel.view.ProgressBar;
 
 //Probably return excel customer obj
-public class ExcelWorkbook extends SwingWorker<ArrayList<excelCustomerObj>,Void>{
+public class ExcelWorkbook{
 	private long lastRowIndex;
 	private int lastColIndex;
-	public ArrayList<excelCustomerObj> customersInWB;
+	private ArrayList<excelCustomerObj> customersInWB;
+
 	//Excel workbook with data and where matches will be added
 	public XSSFWorkbook wb;
 	private File file;
@@ -40,7 +42,6 @@ public class ExcelWorkbook extends SwingWorker<ArrayList<excelCustomerObj>,Void>
 	
 	//set input variables
 	private String path;
-	private ProgressBar progBarFrame;
 	private int[] inputs;
 	private String tabName;
 	private Translators translator;
@@ -53,16 +54,16 @@ public class ExcelWorkbook extends SwingWorker<ArrayList<excelCustomerObj>,Void>
 	 */
 	
 
-	public ExcelWorkbook(String path, ProgressBar progBarFrame, int[] inputs, String tabName, Translators translator){
+	public ExcelWorkbook(String path, int[] inputs, String tabName, Translators translator){
 		this.path = path;
-		this.progBarFrame = progBarFrame;
 		this.inputs = inputs;
 		this.tabName = tabName;
 		this.translator = translator;
+		readInData();
 	}	
 	
-	@Override
-	protected ArrayList<excelCustomerObj> doInBackground() throws Exception {
+	private void readInData() {
+		// TODO Auto-generated method stub
 		//check that this is a xlsx file
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
@@ -113,17 +114,15 @@ public class ExcelWorkbook extends SwingWorker<ArrayList<excelCustomerObj>,Void>
 //				}
 //			}
 //		}
-		populateCustomers(myExcelSheet, progBarFrame, inputs, translator);
+		populateCustomers(myExcelSheet, inputs, translator);
 		try {
 			pkg.close();
 		} catch (IOException e) {
 			System.out.println("File not closeable because open by another program");
 		}
-		return null;
-	}
+	}	
 	
-	
-	private void populateCustomers(Sheet myExcelSheet, ProgressBar progBarFrame, int[] inputs, Translators translator) {
+	private void populateCustomers(Sheet myExcelSheet, int[] inputs, Translators translator) {
 		//array of inputs is passed in to show which column each value is in for the excel sheet
 		int startRow = inputs[0]; //rows are 0 based index, user entered as 1 based
 		int colCustName = inputs[1]; 
@@ -151,7 +150,6 @@ public class ExcelWorkbook extends SwingWorker<ArrayList<excelCustomerObj>,Void>
 			if((i % 10) == 0){
 				double pct = ((double)i / numInSheet) * 100;
 				System.out.println("Read in"+ pct + "of Excel file");
-				setProgress( (int) pct );
 			}
 			Row row = myExcelSheet.getRow( i );
 			String nm = null;
@@ -242,7 +240,6 @@ public class ExcelWorkbook extends SwingWorker<ArrayList<excelCustomerObj>,Void>
 				customersInWB.add(cust);
 			}
 		}
-		setProgress(100);
 		//completed read in columns in workbook
 	}
 	
@@ -264,9 +261,13 @@ public class ExcelWorkbook extends SwingWorker<ArrayList<excelCustomerObj>,Void>
 	public void setLastColIndex(int lastColIndex) {
 		this.lastColIndex = lastColIndex;
 	}
+	/**
+	 * @return the customersInWB
+	 */
+	public ArrayList<excelCustomerObj> getCustomersInWB() {
+		return customersInWB;
+	}
 
-
-	//probably want last column and last row...
 	
 
 }

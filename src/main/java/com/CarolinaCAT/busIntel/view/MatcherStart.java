@@ -8,8 +8,10 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.UIManager;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -39,6 +41,7 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -113,7 +116,7 @@ public class MatcherStart extends JFrame {
 	private JCheckBox ckbxIgnrInfl;
 
 	//class that invokes the popup window for showing progress on matching
-	private ProgressBar progBarFrame;
+	private NewProgressBar progBarFrame;
 	//tells main class whether to start executing or not
 	public static volatile boolean matcherStart = false;
 	private boolean readyToRun = false;
@@ -593,6 +596,8 @@ private void initComponents() {
 	private void createEvents() {
 		btnRunMatcher.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				HashMap<String, CustomerObj> ourCustomers = null; //our customers is hash map of our database customers known as string, customerobj and string is customer number
+				ArrayList<excelCustomerObj> customersToMatch = null; //this is the list of customers to match against from an Excel file
 				//Initiate popup for progress bar
 				int connLen = txtDBSConn.getText().trim().length();
 				int schemaLen = txtSchema.getText().trim().length();
@@ -606,120 +611,104 @@ private void initComponents() {
 				} else if(txtDBSConn.getText().trim().length() == 0 && txtSchema.getText().trim().length() > 0){
 			        JOptionPane.showMessageDialog(null, "Must ODBC Name", "Customer Source Error", JOptionPane.WARNING_MESSAGE);
 				} else if (readyToRun == true){
-					//TODO handle if user exes out program bar popup before done running
-					//thread where GUI is processed is EDT thread.
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							try {
-								if (progBarFrame == null){
-									progBarFrame = new ProgressBar();
-									System.out.println("created prog bar");
-								}
-								
-								progBarFrame.setVisible(true);
-								//TODO check that this is okay
-								progBarFrame.repaint();
-								
-								System.out.println("prog bar visible");
-								//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)
-								int[] colLocs = new int[12];
-								colLocs[0] =  getTxtFirstRow();
-								colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
-								colLocs[2] = (getTxtCustNameCol2() == -1) ?  -1 : getTxtCustNameCol2();
-								colLocs[3] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
-								colLocs[4] = (getTxtCustInfCol2() == -1) ?  -1 : getTxtCustInfCol2();
-								colLocs[5] = (getTxtCustInfCol3() == -1) ?  -1 : getTxtCustInfCol3();
-								colLocs[6] = (getTxtCustInfCol4() == -1) ?  -1 : getTxtCustInfCol4();
-								colLocs[7] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
-								colLocs[8] = (getTxtCustAddrCol2() == -1) ?  -1 : getTxtCustAddrCol2();
-								colLocs[9] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
-								colLocs[10] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
-								colLocs[11] = (getTxtCustZipCol2() == -1) ?  -1 : getTxtCustZipCol2();
-								//TODO should this be inside the run event queue?
-								try {
-									System.out.println("starting run");
-									ReadCustomerData matcherProg = null;
-									String accessDBloc = null;
-									String DbsODBC = null;
-									String schema = null;
-									int customerCount = 0;
-									//TODO need to set string for access DB
-									if (lblAccessDBLocation.getText().trim().length() > 0){
-										accessDBloc = lblAccessDBLocation.getText().trim();
-									}
-									if (txtDBSConn.getText().trim().length() > 0){
-										DbsODBC = txtDBSConn.getText().trim();
-									}
-									if (txtSchema.getText().trim().length() > 0){
-										schema = txtSchema.getText().trim();
-									}
-									if (txtEstCustomers.getText().trim().length() > 0){
-										String str = txtEstCustomers.getText().trim();
-										customerCount = Integer.parseInt(str);
-									}
-									// TODO set translator to null after read in work book
-									//class used to make name translations
-									Translators translator = new Translators();
-									
-									//TODO set the return variable and get progress correctly
-									ReadCustomerData custData = new ReadCustomerData(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
-												progBarFrame, colLocs, getTabName(),getSpnrNameTol(), translator);
-									custData.execute();
-									while(!custData.isDone()){
-										//update progress bar for reading customers
-										progBarFrame.setPBImportDBS(custData.getProgress());
-									}
-									progBarFrame.setPBImportDBS(100);
-									//our customers is hash map of our database customers known as string, customerobj and string is customer number
-									HashMap<String, CustomerObj> ourCustomers = custData.get();
-									
-									//Have all DBS customers read into an hashmap, now need to read unknown customer file and match against ourCustomers
-									String inputFileNameAndPath = getTxtInputFileAndAbsPath();
-									ExcelWorkbook wbOfUnknownCusts = new ExcelWorkbook(inputFileNameAndPath, progBarFrame, colLocs, getTabName(), translator);
-									wbOfUnknownCusts.execute();
-									while(!wbOfUnknownCusts.isDone()){
-										progBarFrame.setPBReadWBofUnknownCusts(wbOfUnknownCusts.getProgress());
-									}
-									progBarFrame.setPBReadWBofUnknownCusts(100);
-									ArrayList<excelCustomerObj> customersToMatch = wbOfUnknownCusts.get();
-									translator = null; //free up memory now that translator is no longer needed
-									
-									//curr state: have hashmap of all known customers, have arraylist of customers to match against known customers
-									
-									//TODO create matcher thread
-									
-									//STOPPED HERE CUSTOMER MATCHER IS THREADED BUT NEEDS TO BE CALLED, ALREADY STARTED DECOUPLING THE LISTS FROM THE WORK BOOK OBJECTS
-									//-1 bc no address tolerance used
-									MatchGenerator genMatches = new MatchGenerator(customersToMatch, ourCustomers, -1, getSpnrNameTol());
-									genMatches.execute();
-									while(!genMatches.isDone()){
-										progBarFrame.setPBGenMatches(genMatches.getProgress());
-									}
-									progBarFrame.setPBGenMatches(100);
-									
-									//Write out the workbook -- do we need error handling?
-									OutputWorkbook outWB = new OutputWorkbook(getTxtOutputFileAndAbsPath(), ourCustomers, customersToMatch);
-									//Check should be done, but no testing done
-									
-									JOptionPane.showMessageDialog(null,
-										    "Matching Complete!",
-										    "Complete",
-										    JOptionPane.INFORMATION_MESSAGE);
-								} catch (Exception e) {
-									JOptionPane.showMessageDialog(null, 
-						                    "Error, file not loaded properly. Check file exists, tab name is correct", 
-						                    "Cannot Write Warning", 
-						                    JOptionPane.WARNING_MESSAGE);
-								}
-								progBarFrame.setVisible(false);
-								//TODO check if setting this to null is creating an issue re-painting
-								progBarFrame = null;
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
+					if (progBarFrame == null){
+						progBarFrame = new NewProgressBar();
+						progBarFrame.setVisible(true);
+						progBarFrame.setAlwaysOnTop(true);
+						System.out.println("created prog bar");
+					}
 					
+					progBarFrame.setVisible(true);
+					progBarFrame.setAlwaysOnTop(true);
+					//TODO check that this is okay
+					//progBarFrame.repaint();
+					
+					System.out.println("prog bar visible");
+					//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)
+					int[] colLocs = new int[12];
+					setupcolLocs(colLocs);
+					try {
+						System.out.println("starting run");
+						ReadCustomerData matcherProg = null;
+						String accessDBloc = null;
+						String DbsODBC = null;
+						String schema = null;
+						int customerCount = 0;
+						//TODO need to set string for access DB
+						if (lblAccessDBLocation.getText().trim().length() > 0){
+							accessDBloc = lblAccessDBLocation.getText().trim();
+						}
+						if (txtDBSConn.getText().trim().length() > 0){
+							DbsODBC = txtDBSConn.getText().trim();
+						}
+						if (txtSchema.getText().trim().length() > 0){
+							schema = txtSchema.getText().trim();
+						}
+						if (txtEstCustomers.getText().trim().length() > 0){
+							String str = txtEstCustomers.getText().trim();
+							customerCount = Integer.parseInt(str);
+						}
+						
+						Translators translator = new Translators();//class used to make name translations
+						String inputFileNameAndPath = getTxtInputFileAndAbsPath(); //file to read unknown customers from
+						//start swing workers to read, match customers
+						System.out.println("starting read cust data thread");
+						ReadCustomerData custData = new ReadCustomerData(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
+									progBarFrame, colLocs, getTabName(),getSpnrNameTol(), translator);
+						//will use property changes to call other methods
+						//
+						custData.addPropertyChangeListener(new InputProgressListener(progBarFrame, inputFileNameAndPath, getTabName(), colLocs, translator, getSpnrNameTol(), ourCustomers, customersToMatch, getTxtOutputFileAndAbsPath()));
+						//initiiate first swing worker
+						custData.execute();
+						
+						//what else does change listener need: 
+						
+//						while(!custData.isDone()){
+//							//update progress bar for reading customers
+//							progBarFrame.setPBImportDBS(custData.getProgress());
+//						}
+						//progBarFrame.setPBImportDBS(100);
+						
+						/*
+						 * If you launch the SwingWorker from the EDT and the call SwingWorker#get you will be block the EDT, preventing it from processing any updates which leads you back to the reason why you're using SwingWorker.
+						 * In this case, you have two choices. You could provide SwingWorker with a callback interface, which it would be able to call from done once the SwingWorker has completed. 
+						 * Or you could attach a PropertyChangeListener to the SwingWorker and monitor the state value, waiting until it equals StateValue.Done
+						 */
+						 
+						
+						//Have all DBS customers read into an hashmap, now need to read unknown customer file and match against ourCustomers
+
+						System.out.println("starting read workbook thread");
+
+//						while(!wbOfUnknownCusts.isDone()){
+//							progBarFrame.setPBReadWBofUnknownCusts(wbOfUnknownCusts.getProgress());
+//						}
+						//progBarFrame.setPBReadWBofUnknownCusts(100);
+						//TODO do not think customers to match is populating
+
+
+						
+						//curr state: have hashmap of all known customers, have arraylist of customers to match against known customers
+
+
+//						while(!genMatches.isDone()){
+//							progBarFrame.setPBGenMatches(genMatches.getProgress());
+//						}
+						//progBarFrame.setPBGenMatches(100);
+
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, 
+			                    "Error, file not loaded properly. Check file exists, tab name is correct", 
+			                    "Cannot Write Warning", 
+			                    JOptionPane.WARNING_MESSAGE);
+					}
+					//progBarFrame.setVisible(false);
+					
+					//TODO need to reset progres bar status to 0
+					
+					//TODO check if setting this to null is creating an issue re-painting
+					//progBarFrame = null;
+
 				} else {
 					JOptionPane.showMessageDialog(null,
 						    "Cannot Run, Please add required fields",
@@ -1033,6 +1022,25 @@ private void initComponents() {
 
 	//////////////////////////////*** GETTERS FOR PROGRAM INPUT ****//////////////////////////////////////////////////////////////////////
 
+	protected void setupcolLocs(int[] colLocs) {
+		// TODO Auto-generated method stub
+		colLocs[0] =  getTxtFirstRow();
+		colLocs[1] = (getTxtCustNameCol() == -1) ?  -1 : getTxtCustNameCol();
+		colLocs[2] = (getTxtCustNameCol2() == -1) ?  -1 : getTxtCustNameCol2();
+		colLocs[3] = (getTxtCustInfCol() == -1) ?  -1 : getTxtCustInfCol();
+		colLocs[4] = (getTxtCustInfCol2() == -1) ?  -1 : getTxtCustInfCol2();
+		colLocs[5] = (getTxtCustInfCol3() == -1) ?  -1 : getTxtCustInfCol3();
+		colLocs[6] = (getTxtCustInfCol4() == -1) ?  -1 : getTxtCustInfCol4();
+		colLocs[7] = (getTxtCustAddrCol() == -1) ?  -1 : getTxtCustAddrCol();
+		colLocs[8] = (getTxtCustAddrCol2() == -1) ?  -1 : getTxtCustAddrCol2();
+		colLocs[9] = (getTxtCustPhoneCol() == -1) ?  -1 : getTxtCustPhoneCol();
+		colLocs[10] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
+		colLocs[11] = (getTxtCustZipCol2() == -1) ?  -1 : getTxtCustZipCol2();
+	}
+
+
+
+
 	private int getTxtCustNameCol() {
 		if(txtCustNameCol.getText() == null || txtCustNameCol.getText().equals("")) {return -1;}
 		String tmp = txtCustNameCol.getText();
@@ -1164,28 +1172,28 @@ private void initComponents() {
 	////////////////////////////////////END GETTERS////////////////////////////////////////////
 	
 	//////////////////////////*** UPDATE PROGRESS BARS ***/////////////////////////////////////
-	/**
-	 * Access to update the progress bars through this class
-	 * @param pct as integer for customer loading status
-	 */
-	public void updateDBSLoadStatus(int pct){
-		progBarFrame.setPBImportDBS(pct);
-	}
-	/**
-	 * Access to update the progress bars through this class
-	 * @param pct as integer for reading excel file status
-	 */	
-	public void updateReadExcelCustomersStatus(int pct){
-		progBarFrame.setPBReadWBofUnknownCusts(pct);
-	}
-
-	/**
-	 * Access to update the progress bars through this class
-	 * @param pct as integer for customer matching status
-	 */	
-	public void updateCustomerMatchingStatus(int pct){
-		progBarFrame.setPBGenMatches(pct);
-	}
+//	/**
+//	 * Access to update the progress bars through this class
+//	 * @param pct as integer for customer loading status
+//	 */
+//	public void updateDBSLoadStatus(int pct){
+//		progBarFrame.setPBImportDBS(pct);
+//	}
+//	/**
+//	 * Access to update the progress bars through this class
+//	 * @param pct as integer for reading excel file status
+//	 */	
+//	public void updateReadExcelCustomersStatus(int pct){
+//		progBarFrame.setPBReadWBofUnknownCusts(pct);
+//	}
+//
+//	/**
+//	 * Access to update the progress bars through this class
+//	 * @param pct as integer for customer matching status
+//	 */	
+//	public void updateCustomerMatchingStatus(int pct){
+//		progBarFrame.setPBGenMatches(pct);
+//	}
 	
 	////////////////////////////////////HELPER METHODS/////////////////////////////////////////
 	
@@ -1250,3 +1258,105 @@ private void initComponents() {
 		}
 	}
 }
+
+/*
+ * Change listener used by background jobs for updating progress
+ */
+class InputProgressListener implements PropertyChangeListener {
+	private NewProgressBar progBarFrame;
+	private String inputFileNameAndPath;
+	private String tabInputName;
+	private int[] colLocs;
+	private String outputFileNameAndPath;
+	private Translators translator;
+	private int spnNameTol;
+	private HashMap<String, CustomerObj> ourCustomers; 
+	private ArrayList<excelCustomerObj> customersToMatch;
+	
+	InputProgressListener() {} 
+
+	InputProgressListener(NewProgressBar progBarFrame, String inputFileNameAndPath, String tabInputName, int[] colLocs, Translators translator, int spnNameTol, HashMap<String, CustomerObj> ourCustomers, ArrayList<excelCustomerObj> customersToMatch, String outputFileNameAndPath) {
+		this.progBarFrame=progBarFrame;
+		this.inputFileNameAndPath=inputFileNameAndPath;
+		this.tabInputName = tabInputName;
+		this.outputFileNameAndPath = outputFileNameAndPath;
+		this.colLocs=colLocs;
+		this.translator=translator;
+		this.spnNameTol=spnNameTol;
+		this.ourCustomers=ourCustomers; 
+		this.customersToMatch=customersToMatch;
+		progBarFrame.setPBImportCustomers(0);
+		progBarFrame.setPBGenMatches(0);
+		progBarFrame.setLblReadStatus("File Reading Not Yet Begun");
+		progBarFrame.setLblStatusConnection("Establishing Connection");
+	}
+
+	public void propertyChange(PropertyChangeEvent evt) {
+		//Determine whether the property is progress type
+		if ("progress".equals(evt.getPropertyName())) { 
+			progBarFrame.setPBImportCustomers((int) evt.getNewValue());
+			progBarFrame.setLblStatusConnection("Connection Established");
+		} else if (evt.getNewValue().equals(StateValue.DONE)){
+			try {
+				ourCustomers = ((SwingWorker<HashMap<String, CustomerObj>,Void>) evt.getSource()).get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			progBarFrame.setLblReadStatus("Reading File");
+			ExcelWorkbook wbOfUnknownCusts = new ExcelWorkbook(inputFileNameAndPath, colLocs, tabInputName, translator);
+			customersToMatch = wbOfUnknownCusts.getCustomersInWB();
+			progBarFrame.setLblReadStatus("File Read Complete");
+			
+			System.out.println("starting match generator thread");
+			MatchGenerator genMatches = new MatchGenerator(customersToMatch, ourCustomers, -1, spnNameTol);//-1 bc no address tolerance used
+			genMatches.addPropertyChangeListener(new MatchGeneratorProgressListener(progBarFrame, spnNameTol, ourCustomers, customersToMatch, outputFileNameAndPath));
+			genMatches.execute();
+		}
+	}
+}
+
+
+class MatchGeneratorProgressListener implements PropertyChangeListener {
+	private NewProgressBar progBarFrame;
+	private int spnNameTol;
+	private HashMap<String, CustomerObj> ourCustomers; 
+	private ArrayList<excelCustomerObj> customersToMatch;
+	private String outputFileNameAndPath;
+	
+	MatchGeneratorProgressListener(NewProgressBar progBarFrame, int spnNameTol, HashMap<String, CustomerObj> ourCustomers, ArrayList<excelCustomerObj> customersToMatch, String outputFileNameAndPath){
+		this.spnNameTol = spnNameTol;
+		this.ourCustomers = ourCustomers;
+		this.customersToMatch = customersToMatch;
+		this.progBarFrame = progBarFrame;
+		this.outputFileNameAndPath=outputFileNameAndPath;
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// TODO Auto-generated method stub
+		if ("progress".equals(evt.getPropertyName())) { 
+			progBarFrame.setPBGenMatches((int) evt.getNewValue());
+		}else if (evt.getNewValue().equals(StateValue.DONE)){			
+			//Write out the workbook -- do we need error handling?
+			System.out.println("write out to out file");
+			OutputWorkbook outWB = new OutputWorkbook(outputFileNameAndPath, ourCustomers, customersToMatch);
+			//Check should be done, but no testing done
+			progBarFrame.setVisible(false);
+			progBarFrame = null;
+			ourCustomers = null;
+			customersToMatch = null;
+			JOptionPane.showMessageDialog(null,
+				    "Matching Complete!",
+				    "Complete",
+				    JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+}
+//custData.get();
+
+

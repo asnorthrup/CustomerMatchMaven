@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 
 import com.CarolinaCAT.busIntel.view.MatcherStart;
+import com.CarolinaCAT.busIntel.view.NewProgressBar;
 import com.CarolinaCAT.busIntel.view.ProgressBar;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -56,7 +57,7 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 	 * @throws Exception
 	 */
 	public ReadCustomerData(String dBSOdbcConn, String dealerSchema, String dbPath, Boolean onlyProspects, 
-			int CustomerEst,String inputFileNameAndPath, String outputFileNameAndPath, ProgressBar progBarFrame, 
+			int CustomerEst,String inputFileNameAndPath, String outputFileNameAndPath, NewProgressBar progBarFrame, 
 			int[] inputs, String tabName, int minNameScore, Translators translator) throws Exception
 	{
 		//Set variables
@@ -98,7 +99,7 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 		}
 		//MS access database query setup
 		String qry = null;
-		if (dbPath != null){
+		if (dbPath != null && !dbPath.equals("No File Choosen")){
 			if( onlyProspects ){
 				qry = "SELECT SaleslinkCustomers.* FROM SaleslinkCustomers WHERE (((SaleslinkCustomers.CustomerNo) Like '$%'))";
 			} else {
