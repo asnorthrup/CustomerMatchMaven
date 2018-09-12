@@ -128,6 +128,7 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 			ResultSet result = customersQuery.getResultSet();
 			//maybe the .next should be in try/catch
 			while(result.next()){
+				if(isCancelled()){break;}
 				//create the customer object
 				CustomerObj co = new CustomerObj(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5), result.getString(6), result.getString(7), result.getString(8), result.getString(9));
 				//use the translator to modify customer name and customer address if it has PO Box
@@ -161,6 +162,7 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 			//get prospect result set and parse from the MS Access query of prospects (already embedded in the Access Prospects query object
 			ResultSet prospectRS = prospectsQuery.getResultSet();	
 			while(prospectRS.next()){
+				if(isCancelled()){break;}
 				CustomerObj co = new CustomerObj(prospectRS.getString(1), prospectRS.getString(2), null, null, prospectRS.getString(8),prospectRS.getString(4), prospectRS.getString(7), prospectRS.getString(3), prospectRS.getString(7));
 				//perform translations on the customer object
 				if(co.name != null){
@@ -187,9 +189,10 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 				numReadIn++;
 			}
 		}
-		
-		setProgress(100);
-		System.out.println("100% DBS loaded!") ;
+		if(!isCancelled()){
+			setProgress(100);
+			System.out.println("100% DBS loaded!") ;
+		}
 		return ourCustomers;
 	}	
 	

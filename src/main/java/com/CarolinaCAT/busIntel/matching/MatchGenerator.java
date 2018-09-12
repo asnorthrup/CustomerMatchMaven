@@ -34,6 +34,7 @@ public class MatchGenerator extends SwingWorker<ArrayList<excelCustomerObj>,Void
 	protected ArrayList<excelCustomerObj> doInBackground() throws Exception {
 		int pctCompleteCounter = 1; //counter for pct complete calculator
 		for ( excelCustomerObj cExcelCust : listOfUnknownCustsToMatch){
+			if(isCancelled()){break;}
 			//c is a potential customer, check for match in customerList
 			if((pctCompleteCounter % 10) == 0){
 				double pct = ((double)pctCompleteCounter / listOfUnknownCustsToMatch.size()) * 100;
@@ -142,9 +143,10 @@ public class MatchGenerator extends SwingWorker<ArrayList<excelCustomerObj>,Void
 		} //end of list of customers in excel file
 		
 		//use sheet of matches to generate output to file path
-	
-		setProgress(100);
-		System.out.println("Done!") ;
+		if(!isCancelled()){
+			setProgress(100);
+			System.out.println("Done!") ;
+		}
 		return listOfUnknownCustsToMatch;
 	}
 	 

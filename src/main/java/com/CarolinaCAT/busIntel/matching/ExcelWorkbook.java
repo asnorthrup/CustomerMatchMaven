@@ -67,8 +67,9 @@ public class ExcelWorkbook{
 	private void readInData() throws InvalidFormatException, IOException {
 		// TODO Auto-generated method stub
 		//check that this is a xlsx file
-		if(path.trim().substring(path.trim().length() - 1) != "x"){
-			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
+		if(!path.trim().substring(path.trim().length() - 1).toLowerCase().equals("x")){
+			System.out.println("Error checking ends with x");
+			System.out.println(path.trim().substring(path.trim().length() - 1).toLowerCase());
 			throw new InvalidFormatException("File must be of XLSX format, verify not XLS");
 		}
 		file = new File(path);
