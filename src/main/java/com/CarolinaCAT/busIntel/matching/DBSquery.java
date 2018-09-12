@@ -14,14 +14,20 @@ public class DBSquery {
 	private ResultSet result;
 	private PreparedStatement dbsCustomers;
 	private ResultSetMetaData rsmd;
-	
-	public DBSquery(String queryCode, String ODBCconn){
+	/**
+	 * Creates a DBS query
+	 * @param queryCode string for a query to be run
+	 * @param ODBCconn string for the name of the odbc connection
+	 * @throws ClassNotFoundException class not found exception
+	 * @throws SQLException sql exception
+	 */
+	public DBSquery(String queryCode, String ODBCconn) throws ClassNotFoundException, SQLException{
 		//access driver from JAR file
 		try {
 			Class.forName("com.ibm.as400.access.AS400JDBCDriver");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ClassNotFoundException("No driver installed for AS400 JDBC");
 		}
 
 		try {
@@ -31,7 +37,7 @@ public class DBSquery {
 			rsmd = result.getMetaData();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SQLException("DBS SQL statement failed, verify schema and table prefixes");
 		}
 	}
 	

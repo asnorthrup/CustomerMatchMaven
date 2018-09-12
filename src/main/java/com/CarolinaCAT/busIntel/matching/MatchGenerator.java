@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.swing.SwingWorker;
 
-public class MatchGenerator extends SwingWorker<Void,Void>{
+public class MatchGenerator extends SwingWorker<ArrayList<excelCustomerObj>,Void>{
 	
 	//set inputs
 	private ArrayList<excelCustomerObj> listOfUnknownCustsToMatch;
@@ -31,7 +31,7 @@ public class MatchGenerator extends SwingWorker<Void,Void>{
 	}
 	
 	@Override
-	protected Void doInBackground() throws Exception {
+	protected ArrayList<excelCustomerObj> doInBackground() throws Exception {
 		int pctCompleteCounter = 1; //counter for pct complete calculator
 		for ( excelCustomerObj cExcelCust : listOfUnknownCustsToMatch){
 			//c is a potential customer, check for match in customerList
@@ -145,7 +145,7 @@ public class MatchGenerator extends SwingWorker<Void,Void>{
 	
 		setProgress(100);
 		System.out.println("Done!") ;
-		return null;
+		return listOfUnknownCustsToMatch;
 	}
 	 
 	

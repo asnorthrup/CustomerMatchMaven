@@ -51,10 +51,12 @@ public class ExcelWorkbook{
 	 * @param path to xlsx file as string for where to find the file with potential matches
 	 * @param inputs 
 	 * @param tabName 
+	 * @throws IOException 
+	 * @throws InvalidFormatException 
 	 */
 	
 
-	public ExcelWorkbook(String path, int[] inputs, String tabName, Translators translator){
+	public ExcelWorkbook(String path, int[] inputs, String tabName, Translators translator) throws InvalidFormatException, IOException{
 		this.path = path;
 		this.inputs = inputs;
 		this.tabName = tabName;
@@ -62,11 +64,12 @@ public class ExcelWorkbook{
 		readInData();
 	}	
 	
-	private void readInData() {
+	private void readInData() throws InvalidFormatException, IOException {
 		// TODO Auto-generated method stub
 		//check that this is a xlsx file
 		if(path.trim().substring(path.trim().length() - 1) != "x"){
 			//TODO figure out throwing an invalid file type exception and tell user it must be excel xlsx file
+			throw new InvalidFormatException("File must be of XLSX format, verify not XLS");
 		}
 		file = new File(path);
 		//opPackage = null;
@@ -75,7 +78,8 @@ public class ExcelWorkbook{
 			pkg = OPCPackage.open(file);
 		} catch (InvalidFormatException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new InvalidFormatException("Could not open file, verify type is XLSX, file not in use. Try opening and resaving file to clear out potential access restrictions");
+			//throw e1;
 		}
 	    Sheet myExcelSheet = null;
 		try {
@@ -97,13 +101,15 @@ public class ExcelWorkbook{
 			if (wsExists){
 				myExcelSheet = wb.getSheet(tabName);
 			} else {
-
+				throw new IllegalArgumentException("Tab name doesn't exist in specified Excel file");
 			}
 
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
+			throw new InvalidFormatException("Could not open file, verify type is XLSX, file not in use. Try opening and resaving file to clear out potential access restrictions");
 		} catch (IOException e){
 			e.printStackTrace();
+			throw new IOException("Could not open file, verify type is XLSX, file not in use. Try opening and resaving file to clear out potential access restrictions");
 		} //finally {
 //			if (excelFile != null) {
 //				try {
@@ -119,6 +125,7 @@ public class ExcelWorkbook{
 			pkg.close();
 		} catch (IOException e) {
 			System.out.println("File not closeable because open by another program");
+			throw new IOException("Workbook not closeable because other application has open");
 		}
 	}	
 	

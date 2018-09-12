@@ -39,6 +39,7 @@ import javax.swing.ButtonGroup;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -46,6 +47,8 @@ import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JCheckBox;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import com.CarolinaCAT.busIntel.matching.CustomerObj;
 import com.CarolinaCAT.busIntel.matching.ExcelWorkbook;
@@ -619,96 +622,47 @@ private void initComponents() {
 					}
 					
 					progBarFrame.setVisible(true);
-					progBarFrame.setAlwaysOnTop(true);
-					//TODO check that this is okay
-					//progBarFrame.repaint();
 					
 					System.out.println("prog bar visible");
 					//create array of column locations, -1 is used to indicate that this isn't going to be read in (i.e. left blank by user)
 					int[] colLocs = new int[12];
 					setupcolLocs(colLocs);
-					try {
-						System.out.println("starting run");
-						ReadCustomerData matcherProg = null;
-						String accessDBloc = null;
-						String DbsODBC = null;
-						String schema = null;
-						int customerCount = 0;
-						//TODO need to set string for access DB
-						if (lblAccessDBLocation.getText().trim().length() > 0){
-							accessDBloc = lblAccessDBLocation.getText().trim();
-						}
-						if (txtDBSConn.getText().trim().length() > 0){
-							DbsODBC = txtDBSConn.getText().trim();
-						}
-						if (txtSchema.getText().trim().length() > 0){
-							schema = txtSchema.getText().trim();
-						}
-						if (txtEstCustomers.getText().trim().length() > 0){
-							String str = txtEstCustomers.getText().trim();
-							customerCount = Integer.parseInt(str);
-						}
-						
-						Translators translator = new Translators();//class used to make name translations
-						String inputFileNameAndPath = getTxtInputFileAndAbsPath(); //file to read unknown customers from
-						//start swing workers to read, match customers
-						System.out.println("starting read cust data thread");
-						ReadCustomerData custData = new ReadCustomerData(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
-									progBarFrame, colLocs, getTabName(),getSpnrNameTol(), translator);
-						//will use property changes to call other methods
-						//
-						custData.addPropertyChangeListener(new InputProgressListener(progBarFrame, inputFileNameAndPath, getTabName(), colLocs, translator, getSpnrNameTol(), ourCustomers, customersToMatch, getTxtOutputFileAndAbsPath()));
-						//initiiate first swing worker
-						custData.execute();
-						
-						//what else does change listener need: 
-						
-//						while(!custData.isDone()){
-//							//update progress bar for reading customers
-//							progBarFrame.setPBImportDBS(custData.getProgress());
-//						}
-						//progBarFrame.setPBImportDBS(100);
-						
-						/*
-						 * If you launch the SwingWorker from the EDT and the call SwingWorker#get you will be block the EDT, preventing it from processing any updates which leads you back to the reason why you're using SwingWorker.
-						 * In this case, you have two choices. You could provide SwingWorker with a callback interface, which it would be able to call from done once the SwingWorker has completed. 
-						 * Or you could attach a PropertyChangeListener to the SwingWorker and monitor the state value, waiting until it equals StateValue.Done
-						 */
-						 
-						
-						//Have all DBS customers read into an hashmap, now need to read unknown customer file and match against ourCustomers
 
-						System.out.println("starting read workbook thread");
-
-//						while(!wbOfUnknownCusts.isDone()){
-//							progBarFrame.setPBReadWBofUnknownCusts(wbOfUnknownCusts.getProgress());
-//						}
-						//progBarFrame.setPBReadWBofUnknownCusts(100);
-						//TODO do not think customers to match is populating
-
-
-						
-						//curr state: have hashmap of all known customers, have arraylist of customers to match against known customers
-
-
-//						while(!genMatches.isDone()){
-//							progBarFrame.setPBGenMatches(genMatches.getProgress());
-//						}
-						//progBarFrame.setPBGenMatches(100);
-
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(null, 
-			                    "Error, file not loaded properly. Check file exists, tab name is correct", 
-			                    "Cannot Write Warning", 
-			                    JOptionPane.WARNING_MESSAGE);
+					System.out.println("starting run");
+					ReadCustomerData matcherProg = null;
+					String accessDBloc = null;
+					String DbsODBC = null;
+					String schema = null;
+					int customerCount = 0;
+					//TODO need to set string for access DB
+					if (lblAccessDBLocation.getText().trim().length() > 0){
+						accessDBloc = lblAccessDBLocation.getText().trim();
 					}
-					//progBarFrame.setVisible(false);
+					if (txtDBSConn.getText().trim().length() > 0){
+						DbsODBC = txtDBSConn.getText().trim();
+					}
+					if (txtSchema.getText().trim().length() > 0){
+						schema = txtSchema.getText().trim();
+					}
+					if (txtEstCustomers.getText().trim().length() > 0){
+						String str = txtEstCustomers.getText().trim();
+						customerCount = Integer.parseInt(str);
+					}
 					
-					//TODO need to reset progres bar status to 0
-					
-					//TODO check if setting this to null is creating an issue re-painting
-					//progBarFrame = null;
-
+					Translators translator = new Translators();//class used to make name translations
+					String inputFileNameAndPath = getTxtInputFileAndAbsPath(); //file to read unknown customers from
+					//start swing workers to read, match customers
+					System.out.println("starting read cust data thread");
+					ReadCustomerData custData;
+					try {
+						custData = new ReadCustomerData(DbsODBC, schema, accessDBloc, chkProspectsOnly.isSelected(), customerCount,getTxtInputFileAndAbsPath(),getTxtOutputFileAndAbsPath(),
+									progBarFrame, colLocs, getTabName(),getSpnrNameTol(), translator);
+						custData.addPropertyChangeListener(new InputProgressListener(progBarFrame, inputFileNameAndPath, getTabName(), colLocs, translator, getSpnrNameTol(), ourCustomers, customersToMatch, getTxtOutputFileAndAbsPath()));
+						//initiate first swing worker
+						custData.execute();
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} else {
 					JOptionPane.showMessageDialog(null,
 						    "Cannot Run, Please add required fields",
@@ -1272,6 +1226,7 @@ class InputProgressListener implements PropertyChangeListener {
 	private int spnNameTol;
 	private HashMap<String, CustomerObj> ourCustomers; 
 	private ArrayList<excelCustomerObj> customersToMatch;
+	private boolean stop;
 	
 	InputProgressListener() {} 
 
@@ -1289,6 +1244,7 @@ class InputProgressListener implements PropertyChangeListener {
 		progBarFrame.setPBGenMatches(0);
 		progBarFrame.setLblReadStatus("File Reading Not Yet Begun");
 		progBarFrame.setLblStatusConnection("Establishing Connection");
+		stop = false;
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -1296,25 +1252,39 @@ class InputProgressListener implements PropertyChangeListener {
 		if ("progress".equals(evt.getPropertyName())) { 
 			progBarFrame.setPBImportCustomers((int) evt.getNewValue());
 			progBarFrame.setLblStatusConnection("Connection Established");
+			if(progBarFrame.isCanceled()){
+				((SwingWorker<HashMap<String, CustomerObj>,Void>) evt.getSource()).cancel(true);
+			}
 		} else if (evt.getNewValue().equals(StateValue.DONE)){
 			try {
 				ourCustomers = ((SwingWorker<HashMap<String, CustomerObj>,Void>) evt.getSource()).get();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				stop = true;
+				JOptionPane.showMessageDialog(null, "Task Canceled", "Canceled", JOptionPane.PLAIN_MESSAGE);
 			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				stop = true;
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			progBarFrame.setLblReadStatus("Reading File");
-			ExcelWorkbook wbOfUnknownCusts = new ExcelWorkbook(inputFileNameAndPath, colLocs, tabInputName, translator);
-			customersToMatch = wbOfUnknownCusts.getCustomersInWB();
-			progBarFrame.setLblReadStatus("File Read Complete");
-			
-			System.out.println("starting match generator thread");
-			MatchGenerator genMatches = new MatchGenerator(customersToMatch, ourCustomers, -1, spnNameTol);//-1 bc no address tolerance used
-			genMatches.addPropertyChangeListener(new MatchGeneratorProgressListener(progBarFrame, spnNameTol, ourCustomers, customersToMatch, outputFileNameAndPath));
-			genMatches.execute();
+			if (!stop){
+				progBarFrame.setLblReadStatus("Reading File");
+				ExcelWorkbook wbOfUnknownCusts;
+				try {
+					wbOfUnknownCusts = new ExcelWorkbook(inputFileNameAndPath, colLocs, tabInputName, translator);
+					customersToMatch = wbOfUnknownCusts.getCustomersInWB();
+					progBarFrame.setLblReadStatus("File Read Complete");
+					System.out.println("starting match generator thread");
+					MatchGenerator genMatches = new MatchGenerator(customersToMatch, ourCustomers, -1, spnNameTol);//-1 bc no address tolerance used
+					genMatches.addPropertyChangeListener(new MatchGeneratorProgressListener(progBarFrame, spnNameTol, ourCustomers, customersToMatch, outputFileNameAndPath));
+					genMatches.execute();
+				} catch (InvalidFormatException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+
+			} else {
+				progBarFrame.setVisible(false);
+			}
 		}
 	}
 }
@@ -1326,6 +1296,7 @@ class MatchGeneratorProgressListener implements PropertyChangeListener {
 	private HashMap<String, CustomerObj> ourCustomers; 
 	private ArrayList<excelCustomerObj> customersToMatch;
 	private String outputFileNameAndPath;
+	private boolean stop;
 	
 	MatchGeneratorProgressListener(NewProgressBar progBarFrame, int spnNameTol, HashMap<String, CustomerObj> ourCustomers, ArrayList<excelCustomerObj> customersToMatch, String outputFileNameAndPath){
 		this.spnNameTol = spnNameTol;
@@ -1333,6 +1304,7 @@ class MatchGeneratorProgressListener implements PropertyChangeListener {
 		this.customersToMatch = customersToMatch;
 		this.progBarFrame = progBarFrame;
 		this.outputFileNameAndPath=outputFileNameAndPath;
+		stop = false;
 	}
 	
 	@Override
@@ -1340,23 +1312,43 @@ class MatchGeneratorProgressListener implements PropertyChangeListener {
 		// TODO Auto-generated method stub
 		if ("progress".equals(evt.getPropertyName())) { 
 			progBarFrame.setPBGenMatches((int) evt.getNewValue());
+			if(progBarFrame.isCanceled()){
+				((SwingWorker<ArrayList<excelCustomerObj>, Void>) evt.getSource()).cancel(true);
+			}
 		}else if (evt.getNewValue().equals(StateValue.DONE)){			
-			//Write out the workbook -- do we need error handling?
-			System.out.println("write out to out file");
-			OutputWorkbook outWB = new OutputWorkbook(outputFileNameAndPath, ourCustomers, customersToMatch);
-			//Check should be done, but no testing done
-			progBarFrame.setVisible(false);
-			progBarFrame = null;
-			ourCustomers = null;
-			customersToMatch = null;
-			JOptionPane.showMessageDialog(null,
-				    "Matching Complete!",
-				    "Complete",
-				    JOptionPane.INFORMATION_MESSAGE);
+			try {
+				customersToMatch =  ((SwingWorker<ArrayList<excelCustomerObj>, Void>) evt.getSource()).get();
+			} catch (InterruptedException e) {
+				stop = true;
+				JOptionPane.showMessageDialog(null, "Task Canceled", "Canceled", JOptionPane.PLAIN_MESSAGE);
+			} catch (ExecutionException e) {
+				stop = true;
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			if (!stop){
+				System.out.println("write out to out file");
+				try {
+					OutputWorkbook outWB = new OutputWorkbook(outputFileNameAndPath, ourCustomers, customersToMatch);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				//Check should be done, but no testing done
+				progBarFrame.setVisible(false);
+				progBarFrame = null;
+				ourCustomers = null;
+				customersToMatch = null;
+				JOptionPane.showMessageDialog(null,
+					    "Matching Complete!",
+					    "Complete",
+					    JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				
+			}
 		}
 	}
 
 }
-//custData.get();
+
 
 

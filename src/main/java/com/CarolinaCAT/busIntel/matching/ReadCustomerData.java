@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import com.CarolinaCAT.busIntel.view.MatcherStart;
@@ -82,7 +84,7 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 	 * @see javax.swing.SwingWorker#doInBackground()
 	 */
 	@Override
-	protected HashMap<String, CustomerObj> doInBackground() throws Exception {
+	protected HashMap<String, CustomerObj> doInBackground() throws Exception{
 		String queryCode  = null;
 		DBSquery customersQuery = null;
 		AccessProspectsQuery prospectsQuery = null;
@@ -95,7 +97,11 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 				+ "WHEN length(trim(PHYS.CUADD1)) > 0 THEN trim(PHYS.CUADD1) ELSE 'No Phys Adr' END AS PHYS_ADR, PHYS.ZIPCD9 AS PHYSZIP "
 				+ "FROM " + dealerSchema + ".CIPNAME0 CIP LEFT JOIN " + dealerSchema + ".CIPLADR0 PHYS ON (CIP.CUNO = PHYS.CUNO) "
 				+ "WHERE CIP.CUNO NOT LIKE ('I%')";
-			customersQuery = new DBSquery(queryCode, dBSOdbcConn);
+			try{
+				customersQuery = new DBSquery(queryCode, dBSOdbcConn);
+			} catch (Exception e){
+				
+			}
 		}
 		//MS access database query setup
 		String qry = null;
@@ -184,6 +190,7 @@ public class ReadCustomerData extends SwingWorker<HashMap<String, CustomerObj>,V
 		
 		setProgress(100);
 		System.out.println("100% DBS loaded!") ;
-		return ourCustomers;		
-	}
+		return ourCustomers;
+	}	
+	
 }

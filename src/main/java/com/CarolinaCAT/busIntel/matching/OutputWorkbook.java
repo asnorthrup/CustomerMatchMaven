@@ -19,9 +19,10 @@ public class OutputWorkbook {
 	 * Populate a worksheet in the original workbook with the highest rated match. Before calling this function, the customers should
 	 * have been matched with a DBS customer (if one exists) and assigned a specific match score.
 	 * @param ourCustomers 
+	 * @throws IOException 
 	 */
 	//TODO finish this logic, still need to output the excel customer snad the top match to excel. Also, need to write test cases
-	public OutputWorkbook(String path, HashMap<String, CustomerObj> ourCustomers, ArrayList<excelCustomerObj> customersInWB){
+	public OutputWorkbook(String path, HashMap<String, CustomerObj> ourCustomers, ArrayList<excelCustomerObj> customersInWB) throws IOException{
 		XSSFWorkbook outputBook = new XSSFWorkbook();
 		Sheet matchesSheet = outputBook.createSheet("DBSmatches");
 		
@@ -62,14 +63,9 @@ public class OutputWorkbook {
 			fileOut.close();
 		} catch (FileNotFoundException e1) {
 			// if file cannot be found, alert user
-			JOptionPane.showMessageDialog(null, 
-                    "File not available - Please close file and restart", 
-                    "Cannot Write Warning", 
-                    JOptionPane.WARNING_MESSAGE);
-			//TODO remove stack trace
-			e1.printStackTrace();
+			throw new FileNotFoundException("File not available, close file if open");
 		} catch (IOException e){
-			e.printStackTrace();
+			throw new IOException("File not available, close file if open");
 		}
 	}
 	
