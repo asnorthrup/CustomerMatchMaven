@@ -170,7 +170,7 @@ try (BufferedWriter fileOut = new BufferedWriter(new FileWriter(yourFile))) {
 
 	private void initComponents() {
 		// TODO Auto-generated method stub
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 826, 521);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
