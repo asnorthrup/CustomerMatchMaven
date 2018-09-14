@@ -622,7 +622,7 @@ private void initComponents() {
 					if (progBarFrame == null){
 						progBarFrame = new NewProgressBar();
 						progBarFrame.setVisible(true);
-						progBarFrame.setAlwaysOnTop(true);
+						//progBarFrame.setAlwaysOnTop(true);
 						System.out.println("created prog bar");
 					}
 					
