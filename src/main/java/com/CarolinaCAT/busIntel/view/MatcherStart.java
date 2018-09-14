@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.awt.Color;
 import java.awt.Font;
@@ -224,18 +225,22 @@ private void initComponents() {
 	txtCustInfCol = new JTextField();
 	txtCustInfCol.setToolTipText("First and Last Column OR First Name to be concatenated with (optional) last name column 1, if supplied.");
 	txtCustInfCol.setColumns(2);
+	txtCustInfCol.setEditable(false); //not implemented yet
 	
 	txtCustInfCol2 = new JTextField();
 	txtCustInfCol2.setToolTipText("Optional last name column 1 to concatenate to first column entered");
 	txtCustInfCol2.setColumns(2);
+	txtCustInfCol2.setEditable(false); //not implemented yet
 	
 	txtCustInfCol3 = new JTextField();
 	txtCustInfCol3.setToolTipText("Optional first and last column for second influencer OR second influencers first name.");
 	txtCustInfCol3.setColumns(2);
+	txtCustInfCol3.setEditable(false); //not implemented yet
 	
 	txtCustInfCol4 = new JTextField();
 	txtCustInfCol4.setToolTipText("Second influencer last name will be concatenated with optional second influencer first name if this field is filled in");
 	txtCustInfCol4.setColumns(2);
+	txtCustInfCol4.setEditable(false); //not implemented yet
 	
 	txtFirstRow = new JTextField();
 	txtFirstRow.setColumns(3);
@@ -285,7 +290,7 @@ private void initComponents() {
 	lblErrPhoneCol.setFont(new Font("Tahoma", Font.BOLD, 13));
 	lblErrPhoneCol.setForeground(Color.RED);
 	
-	lblErrInflCol = new JLabel("*");
+	lblErrInflCol = new JLabel("");
 	lblErrInflCol.setFont(new Font("Tahoma", Font.BOLD, 13));
 	lblErrInflCol.setForeground(Color.RED);
 	
@@ -792,7 +797,7 @@ private void initComponents() {
 					txtCustPhoneCol.setText("");
 					lblErrPhoneCol.setText("*");
 					txtCustInfCol.setText("");
-					lblErrInflCol.setText("*");
+					lblErrInflCol.setText("");//Not used yet, so removed the *
 					txtFirstRow.setText("");
 					lblErrFirstRow.setText("*");
 					checkReadyToRun();
@@ -962,13 +967,13 @@ private void initComponents() {
 					txtCustInfCol4.setText("");
 					txtCustInfCol4.setEditable(false);
 					checkReadyToRun();
-				} else {
-					txtCustInfCol.setEditable(true);
-					lblErrInflCol.setText("*");
-					txtCustInfCol2.setEditable(true);
-					txtCustInfCol3.setEditable(true);
-					txtCustInfCol4.setEditable(true);
-					readyToRun = false;
+				} else { //change all these to false as well because no need to put in yet
+					txtCustInfCol.setEditable(false);
+					lblErrInflCol.setText("");//removed *
+					txtCustInfCol2.setEditable(false);
+					txtCustInfCol3.setEditable(false);
+					txtCustInfCol4.setEditable(false);
+					readyToRun = true;
 				}
 			}
 		});
@@ -1125,39 +1130,15 @@ private void initComponents() {
 	}
 	////////////////////////////////////END GETTERS////////////////////////////////////////////
 	
-	//////////////////////////*** UPDATE PROGRESS BARS ***/////////////////////////////////////
-//	/**
-//	 * Access to update the progress bars through this class
-//	 * @param pct as integer for customer loading status
-//	 */
-//	public void updateDBSLoadStatus(int pct){
-//		progBarFrame.setPBImportDBS(pct);
-//	}
-//	/**
-//	 * Access to update the progress bars through this class
-//	 * @param pct as integer for reading excel file status
-//	 */	
-//	public void updateReadExcelCustomersStatus(int pct){
-//		progBarFrame.setPBReadWBofUnknownCusts(pct);
-//	}
-//
-//	/**
-//	 * Access to update the progress bars through this class
-//	 * @param pct as integer for customer matching status
-//	 */	
-//	public void updateCustomerMatchingStatus(int pct){
-//		progBarFrame.setPBGenMatches(pct);
-//	}
-	
 	////////////////////////////////////HELPER METHODS/////////////////////////////////////////
 	
 	//checks for error indicators, will enable button if no indicators exist
 	private void checkReadyToRun(){
 		//probably should put error labels in an array
 		if(lblErrNameCol.getText().equals("*") || lblErrAddrCol.getText().equals("*")|| lblErrZipCol.getText().equals("*") || 
-			lblErrPhoneCol.getText().equals("*") || lblErrInflCol.getText().equals("*") || lblErrFirstRow.getText().equals("*")
+			lblErrPhoneCol.getText().equals("*")  || lblErrFirstRow.getText().equals("*")
 			|| lblSelectInputFile.getText().equals("No File Choosen") || txtOutputFileName.getText().trim().length() < 1
-			|| txtTabName.getText().trim().length() < 1){
+			|| txtTabName.getText().trim().length() < 1){ //removed || lblErrInflCol.getText().equals("*") from checking becuase no necessary for influencer
 			readyToRun = false;
 		} else {
 			readyToRun = true;
@@ -1258,7 +1239,7 @@ class InputProgressListener implements PropertyChangeListener {
 		} else if (evt.getNewValue().equals(StateValue.DONE)){
 			try {
 				ourCustomers = ((SwingWorker<HashMap<String, CustomerObj>,Void>) evt.getSource()).get();
-			} catch (InterruptedException e) {
+			} catch (InterruptedException | CancellationException e) {
 				stop = true;
 				JOptionPane.showMessageDialog(null, "Task Canceled", "Canceled", JOptionPane.PLAIN_MESSAGE);
 			} catch (ExecutionException e) {
@@ -1278,11 +1259,20 @@ class InputProgressListener implements PropertyChangeListener {
 					genMatches.execute();
 				} catch (InvalidFormatException e) {
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					progBarFrame.restoreDefaults();
+					progBarFrame.setVisible(false);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					progBarFrame.restoreDefaults();
+					progBarFrame.setVisible(false);
+				} catch (IllegalArgumentException e){
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					progBarFrame.restoreDefaults();
+					progBarFrame.setVisible(false);
 				}
 
 			} else {
+				progBarFrame.restoreDefaults();
 				progBarFrame.setVisible(false);
 			}
 		}
@@ -1318,14 +1308,18 @@ class MatchGeneratorProgressListener implements PropertyChangeListener {
 		}else if (evt.getNewValue().equals(StateValue.DONE)){			
 			try {
 				customersToMatch =  ((SwingWorker<ArrayList<excelCustomerObj>, Void>) evt.getSource()).get();
-			} catch (InterruptedException e) {
+			} catch (InterruptedException | CancellationException e) {
 				stop = true;
+				progBarFrame.restoreDefaults();
+				progBarFrame.setVisible(false);
 				JOptionPane.showMessageDialog(null, "Task Canceled", "Canceled", JOptionPane.PLAIN_MESSAGE);
 			} catch (ExecutionException e) {
 				stop = true;
+				progBarFrame.restoreDefaults();
+				progBarFrame.setVisible(false);
 				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			if (!stop){
+			if ( !stop ){
 				System.out.println("write out to out file");
 				try {
 					OutputWorkbook outWB = new OutputWorkbook(outputFileNameAndPath, ourCustomers, customersToMatch);
@@ -1334,6 +1328,7 @@ class MatchGeneratorProgressListener implements PropertyChangeListener {
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				//Check should be done, but no testing done
+				progBarFrame.restoreDefaults();
 				progBarFrame.setVisible(false);
 				progBarFrame = null;
 				ourCustomers = null;
@@ -1343,7 +1338,8 @@ class MatchGeneratorProgressListener implements PropertyChangeListener {
 					    "Complete",
 					    JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				
+				progBarFrame.restoreDefaults();
+				progBarFrame.setVisible(false);
 			}
 		}
 	}
