@@ -753,7 +753,7 @@ private void initComponents() {
 					lblErrZipCol.setText("");
 					txtCustPhoneCol.setText("N");
 					lblErrPhoneCol.setText("");
-					txtCustInfCol.setText("C");
+					txtCustInfCol.setText("");
 					lblErrInflCol.setText("");
 					txtFirstRow.setText("2");
 					lblErrFirstRow.setText("");
@@ -769,14 +769,15 @@ private void initComponents() {
 					txtTabName.setText("Results");
 					lblErrTabName.setText("");
 					txtCustNameCol.setText("A");
-					lblErrNameCol.setText(""); //clears error indicator
+					lblErrNameCol.setText(""); //clears error indicator becuase not used yet
 					txtCustAddrCol.setText("D");
+					txtCustAddrCol2.setText("");
 					lblErrAddrCol.setText("");
 					txtCustZipCol.setText("G");
 					lblErrZipCol.setText("");
 					txtCustPhoneCol.setText("K");
 					lblErrPhoneCol.setText("");
-					txtCustInfCol.setText("B");
+					txtCustInfCol.setText("");
 					lblErrInflCol.setText("");
 					txtFirstRow.setText("2");
 					lblErrFirstRow.setText("");
@@ -996,9 +997,6 @@ private void initComponents() {
 		colLocs[10] = (getTxtCustZipCol() == -1) ?  -1 : getTxtCustZipCol();
 		colLocs[11] = (getTxtCustZipCol2() == -1) ?  -1 : getTxtCustZipCol2();
 	}
-
-
-
 
 	private int getTxtCustNameCol() {
 		if(txtCustNameCol.getText() == null || txtCustNameCol.getText().equals("")) {return -1;}
