@@ -268,7 +268,7 @@ public class CustomerMatcher {
 						createDBSCustomerwithMatchScore(cExcelCust, dbsCust.getValue().cuno, custNameScore,"Customer Name");
 					}
 					//giving false positives for simple names like J M construction vs K M construction
-					//penalize 3 points if first letter isn't the same
+					//penalize points if first letter isn't the same
 					if( !( dbsCust.getValue().name_translated.substring(0, 1).equals( cExcelCust.name_translated.substring(0,1) ) ) ){
 						custNameScore = custNameScore - 2;
 						if(cExcelCust.name_translated.split(" +")[0].length() < 4){
