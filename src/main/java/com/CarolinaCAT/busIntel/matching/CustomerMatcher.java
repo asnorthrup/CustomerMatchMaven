@@ -260,11 +260,22 @@ public class CustomerMatcher {
 					}
 				}
 				if(!exactMatch){
+					//TODO customer name score is giving too many wrong issues with G P Grading matching J P Grading, etc. need
+					//to do a check on something like that or GP vs JP as these are not the same
 					custNameScore = MatcherHelpers.getNameScore(dbsCust.getValue().name_translated, cExcelCust.name_translated);
 					if (custNameScore == 100){ exactMatch = true; }
 					if(exactMatch){
 						createDBSCustomerwithMatchScore(cExcelCust, dbsCust.getValue().cuno, custNameScore,"Customer Name");
 					}
+					//giving false positives for simple names like J M construction vs K M construction
+					//penalize 3 points if first letter isn't the same
+					if( !( dbsCust.getValue().name_translated.substring(0, 1).equals( cExcelCust.name_translated.substring(0,1) ) ) ){
+						custNameScore = custNameScore - 2;
+						if(cExcelCust.name_translated.split(" +")[0].length() < 4){
+							custNameScore = custNameScore - 2; //penalize more if the first word is short
+						}
+					}
+					
 					if (custNameScore > MIN_CUSTNAME_SCORE){ partialMatchName = true; }
 				}
 				
